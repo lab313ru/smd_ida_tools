@@ -7,6 +7,9 @@ Tested work on v5.2, v6.6. Should work on other versions.
 ## Supported versions of IDA Pro SDK
 You have to use v6.6 version of it.
 
+## How to use
+Put the "smd_loader.ldw" file into your <IDA>\loaders folder.
+
 ## How to build
 1) Open solution (*.sln) in your Visual Studio 2013 (you may use even Express Edition, I hope).
 
