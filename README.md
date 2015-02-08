@@ -1,8 +1,11 @@
 # ida_smd_loader
 Sega Genesis/Megadrive ROMs loader plugin for IDA Pro.
 
-## Supported versions
-Now it is only for 6.6 version, but will be for (5.x, 6.x) soon.
+## Supported versions of IDA Pro
+Tested work on v5.2, v6.6. Should work on other versions.
+
+## Supported versions of IDA Pro SDK
+You have to use v6.6 version of it.
 
 ## How to build
 1) Open solution (*.sln) in your Visual Studio 2013 (you may use even Express Edition, I hope).
