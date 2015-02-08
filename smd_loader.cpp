@@ -5,10 +5,11 @@
 *
 */
 
-//
-//      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
-//      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>, v1.0, 07/02/2015
-//
+#define VERSION "1.0.1"
+/*
+*      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
+*      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>, v1.0, 07/02/2015
+*/
 
 #define NO_OBSOLETE_FUNCS
 #define _CRT_SECURE_NO_WARNINGS
@@ -28,7 +29,8 @@
 static gen_hdr _hdr;
 static gen_vect _vect;
 
-static const char RESET[] = "RESET";
+static const char *VECTOR_NAMES[] = { "SSP", "Reset", "BusErr", "AdrErr", "InvOpCode", "DivBy0", "Check", "TrapV", "GPF", "Trace", "Reserv0", "Reserv1", "Reserv2", "Reserv3", "Reserv4", "BadInt", "Reserv10", "Reserv11", "Reserv12", "Reserv13", "Reserv14", "Reserv15", "Reserv16", "Reserv17", "BadIRQ", "IRQ1", "EXT", "IRQ3", "HBLANK", "IRQ5", "VBLANK", "IRQ7", "Trap0", "Trap1", "Trap2", "Trap3", "Trap4", "Trap5", "Trap6", "Trap7", "Trap8", "Trap9", "Trap10", "Trap11", "Trap12", "Trap13", "Trap14", "Trap15", "Reserv30", "Reserv31", "Reserv32", "Reserv33", "Reserv34", "Reserv35", "Reserv36", "Reserv37", "Reserv38", "Reserv39", "Reserv3A", "Reserv3B", "Reserv3C", "Reserv3D", "Reserv3E", "Reserv3F" };
+
 static const char M68K[] = "68000";
 static const char CODE[] = "CODE";
 static const char DATA[] = "DATA";
@@ -52,34 +54,32 @@ static const char HEADER[] = "header";
 static const char HEADER_STRUCT[] = "struct_header";
 static const char SETUP[] = "setup";
 
-// Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
-// and vice versa.
+//------------------------------------------------------------------------
 static unsigned int SWAP_BYTES_32(unsigned int a)
 {
-	return ((a >> 24) & 0x000000FF) | ((a >> 8) & 0x0000FF00) |	((a << 8) & 0x00FF0000) | ((a << 24) & 0xFF000000);
-}
-
-// Read BE word
-static unsigned short READ_BE_WORD(unsigned char *addr)
-{
-	return (addr[0] << 8) | addr[1];
-}
-
-// Read BE unsigned int by pointer
-static unsigned int READ_BE_UINT(unsigned char *addr)
-{
-	return (READ_BE_WORD(&addr[0]) << 16) | READ_BE_WORD(&addr[2]);
+	return ((a >> 24) & 0x000000FF) | ((a >> 8) & 0x0000FF00) | ((a << 8) & 0x00FF0000) | ((a << 24) & 0xFF000000); // Swap dword LE to BE
 }
 
 //------------------------------------------------------------------------
-static void add_sub(unsigned int addr, const char *name, unsigned int min, unsigned int max)
+static unsigned short READ_BE_WORD(unsigned char *addr)
 {
-	if ((addr >= min) && (addr < max))
-	{
-		ea_t e_addr = toEA(ask_selector(0), addr);
-		auto_make_proc(e_addr);
-		set_name(e_addr, name);
-	}
+	return (addr[0] << 8) | addr[1]; // Read BE word
+}
+
+//------------------------------------------------------------------------
+static unsigned int READ_BE_UINT(unsigned char *addr)
+{
+	return (READ_BE_WORD(&addr[0]) << 16) | READ_BE_WORD(&addr[2]); // Read BE unsigned int by pointer
+}
+
+//------------------------------------------------------------------------
+static void add_sub(unsigned int addr, const char *name, unsigned int max)
+{
+	if (!((addr >= 0x200) && (addr < max))) return;
+
+	ea_t e_addr = toEA(ask_selector(0), addr);
+	auto_make_proc(e_addr);
+	set_name(e_addr, name);
 }
 
 //------------------------------------------------------------------------
@@ -90,11 +90,13 @@ static void add_offset_field(struc_t *st, segment_t *code_segm, const char *name
 	add_struc_member(st, name, BADADDR, dwrdflag() | offflag(), &info, 4);
 }
 
+//------------------------------------------------------------------------
 static void add_dword_field(struc_t *st, const char *name)
 {
 	add_struc_member(st, name, BADADDR, dwrdflag() | hexflag(), NULL, 4);
 }
 
+//------------------------------------------------------------------------
 static void add_string_field(struc_t *st, const char *name, asize_t size)
 {
 	opinfo_t info = { 0 };
@@ -102,89 +104,53 @@ static void add_string_field(struc_t *st, const char *name, asize_t size)
 	add_struc_member(st, name, BADADDR, asciflag(), &info, size);
 }
 
+//------------------------------------------------------------------------
 static void add_short_field(struc_t *st, const char *name)
 {
 	add_struc_member(st, name, BADADDR, wordflag() | hexflag(), NULL, 2);
 }
 
+//------------------------------------------------------------------------
 static void add_dword_array(struc_t *st, const char *name, asize_t length)
 {
 	add_struc_member(st, name, BADADDR, dwrdflag() | hexflag(), NULL, 4 * length);
 }
 
+//------------------------------------------------------------------------
+static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
+{
+	if (!add_segm(0, start, end, name, class_name)) loader_failure();
+	segment_t *segm = getseg(start);
+	set_segment_cmt(segm, cmnt, false);
+	doByte(start, 1);
+}
+
+//------------------------------------------------------------------------
+static void add_subroutines(gen_vect *table, unsigned int rom_size)
+{
+	for (int i = 1; i < 64; i++) // except SPP pointer
+	{
+		add_sub(table->vectors[i], VECTOR_NAMES[i], rom_size);
+	}
+}
+
+//------------------------------------------------------------------------
 static void define_vectors_struct()
 {
 	segment_t *code_segm = getseg(0);
 	tid_t vec_id = add_struc(BADADDR, VECTORS_STRUCT);
 	struc_t *vectors = get_struc(vec_id);
-	add_offset_field(vectors, code_segm, "SSP");
-	add_offset_field(vectors, code_segm, "Reset");
-	add_offset_field(vectors, code_segm, "BusErr");
-	add_offset_field(vectors, code_segm, "AdrErr");
-	add_offset_field(vectors, code_segm, "InvOpCode");
-	add_offset_field(vectors, code_segm, "DivBy0");
-	add_offset_field(vectors, code_segm, "Check");
-	add_offset_field(vectors, code_segm, "TrapV");
-	add_offset_field(vectors, code_segm, "GPF");
-	add_offset_field(vectors, code_segm, "Trace");
-	add_offset_field(vectors, code_segm, "Reserv0");
-	add_offset_field(vectors, code_segm, "Reserv1");
-	add_offset_field(vectors, code_segm, "Reserv2");
-	add_offset_field(vectors, code_segm, "Reserv3");
-	add_offset_field(vectors, code_segm, "Reserv4");
-	add_offset_field(vectors, code_segm, "BadInt");
-	add_offset_field(vectors, code_segm, "Reserv10");
-	add_offset_field(vectors, code_segm, "Reserv11");
-	add_offset_field(vectors, code_segm, "Reserv12");
-	add_offset_field(vectors, code_segm, "Reserv13");
-	add_offset_field(vectors, code_segm, "Reserv14");
-	add_offset_field(vectors, code_segm, "Reserv15");
-	add_offset_field(vectors, code_segm, "Reserv16");
-	add_offset_field(vectors, code_segm, "Reserv17");
-	add_offset_field(vectors, code_segm, "BadIRQ");
-	add_offset_field(vectors, code_segm, "IRQ1");
-	add_offset_field(vectors, code_segm, "EXT");
-	add_offset_field(vectors, code_segm, "IRQ3");
-	add_offset_field(vectors, code_segm, "HBLANK");
-	add_offset_field(vectors, code_segm, "IRQ5");
-	add_offset_field(vectors, code_segm, "VBLANK");
-	add_offset_field(vectors, code_segm, "IRQ7");
-	add_offset_field(vectors, code_segm, "Trap0");
-	add_offset_field(vectors, code_segm, "Trap1");
-	add_offset_field(vectors, code_segm, "Trap2");
-	add_offset_field(vectors, code_segm, "Trap3");
-	add_offset_field(vectors, code_segm, "Trap4");
-	add_offset_field(vectors, code_segm, "Trap5");
-	add_offset_field(vectors, code_segm, "Trap6");
-	add_offset_field(vectors, code_segm, "Trap7");
-	add_offset_field(vectors, code_segm, "Trap8");
-	add_offset_field(vectors, code_segm, "Trap9");
-	add_offset_field(vectors, code_segm, "Trap10");
-	add_offset_field(vectors, code_segm, "Trap11");
-	add_offset_field(vectors, code_segm, "Trap12");
-	add_offset_field(vectors, code_segm, "Trap13");
-	add_offset_field(vectors, code_segm, "Trap14");
-	add_offset_field(vectors, code_segm, "Trap15");
-	add_offset_field(vectors, code_segm, "Reserv30");
-	add_offset_field(vectors, code_segm, "Reserv31");
-	add_offset_field(vectors, code_segm, "Reserv32");
-	add_offset_field(vectors, code_segm, "Reserv33");
-	add_offset_field(vectors, code_segm, "Reserv34");
-	add_offset_field(vectors, code_segm, "Reserv35");
-	add_offset_field(vectors, code_segm, "Reserv36");
-	add_offset_field(vectors, code_segm, "Reserv37");
-	add_offset_field(vectors, code_segm, "Reserv38");
-	add_offset_field(vectors, code_segm, "Reserv39");
-	add_offset_field(vectors, code_segm, "Reserv3A");
-	add_offset_field(vectors, code_segm, "Reserv3B");
-	add_offset_field(vectors, code_segm, "Reserv3C");
-	add_offset_field(vectors, code_segm, "Reserv3D");
-	add_offset_field(vectors, code_segm, "Reserv3E");
-	add_offset_field(vectors, code_segm, "Reserv3F");
+
+	for (int i = 0; i < 64; i++)
+	{
+		add_offset_field(vectors, code_segm, VECTOR_NAMES[i]);
+	}
+
 	doStruct(0, sizeof(gen_vect), vec_id);
 	set_name(0, VECTORS);
 }
 
+//------------------------------------------------------------------------
 static void define_header_struct()
 {
 	tid_t head_id = add_struc(BADADDR, HEADER_STRUCT);
@@ -208,75 +174,8 @@ static void define_header_struct()
 	set_name(0x100, HEADER);
 }
 
-void add_subroutines(unsigned int size)
-{
-	add_entry(1, toEA(ask_selector(0), _vect.Reset), RESET, true); // entry point
-	add_sub(_vect.BusErr, "BUSERR", 0x200, size);
-	add_sub(_vect.AdrErr, "ADRERR", 0x200, size);
-	add_sub(_vect.InvOpCode, "INVOPCODE", 0x200, size);
-	add_sub(_vect.DivBy0, "DIVBY0", 0x200, size);
-	add_sub(_vect.Check, "CHECK", 0x200, size);
-	add_sub(_vect.TrapV, "TRAPV", 0x200, size);
-	add_sub(_vect.GPF, "GPF", 0x200, size);
-	add_sub(_vect.Trace, "TRACE", 0x200, size);
-	add_sub(_vect.Reserv0, "RESERV0", 0x200, size);
-	add_sub(_vect.Reserv1, "RESERV1", 0x200, size);
-	add_sub(_vect.Reserv2, "RESERV2", 0x200, size);
-	add_sub(_vect.Reserv3, "RESERV3", 0x200, size);
-	add_sub(_vect.Reserv4, "RESERV4", 0x200, size);
-	add_sub(_vect.BadInt, "BADINT", 0x200, size);
-	add_sub(_vect.Reserv10, "RESERV10", 0x200, size);
-	add_sub(_vect.Reserv11, "RESERV11", 0x200, size);
-	add_sub(_vect.Reserv12, "RESERV12", 0x200, size);
-	add_sub(_vect.Reserv13, "RESERV13", 0x200, size);
-	add_sub(_vect.Reserv14, "RESERV14", 0x200, size);
-	add_sub(_vect.Reserv15, "RESERV15", 0x200, size);
-	add_sub(_vect.Reserv16, "RESERV16", 0x200, size);
-	add_sub(_vect.Reserv17, "RESERV17", 0x200, size);
-	add_sub(_vect.BadIRQ, "BADIRQ", 0x200, size);
-	add_sub(_vect.IRQ1, "IRQ1", 0x200, size);
-	add_sub(_vect.EXT, "EXTIRQ", 0x200, size);
-	add_sub(_vect.IRQ3, "IRQ3", 0x200, size);
-	add_sub(_vect.HBLANK, "HBLANK", 0x200, size);
-	add_sub(_vect.IRQ5, "IRQ5", 0x200, size);
-	add_sub(_vect.VBLANK, "VBLANK", 0x200, size);
-	add_sub(_vect.IRQ7, "IRQ7", 0x200, size);
-	add_sub(_vect.Trap0, "TRAP0", 0x200, size);
-	add_sub(_vect.Trap1, "TRAP1", 0x200, size);
-	add_sub(_vect.Trap2, "TRAP2", 0x200, size);
-	add_sub(_vect.Trap3, "TRAP3", 0x200, size);
-	add_sub(_vect.Trap4, "TRAP4", 0x200, size);
-	add_sub(_vect.Trap5, "TRAP5", 0x200, size);
-	add_sub(_vect.Trap6, "TRAP6", 0x200, size);
-	add_sub(_vect.Trap7, "TRAP7", 0x200, size);
-	add_sub(_vect.Trap8, "TRAP8", 0x200, size);
-	add_sub(_vect.Trap9, "TRAP9", 0x200, size);
-	add_sub(_vect.Trap10, "TRAP10", 0x200, size);
-	add_sub(_vect.Trap11, "TRAP11", 0x200, size);
-	add_sub(_vect.Trap12, "TRAP12", 0x200, size);
-	add_sub(_vect.Trap13, "TRAP13", 0x200, size);
-	add_sub(_vect.Trap14, "TRAP14", 0x200, size);
-	add_sub(_vect.Trap15, "TRAP15", 0x200, size);
-	add_sub(_vect.Reserv30, "RESERV30", 0x200, size);
-	add_sub(_vect.Reserv31, "RESERV31", 0x200, size);
-	add_sub(_vect.Reserv32, "RESERV32", 0x200, size);
-	add_sub(_vect.Reserv33, "RESERV33", 0x200, size);
-	add_sub(_vect.Reserv34, "RESERV34", 0x200, size);
-	add_sub(_vect.Reserv35, "RESERV35", 0x200, size);
-	add_sub(_vect.Reserv36, "RESERV36", 0x200, size);
-	add_sub(_vect.Reserv37, "RESERV37", 0x200, size);
-	add_sub(_vect.Reserv38, "RESERV38", 0x200, size);
-	add_sub(_vect.Reserv39, "RESERV39", 0x200, size);
-	add_sub(_vect.Reserv3A, "RESERV3A", 0x200, size);
-	add_sub(_vect.Reserv3B, "RESERV3B", 0x200, size);
-	add_sub(_vect.Reserv3C, "RESERV3C", 0x200, size);
-	add_sub(_vect.Reserv3D, "RESERV3D", 0x200, size);
-	add_sub(_vect.Reserv3E, "RESERV3E", 0x200, size);
-	add_sub(_vect.Reserv3F, "RESERV3F", 0x200, size);
-}
-
 //------------------------------------------------------------------------
-static void set_def_names()
+static void set_register_names()
 {
 	doDwrd(0xA04000, 4); set_name(0xA04000, "Z80_YM2612");
 	doWord(0xA07F10, 2); set_name(0xA07F10, "Z80_PSG");
@@ -310,14 +209,7 @@ static void set_def_names()
 	doWord(0xC00010, 2); set_name(0xC00010, "VDP_PSG");
 }
 
-static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
-{
-	if (!add_segm(0, start, end, name, class_name)) loader_failure();
-	segment_t *segm = getseg(start);
-	set_segment_cmt(segm, cmnt, false);
-	doByte(start, 1);
-}
-
+//------------------------------------------------------------------------
 static void make_segments()
 {
 	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment");
@@ -357,76 +249,24 @@ static void make_segments()
 }
 
 //------------------------------------------------------------------------
-void convert_vector_addrs()
+static void convert_vector_addrs(gen_vect *table)
 {
-	_vect.SSP = SWAP_BYTES_32(_vect.SSP);
-	_vect.Reset = SWAP_BYTES_32(_vect.Reset);
-	_vect.BusErr = SWAP_BYTES_32(_vect.BusErr);
-	_vect.AdrErr = SWAP_BYTES_32(_vect.AdrErr);
-	_vect.InvOpCode = SWAP_BYTES_32(_vect.InvOpCode);
-	_vect.DivBy0 = SWAP_BYTES_32(_vect.DivBy0);
-	_vect.Check = SWAP_BYTES_32(_vect.Check);
-	_vect.TrapV = SWAP_BYTES_32(_vect.TrapV);
-	_vect.GPF = SWAP_BYTES_32(_vect.GPF);
-	_vect.Trace = SWAP_BYTES_32(_vect.Trace);
-	_vect.Reserv0 = SWAP_BYTES_32(_vect.Reserv0);
-	_vect.Reserv1 = SWAP_BYTES_32(_vect.Reserv1);
-	_vect.Reserv2 = SWAP_BYTES_32(_vect.Reserv2);
-	_vect.Reserv3 = SWAP_BYTES_32(_vect.Reserv3);
-	_vect.Reserv4 = SWAP_BYTES_32(_vect.Reserv4);
-	_vect.BadInt = SWAP_BYTES_32(_vect.BadInt);
-	_vect.Reserv10 = SWAP_BYTES_32(_vect.Reserv10);
-	_vect.Reserv11 = SWAP_BYTES_32(_vect.Reserv11);
-	_vect.Reserv12 = SWAP_BYTES_32(_vect.Reserv12);
-	_vect.Reserv13 = SWAP_BYTES_32(_vect.Reserv13);
-	_vect.Reserv14 = SWAP_BYTES_32(_vect.Reserv14);
-	_vect.Reserv15 = SWAP_BYTES_32(_vect.Reserv15);
-	_vect.Reserv16 = SWAP_BYTES_32(_vect.Reserv16);
-	_vect.Reserv17 = SWAP_BYTES_32(_vect.Reserv17);
-	_vect.BadIRQ = SWAP_BYTES_32(_vect.BadIRQ);
-	_vect.IRQ1 = SWAP_BYTES_32(_vect.IRQ1);
-	_vect.EXT = SWAP_BYTES_32(_vect.EXT);
-	_vect.IRQ3 = SWAP_BYTES_32(_vect.IRQ3);
-	_vect.HBLANK = SWAP_BYTES_32(_vect.HBLANK);
-	_vect.IRQ5 = SWAP_BYTES_32(_vect.IRQ5);
-	_vect.VBLANK = SWAP_BYTES_32(_vect.VBLANK);
-	_vect.IRQ7 = SWAP_BYTES_32(_vect.IRQ7);
-	_vect.Trap0 = SWAP_BYTES_32(_vect.Trap0);
-	_vect.Trap1 = SWAP_BYTES_32(_vect.Trap1);
-	_vect.Trap2 = SWAP_BYTES_32(_vect.Trap2);
-	_vect.Trap3 = SWAP_BYTES_32(_vect.Trap3);
-	_vect.Trap4 = SWAP_BYTES_32(_vect.Trap4);
-	_vect.Trap5 = SWAP_BYTES_32(_vect.Trap5);
-	_vect.Trap6 = SWAP_BYTES_32(_vect.Trap6);
-	_vect.Trap7 = SWAP_BYTES_32(_vect.Trap7);
-	_vect.Trap8 = SWAP_BYTES_32(_vect.Trap8);
-	_vect.Trap9 = SWAP_BYTES_32(_vect.Trap9);
-	_vect.Trap10 = SWAP_BYTES_32(_vect.Trap10);
-	_vect.Trap11 = SWAP_BYTES_32(_vect.Trap11);
-	_vect.Trap12 = SWAP_BYTES_32(_vect.Trap12);
-	_vect.Trap13 = SWAP_BYTES_32(_vect.Trap13);
-	_vect.Trap14 = SWAP_BYTES_32(_vect.Trap14);
-	_vect.Trap15 = SWAP_BYTES_32(_vect.Trap15);
-	_vect.Reserv30 = SWAP_BYTES_32(_vect.Reserv30);
-	_vect.Reserv31 = SWAP_BYTES_32(_vect.Reserv31);
-	_vect.Reserv32 = SWAP_BYTES_32(_vect.Reserv32);
-	_vect.Reserv33 = SWAP_BYTES_32(_vect.Reserv33);
-	_vect.Reserv34 = SWAP_BYTES_32(_vect.Reserv34);
-	_vect.Reserv35 = SWAP_BYTES_32(_vect.Reserv35);
-	_vect.Reserv36 = SWAP_BYTES_32(_vect.Reserv36);
-	_vect.Reserv37 = SWAP_BYTES_32(_vect.Reserv37);
-	_vect.Reserv38 = SWAP_BYTES_32(_vect.Reserv38);
-	_vect.Reserv39 = SWAP_BYTES_32(_vect.Reserv39);
-	_vect.Reserv3A = SWAP_BYTES_32(_vect.Reserv3A);
-	_vect.Reserv3B = SWAP_BYTES_32(_vect.Reserv3B);
-	_vect.Reserv3C = SWAP_BYTES_32(_vect.Reserv3C);
-	_vect.Reserv3D = SWAP_BYTES_32(_vect.Reserv3D);
-	_vect.Reserv3E = SWAP_BYTES_32(_vect.Reserv3E);
-	_vect.Reserv3F = SWAP_BYTES_32(_vect.Reserv3F);
+	for (int i = 0; i < 64; i++)
+	{
+		table->vectors[i] = SWAP_BYTES_32(table->vectors[i]);
+	}
 }
 
 //--------------------------------------------------------------------------
-int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME],	int n)
+static void print_version()
+{
+	static const char format[] = "Sega Genesis/Megadrive ROMs loader plugin. Current version: v%s.\n";
+	info(format, VERSION);
+	msg(format, VERSION);
+}
+
+//--------------------------------------------------------------------------
+int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], int n)
 {
 	if (n != 0) return 0;
 	qlseek(li, 0, SEEK_SET);
@@ -450,19 +290,14 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 
 	file2base(li, 0, 0x0000000, size, FILEREG_PATCHABLE); // load rom to database
 
-	make_segments();
+	make_segments(); // create ROM, RAM, Z80 RAM and etc. segments
+	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
+	define_vectors_struct(); // add definition of vectors struct
+	define_header_struct(); // add definition of header struct
+	set_register_names(); // apply names for special addresses of registers
+	add_subroutines(&_vect, size); // mark vector subroutines as procedures
 
-	convert_vector_addrs(); // LittleEndian to BigEndian
-
-	define_vectors_struct();
-	define_header_struct();
-	set_def_names();
-
-	add_subroutines(size);
-
-	ea_t tt = get_name_ea(BADADDR, RESET);
-	inf.startIP = tt;
-	inf.beginEA = tt;
+	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]);
 
 	inf.af = 0
 		| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
@@ -500,6 +335,8 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
 		//| AF2_MEMFUNC //    0x8000          // Try to guess member function types
 		;
+
+	print_version();
 }
 
 //--------------------------------------------------------------------------
