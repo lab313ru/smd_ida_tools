@@ -35,12 +35,15 @@ static const char ROM[] = "ROM";
 static const char EPA[] = "EPA";
 static const char S32X[] = "S32X";
 static const char Z80[] = "Z80";
+static const char Z80_RAM[] = "Z80_RAM";
 static const char REGS[] = "REGS";
 static const char Z80C[] = "Z80C";
 static const char ASSR[] = "ASSR";
 static const char UNLK[] = "UNLK";
 static const char VDP[] = "VDP";
 static const char RAM[] = "RAM";
+static const char M68K_RAM[] = "M68K_RAM";
+static const char M68K_RAM_[] = "M68K_RAM_";
 static const char SRAM[] = "SRAM";
 static const char VECTORS[] = "vectors";
 static const char VECTORS_STRUCT[] = "struct_vectors";
@@ -306,17 +309,12 @@ static void set_def_names()
 	doWord(0xC00010, 2); set_name(0xC00010, "VDP_PSG");
 }
 
-static void clear_segment(ea_t start, ea_t end)
-{
-	do_unknown_range(start, end, DOUNK_DELNAMES);
-}
-
 static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
 {
 	if (!add_segm(0, start, end, name, class_name)) loader_failure();
 	segment_t *segm = getseg(start);
 	set_segment_cmt(segm, cmnt, false);
-	clear_segment(start, end);
+	doByte(start, 1);
 }
 
 static void make_segments()
@@ -324,7 +322,7 @@ static void make_segments()
 	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment");
 	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)");
 	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)");
-	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory");
+	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory"); set_name(0x00A00000, Z80_RAM);
 	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, DATA, "System registers");
 	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, DATA, "Z80 control (/BUSREQ and /RESET lines)");
 	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, DATA, "Assorted registers");
@@ -340,6 +338,9 @@ static void make_segments()
 		add_segment(0x00E00000 + i * 0x10000, 0x00E00000 + i * 0x10000 + 0xFFFF + 1, RAM, DATA, "RAM mirror");
 	}
 	add_segment(0xFFFF0000, 0xFFFFFFFE, RAM, DATA, "RAM mirror");
+
+	set_name(0x00FF0000, M68K_RAM);
+	set_name(0xFFFF0000, M68K_RAM_);
 
 	// create SRAM segment
 	if ((READ_BE_WORD(&(_hdr.SramCode[0])) == 0x5241) && (_hdr.SramCode[2] == 0x20))
@@ -451,11 +452,12 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	make_segments();
 
 	convert_vector_addrs(); // LittleEndian to BigEndian
-	add_subroutines(size);
 
 	define_vectors_struct();
 	define_header_struct();
 	set_def_names();
+
+	add_subroutines(size);
 
 	ea_t tt = get_name_ea(BADADDR, RESET);
 	inf.startIP = tt;
@@ -494,7 +496,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//AF2_VERSP | //      0x0800          // Perform full SP-analysis (ph.verify_sp)
 		//AF2_DOCODE | //     0x1000          // Coagulate code segs at the final pass
 		AF2_TRFUNC | //     0x2000          // Truncate functions upon code deletion
-		AF2_PURDAT | //     0x4000          // Control flow to data segment is ignored
+		//AF2_PURDAT | //     0x4000          // Control flow to data segment is ignored
 		AF2_MEMFUNC; //    0x8000          // Try to guess member function types
 }
 
