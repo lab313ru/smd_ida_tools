@@ -30,11 +30,30 @@
 static gen_hdr _hdr;
 static gen_vect _vect;
 
-static const char *VECTOR_NAMES[] = { "SSP", "Reset", "BusErr", "AdrErr", "InvOpCode", "DivBy0", "Check", "TrapV", "GPF", "Trace", "Reserv0", "Reserv1", "Reserv2", "Reserv3", "Reserv4", "BadInt", "Reserv10", "Reserv11", "Reserv12", "Reserv13", "Reserv14", "Reserv15", "Reserv16", "Reserv17", "BadIRQ", "IRQ1", "EXT", "IRQ3", "HBLANK", "IRQ5", "VBLANK", "IRQ7", "Trap0", "Trap1", "Trap2", "Trap3", "Trap4", "Trap5", "Trap6", "Trap7", "Trap8", "Trap9", "Trap10", "Trap11", "Trap12", "Trap13", "Trap14", "Trap15", "Reserv30", "Reserv31", "Reserv32", "Reserv33", "Reserv34", "Reserv35", "Reserv36", "Reserv37", "Reserv38", "Reserv39", "Reserv3A", "Reserv3B", "Reserv3C", "Reserv3D", "Reserv3E", "Reserv3F" };
+struct reg {
+	asize_t size;
+	ea_t addr;
+	char *name;
+};
 
-static const int spec_reg_sizes[] = { 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0x100, 0x100, 2, 2, 2, 2, 2, 2, 2 };
-static const unsigned int spec_reg_addrs[] = { 0xA04000, 0xA07F10, 0xA10000, 0xA10002, 0xA10004, 0xA10006, 0xA10008, 0xA1000A, 0xA1000C, 0xA1000E, 0xA10010, 0xA10012, 0xA10014, 0xA10016, 0xA10018, 0xA1001A, 0xA1001C, 0xA1001E, 0xA11000, 0xA11100, 0xA11200, 0xA12000, 0xA13000, 0xC00000, 0xC00002, 0xC00004, 0xC00006, 0xC00008, 0xC0000A, 0xC00010 };
-static const char *spec_reg_names[] = { "Z80_YM2612", "Z80_PSG", "IO_PCBVER", "IO_CT1_DATA", "IO_CT2_DATA", "IO_EXT_DATA", "IO_CT1_CTRL", "IO_CT2_CTRL", "IO_EXT_CTRL", "IO_CT1_RX", "IO_CT1_TX", "IO_CT1_SMODE", "IO_CT2_RX", "IO_CT2_TX", "IO_CT2_SMODE", "IO_EXT_RX", "IO_EXT_TX", "IO_EXT_SMODE", "IO_RAMMODE", "IO_Z80BUS", "IO_Z80RES", "IO_FDC", "IO_TIME", "VDP_DATA", "VDP__DATA", "VDP_CTRL", "VDP__CTRL", "VDP_CNTR", "VDP__CNTR", "VDP_PSG" };
+static const char *VECTOR_NAMES[] = {
+	"SSP", "Reset", "BusErr", "AdrErr", "InvOpCode", "DivBy0", "Check", "TrapV", "GPF", "Trace", "Reserv0", "Reserv1", "Reserv2", "Reserv3",
+	"Reserv4", "BadInt", "Reserv10", "Reserv11", "Reserv12", "Reserv13", "Reserv14", "Reserv15", "Reserv16", "Reserv17", "BadIRQ", "IRQ1",
+	"EXT", "IRQ3", "HBLANK", "IRQ5", "VBLANK", "IRQ7", "Trap0", "Trap1", "Trap2", "Trap3", "Trap4", "Trap5", "Trap6", "Trap7", "Trap8",
+	"Trap9", "Trap10", "Trap11", "Trap12", "Trap13", "Trap14", "Trap15", "Reserv30", "Reserv31", "Reserv32", "Reserv33", "Reserv34",
+	"Reserv35", "Reserv36", "Reserv37", "Reserv38", "Reserv39", "Reserv3A", "Reserv3B", "Reserv3C", "Reserv3D", "Reserv3E", "Reserv3F"
+};
+
+static const reg spec_regs[] = {
+	{ 4, 0xA04000, "Z80_YM2612" }, { 2, 0xA10000, "IO_PCBVER" }, { 2, 0xA10002, "IO_CT1_DATA" }, { 2, 0xA10004, "IO_CT2_DATA" },
+	{ 2, 0xA10006, "IO_EXT_DATA" }, { 2, 0xA10008, "IO_CT1_CTRL" }, { 2, 0xA1000A, "IO_CT2_CTRL" }, { 2, 0xA1000C, "IO_EXT_CTRL" },
+	{ 2, 0xA1000E, "IO_CT1_RX" }, { 2, 0xA10010, "IO_CT1_TX" }, { 2, 0xA10012, "IO_CT1_SMODE" }, { 2, 0xA10014, "IO_CT2_RX" },
+	{ 2, 0xA10016, "IO_CT2_TX" }, { 2, 0xA10018, "IO_CT2_SMODE" }, { 2, 0xA1001A, "IO_EXT_RX" }, { 2, 0xA1001C, "IO_EXT_TX" },
+	{ 2, 0xA1001E, "IO_EXT_SMODE" }, { 2, 0xA11000, "IO_RAMMODE" }, { 2, 0xA11100, "IO_Z80BUS" }, { 2, 0xA11200, "IO_Z80RES" },
+	{ 0x100, 0xA12000, "IO_FDC" }, { 0x100, 0xA13000, "IO_TIME" }, { 4, 0xA14000, "IO_TMSS" }, { 2, 0xC00000, "VDP_DATA" },
+	{ 2, 0xC00002, "VDP__DATA" }, { 2, 0xC00004, "VDP_CTRL" }, { 2, 0xC00006, "VDP__CTRL" }, { 2, 0xC00008, "VDP_CNTR" },
+	{ 2, 0xC0000A, "VDP__CNTR" }, { 2, 0xC0000C, "VDP___CNTR" }, { 2, 0xC0000E, "VDP____CNTR" }, { 2, 0xC00011, "VDP_PSG" },
+};
 
 static const char M68K[] = "68000";
 static const char CODE[] = "CODE";
@@ -181,21 +200,21 @@ static void add_enum_member_with_mask(enum_t id, unsigned int value, unsigned in
 //------------------------------------------------------------------------
 static void set_spec_register_names()
 {
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i <= 31; i++)
 	{
-		if (spec_reg_sizes[i] == sizeof(unsigned short))
+		if (spec_regs[i].size == 2)
 		{
-			doWord(spec_reg_addrs[i], spec_reg_sizes[i]);
+			doWord(spec_regs[i].addr, 2);
 		}
-		else if (spec_reg_sizes[i] == sizeof(unsigned int))
+		else if (spec_regs[i].size == 4)
 		{
-			doDwrd(spec_reg_addrs[i], spec_reg_sizes[i]);
+			doDwrd(spec_regs[i].addr, 4);
 		}
 		else
 		{
-			doByte(spec_reg_addrs[i], spec_reg_sizes[i]);
+			doByte(spec_regs[i].addr, spec_regs[i].size);
 		}
-		set_name(spec_reg_addrs[i], spec_reg_names[i]);
+		set_name(spec_regs[i].addr, spec_regs[i].name);
 	}
 }
 
@@ -268,7 +287,7 @@ static void add_other_enum(enum_t ot)
 {
 	add_enum_const_member(ot, 0x200, "ROM_START");
 	add_enum_const_member(ot, 0x10FF, "IO_PCBVER_REF");
-	add_enum_const_member(ot, 0x2F00, "IO_TMSS_REG");
+	add_enum_const_member(ot, 0x2F00, "IO_TMSS_REF"); // IO_TMSS
 }
 
 //--------------------------------------------------------------------------
@@ -378,9 +397,9 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	char buf[25];
 	for (int i = 0; i < 0x100; i++)
 	{
-		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE_%.2X", i);
+		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE_0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, buf);
-		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE__%.2X", i);
+		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE__0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, buf);
 	}
 }
