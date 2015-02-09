@@ -165,17 +165,17 @@ static void define_vectors_struct()
 }
 
 //--------------------------------------------------------------------------
-static void add_enum_const_member(enum_t id, unsigned int value, const char *name, const char *cmt = NULL, bool repeatable = false)
+static void add_enum_const_member(enum_t id, unsigned int value, const char *name, const char *cmt = NULL)
 {
 	int res = add_enum_member(id, name, value);
-	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, repeatable);
+	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, false);
 }
 
 //--------------------------------------------------------------------------
-static void add_enum_bf_member(enum_t id, unsigned char bit, const char *name, const char *cmt = NULL, bool repeatable = false)
+static void add_enum_bf_member(enum_t id, unsigned char bit, const char *name, const char *cmt = NULL)
 {
 	int res = add_enum_member(id, name, (1 << bit), (1 << bit));
-	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, repeatable);
+	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, false);
 }
 
 //--------------------------------------------------------------------------
@@ -296,7 +296,7 @@ static void add_sr_enum(enum_t sr)
 {
 	add_enum_bf_member(sr, 15, "T1", "Trace bit 2. If set, trace is allowed on any instruction");
 	add_enum_bf_member(sr, 14, "T0", "Trace bit 1. If set, trace on change of program flow");
-	add_enum_bf_member(sr, 13, "SF", "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to", true);
+	add_enum_bf_member(sr, 13, "SF", "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to");
 	add_enum_bf_member(sr, 12, "MF", "Always clear (???)");
 	// bit 11 is clear
 	add_enum_interrupt_member(sr, 7 /*111*/, "DISABLE_ALL_INTERRUPTS", NULL);
@@ -312,19 +312,36 @@ static void add_sr_enum(enum_t sr)
 	add_enum_interrupt_member(sr, 0 /*000*/, "ENABLE_ALL_INTERRUPTS", NULL);
 }
 
+static void add_vdp_status_enum(enum_t vdp_status)
+{
+	add_enum_bf_member(vdp_status, 9, "FIFO_EMPTY");
+	add_enum_bf_member(vdp_status, 8, "FIFO_FULL");
+	add_enum_bf_member(vdp_status, 7, "VBLANK_PENDING");
+	add_enum_bf_member(vdp_status, 6, "SPRITE_OVERFLOW");
+	add_enum_bf_member(vdp_status, 5, "SPRITE_COLLISION");
+	add_enum_bf_member(vdp_status, 4, "ODD_FRAME");
+	add_enum_bf_member(vdp_status, 3, "VBLANKING");
+	add_enum_bf_member(vdp_status, 2, "HBLANKING");
+	add_enum_bf_member(vdp_status, 1, "DMA_IN_PROGRESS");
+	add_enum_bf_member(vdp_status, 0, "PAL_MODE");
+}
+
 //--------------------------------------------------------------------------
 static void add_enums()
 {
-	enum_t ccr = add_enum(BADADDR, "struct_ccr", hexflag());
+	enum_t ccr = add_enum(BADADDR, "enum_ccr", hexflag());
 	set_enum_bf(ccr, true);
 	add_ccr_enum(ccr);
 
-	enum_t sr = add_enum(BADADDR, "struct_sr", hexflag());
+	enum_t sr = add_enum(BADADDR, "enum_sr", hexflag());
 	set_enum_bf(sr, true);
 	add_sr_enum(sr);
 
-	enum_t ot = add_enum(BADADDR, "struct_other", hexflag());
+	enum_t ot = add_enum(BADADDR, "enum_other", hexflag());
 	add_other_enum(ot);
+
+	enum_t vdp_status = add_enum(BADADDR, "enum_vdp_status", hexflag());
+	add_vdp_status_enum(vdp_status);
 }
 
 //--------------------------------------------------------------------------
