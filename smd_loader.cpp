@@ -179,12 +179,12 @@ static void add_enum_bf_member(enum_t id, unsigned char bit, const char *name, c
 }
 
 //--------------------------------------------------------------------------
-static void add_enum_interrupt_member(enum_t id, unsigned char value, const char *name, const char *cmt = NULL, bool repeatable = false)
+static void add_enum_interrupt_member(enum_t id, unsigned char value, const char *name, const char *cmt = NULL)
 {
 	int res = add_enum_member(id, name, (value << 8), 0x700);
 	const_t bf = get_enum_member_by_name(name);
 
-	if (cmt != NULL) set_enum_member_cmt(bf, cmt, repeatable);
+	if (cmt != NULL) set_enum_member_cmt(bf, cmt, false);
 }
 
 //------------------------------------------------------------------------
@@ -299,17 +299,17 @@ static void add_sr_enum(enum_t sr)
 	add_enum_bf_member(sr, 13, "SF", "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to", true);
 	add_enum_bf_member(sr, 12, "MF", "Always clear (???)");
 	// bit 11 is clear
-	add_enum_interrupt_member(sr, 7 /*111*/, "DISABLE_ALL_INTERRUPTS", NULL, true);
-	add_enum_interrupt_member(sr, 6 /*110*/, "ENABLE_NO_INTERRUPTS", NULL, true);
+	add_enum_interrupt_member(sr, 7 /*111*/, "DISABLE_ALL_INTERRUPTS", NULL);
+	add_enum_interrupt_member(sr, 6 /*110*/, "ENABLE_NO_INTERRUPTS", NULL);
 
-	add_enum_interrupt_member(sr, 5 /*101*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", NULL, true);
-	add_enum_interrupt_member(sr, 4 /*100*/, "ENABLE_ONLY_VBLANK_INTERRUPT", NULL, true);
+	add_enum_interrupt_member(sr, 5 /*101*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", NULL);
+	add_enum_interrupt_member(sr, 4 /*100*/, "ENABLE_ONLY_VBLANK_INTERRUPT", NULL);
 
-	add_enum_interrupt_member(sr, 3 /*011*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", NULL, true);
-	add_enum_interrupt_member(sr, 2 /*010*/, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", NULL, true);
+	add_enum_interrupt_member(sr, 3 /*011*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", NULL);
+	add_enum_interrupt_member(sr, 2 /*010*/, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", NULL);
 
-	add_enum_interrupt_member(sr, 1 /*001*/, "DISABLE_NO_INTERRUPTS", NULL, true);
-	add_enum_interrupt_member(sr, 0 /*000*/, "ENABLE_ALL_INTERRUPTS", NULL, true);
+	add_enum_interrupt_member(sr, 1 /*001*/, "DISABLE_NO_INTERRUPTS", NULL);
+	add_enum_interrupt_member(sr, 0 /*000*/, "ENABLE_ALL_INTERRUPTS", NULL);
 }
 
 //--------------------------------------------------------------------------
