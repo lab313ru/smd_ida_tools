@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.1"
+#define VERSION "1.0.2"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>, v1.0, 07/02/2015
@@ -23,6 +23,7 @@
 #include <name.hpp>
 #include <bytes.hpp>
 #include <struct.hpp>
+#include <enum.hpp>
 
 #include "smd_loader.h"
 
@@ -30,6 +31,10 @@ static gen_hdr _hdr;
 static gen_vect _vect;
 
 static const char *VECTOR_NAMES[] = { "SSP", "Reset", "BusErr", "AdrErr", "InvOpCode", "DivBy0", "Check", "TrapV", "GPF", "Trace", "Reserv0", "Reserv1", "Reserv2", "Reserv3", "Reserv4", "BadInt", "Reserv10", "Reserv11", "Reserv12", "Reserv13", "Reserv14", "Reserv15", "Reserv16", "Reserv17", "BadIRQ", "IRQ1", "EXT", "IRQ3", "HBLANK", "IRQ5", "VBLANK", "IRQ7", "Trap0", "Trap1", "Trap2", "Trap3", "Trap4", "Trap5", "Trap6", "Trap7", "Trap8", "Trap9", "Trap10", "Trap11", "Trap12", "Trap13", "Trap14", "Trap15", "Reserv30", "Reserv31", "Reserv32", "Reserv33", "Reserv34", "Reserv35", "Reserv36", "Reserv37", "Reserv38", "Reserv39", "Reserv3A", "Reserv3B", "Reserv3C", "Reserv3D", "Reserv3E", "Reserv3F" };
+
+static const int spec_reg_sizes[] = { 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0x100, 0x100, 2, 2, 2, 2, 2, 2, 2 };
+static const unsigned int spec_reg_addrs[] = { 0xA04000, 0xA07F10, 0xA10000, 0xA10002, 0xA10004, 0xA10006, 0xA10008, 0xA1000A, 0xA1000C, 0xA1000E, 0xA10010, 0xA10012, 0xA10014, 0xA10016, 0xA10018, 0xA1001A, 0xA1001C, 0xA1001E, 0xA11000, 0xA11100, 0xA11200, 0xA12000, 0xA13000, 0xC00000, 0xC00002, 0xC00004, 0xC00006, 0xC00008, 0xC0000A, 0xC00010 };
+static const char *spec_reg_names[] = { "Z80_YM2612", "Z80_PSG", "IO_PCBVER", "IO_CT1_DATA", "IO_CT2_DATA", "IO_EXT_DATA", "IO_CT1_CTRL", "IO_CT2_CTRL", "IO_EXT_CTRL", "IO_CT1_RX", "IO_CT1_TX", "IO_CT1_SMODE", "IO_CT2_RX", "IO_CT2_TX", "IO_CT2_SMODE", "IO_EXT_RX", "IO_EXT_TX", "IO_EXT_SMODE", "IO_RAMMODE", "IO_Z80BUS", "IO_Z80RES", "IO_FDC", "IO_TIME", "VDP_DATA", "VDP_DATA_", "VDP_CTRL", "VDP_CTRL_", "VDP_CNTR", "VDP_CNTR_", "VDP_PSG" };
 
 static const char M68K[] = "68000";
 static const char CODE[] = "CODE";
@@ -135,6 +140,15 @@ static void add_subroutines(gen_vect *table, unsigned int rom_size)
 }
 
 //------------------------------------------------------------------------
+static void convert_vector_addrs(gen_vect *table)
+{
+	for (int i = 0; i < 64; i++)
+	{
+		table->vectors[i] = SWAP_BYTES_32(table->vectors[i]);
+	}
+}
+
+//------------------------------------------------------------------------
 static void define_vectors_struct()
 {
 	segment_t *code_segm = getseg(0);
@@ -148,6 +162,50 @@ static void define_vectors_struct()
 
 	doStruct(0, sizeof(gen_vect), vec_id);
 	set_name(0, VECTORS);
+}
+
+//--------------------------------------------------------------------------
+static void add_enum_const_member(enum_t id, unsigned int value, const char *name, const char *cmt = NULL, bool repeatable = false)
+{
+	int res = add_enum_member(id, name, value);
+	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, repeatable);
+}
+
+//--------------------------------------------------------------------------
+static void add_enum_bf_member(enum_t id, unsigned char bit, const char *name, const char *cmt = NULL, bool repeatable = false)
+{
+	int res = add_enum_member(id, name, (1 << bit), (1 << bit));
+	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, repeatable);
+}
+
+//--------------------------------------------------------------------------
+static void add_enum_interrupt_member(enum_t id, unsigned char value, const char *name, const char *cmt = NULL, bool repeatable = false)
+{
+	int res = add_enum_member(id, name, (value << 8), 0x700);
+	const_t bf = get_enum_member_by_name(name);
+
+	if (cmt != NULL) set_enum_member_cmt(bf, cmt, repeatable);
+}
+
+//------------------------------------------------------------------------
+static void set_spec_register_names()
+{
+	for (int i = 0; i < 30; i++)
+	{
+		if (spec_reg_sizes[i] == sizeof(unsigned short))
+		{
+			doWord(spec_reg_addrs[i], spec_reg_sizes[i]);
+		}
+		else if (spec_reg_sizes[i] == sizeof(unsigned int))
+		{
+			doDwrd(spec_reg_addrs[i], spec_reg_sizes[i]);
+		}
+		else
+		{
+			doByte(spec_reg_addrs[i], spec_reg_sizes[i]);
+		}
+		set_name(spec_reg_addrs[i], spec_reg_names[i]);
+	}
 }
 
 //------------------------------------------------------------------------
@@ -175,47 +233,12 @@ static void define_header_struct()
 }
 
 //------------------------------------------------------------------------
-static void set_register_names()
-{
-	doDwrd(0xA04000, 4); set_name(0xA04000, "Z80_YM2612");
-	doWord(0xA07F10, 2); set_name(0xA07F10, "Z80_PSG");
-	doWord(0xA10000, 2); set_name(0xA10000, "IO_PCBVER");
-	doWord(0xA10002, 2); set_name(0xA10002, "IO_CT1_DATA");
-	doWord(0xA10004, 2); set_name(0xA10004, "IO_CT2_DATA");
-	doWord(0xA10006, 2); set_name(0xA10006, "IO_EXT_DATA");
-	doWord(0xA10008, 2); set_name(0xA10008, "IO_CT1_CTRL");
-	doWord(0xA1000A, 2); set_name(0xA1000A, "IO_CT2_CTRL");
-	doWord(0xA1000C, 2); set_name(0xA1000C, "IO_EXT_CTRL");
-	doWord(0xA1000E, 2); set_name(0xA1000E, "IO_CT1_RX");
-	doWord(0xA10010, 2); set_name(0xA10010, "IO_CT1_TX");
-	doWord(0xA10012, 2); set_name(0xA10012, "IO_CT1_SMODE");
-	doWord(0xA10014, 2); set_name(0xA10014, "IO_CT2_RX");
-	doWord(0xA10016, 2); set_name(0xA10016, "IO_CT2_TX");
-	doWord(0xA10018, 2); set_name(0xA10018, "IO_CT2_SMODE");
-	doWord(0xA1001A, 2); set_name(0xA1001A, "IO_EXT_RX");
-	doWord(0xA1001C, 2); set_name(0xA1001C, "IO_EXT_TX");
-	doWord(0xA1001E, 2); set_name(0xA1001E, "IO_EXT_SMODE");
-	doWord(0xA11000, 2); set_name(0xA11000, "IO_RAMMODE");
-	doWord(0xA11100, 2); set_name(0xA11100, "IO_Z80BUS");
-	doWord(0xA11200, 2); set_name(0xA11200, "IO_Z80RES");
-	doByte(0xA12000, 0x100); set_name(0xA12000, "IO_FDC");
-	doByte(0xA13000, 0x100); set_name(0xA13000, "IO_TIME");
-	doWord(0xC00000, 2); set_name(0xC00000, "VDP_DATA");
-	doWord(0xC00002, 2); set_name(0xC00002, "VDP_DATA_");
-	doWord(0xC00004, 2); set_name(0xC00004, "VDP_CTRL");
-	doWord(0xC00006, 2); set_name(0xC00006, "VDP_CTRL_");
-	doWord(0xC00008, 2); set_name(0xC00008, "VDP_CNTR");
-	doWord(0xC0000A, 2); set_name(0xC0000A, "VDP_CNTR_");
-	doWord(0xC00010, 2); set_name(0xC00010, "VDP_PSG");
-}
-
-//------------------------------------------------------------------------
 static void make_segments()
 {
 	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment");
 	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)");
 	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)");
-	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory"); set_name(0x00A00000, Z80_RAM);
+	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory");
 	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, DATA, "System registers");
 	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, DATA, "Z80 control (/BUSREQ and /RESET lines)");
 	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, DATA, "Assorted registers");
@@ -232,6 +255,7 @@ static void make_segments()
 	}
 	add_segment(0xFFFF0000, 0xFFFFFFFE, RAM, DATA, "RAM mirror");
 
+	set_name(0x00A00000, Z80_RAM);
 	set_name(0x00FF0000, M68K_RAM);
 	set_name(0xFFFF0000, M68K_RAM_);
 
@@ -248,19 +272,65 @@ static void make_segments()
 	}
 }
 
-//------------------------------------------------------------------------
-static void convert_vector_addrs(gen_vect *table)
+//--------------------------------------------------------------------------
+static void add_other_enum(enum_t ot)
 {
-	for (int i = 0; i < 64; i++)
-	{
-		table->vectors[i] = SWAP_BYTES_32(table->vectors[i]);
-	}
+	add_enum_const_member(ot, 0x200, "ROM_START");
+	add_enum_const_member(ot, 0x10FF, "IO_PCBVER_REF");
+	add_enum_const_member(ot, 0x2F00, "IO_TMSS_REG");
+}
+
+//--------------------------------------------------------------------------
+static void add_ccr_enum(enum_t ccr)
+{
+	// bits 7..5 is clear
+	add_enum_bf_member(ccr, 4, "X", "Extend flag");
+	add_enum_bf_member(ccr, 3, "N", "Negative flag");
+	add_enum_bf_member(ccr, 2, "Z", "Zero flag");
+	add_enum_bf_member(ccr, 1, "V", "Overflow flag");
+	add_enum_bf_member(ccr, 0, "C", "Carry flag");
+}
+
+//--------------------------------------------------------------------------
+static void add_sr_enum(enum_t sr)
+{
+	add_enum_bf_member(sr, 15, "T1", "Trace bit 2. If set, trace is allowed on any instruction");
+	add_enum_bf_member(sr, 14, "T0", "Trace bit 1. If set, trace on change of program flow");
+	add_enum_bf_member(sr, 13, "SF", "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to", true);
+	add_enum_bf_member(sr, 12, "MF", "Always clear (???)");
+	// bit 11 is clear
+	add_enum_interrupt_member(sr, 7 /*111*/, "DISABLE_ALL_INTERRUPTS", NULL, true);
+	add_enum_interrupt_member(sr, 6 /*110*/, "ENABLE_NO_INTERRUPTS", NULL, true);
+
+	add_enum_interrupt_member(sr, 5 /*101*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", NULL, true);
+	add_enum_interrupt_member(sr, 4 /*100*/, "ENABLE_ONLY_VBLANK_INTERRUPT", NULL, true);
+
+	add_enum_interrupt_member(sr, 3 /*011*/, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", NULL, true);
+	add_enum_interrupt_member(sr, 2 /*010*/, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", NULL, true);
+
+	add_enum_interrupt_member(sr, 1 /*001*/, "DISABLE_NO_INTERRUPTS", NULL, true);
+	add_enum_interrupt_member(sr, 0 /*000*/, "ENABLE_ALL_INTERRUPTS", NULL, true);
+}
+
+//--------------------------------------------------------------------------
+static void add_enums()
+{
+	enum_t ccr = add_enum(BADADDR, "struct_ccr", hexflag());
+	set_enum_bf(ccr, true);
+	add_ccr_enum(ccr);
+
+	enum_t sr = add_enum(BADADDR, "struct_sr", hexflag());
+	set_enum_bf(sr, true);
+	add_sr_enum(sr);
+
+	enum_t ot = add_enum(BADADDR, "struct_other", hexflag());
+	add_other_enum(ot);
 }
 
 //--------------------------------------------------------------------------
 static void print_version()
 {
-	static const char format[] = "Sega Genesis/Megadrive ROMs loader plugin. Current version: v%s.\n";
+	static const char format[] = "Sega Genesis/Megadrive ROMs loader plugin v%s;\nAuthor: Dr. MefistO [Lab 313] <meffi@lab313.ru>.";
 	info(format, VERSION);
 	msg(format, VERSION);
 }
@@ -294,10 +364,11 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
 	define_vectors_struct(); // add definition of vectors struct
 	define_header_struct(); // add definition of header struct
-	set_register_names(); // apply names for special addresses of registers
+	set_spec_register_names(); // apply names for special addresses of registers
 	add_subroutines(&_vect, size); // mark vector subroutines as procedures
+	add_enums(); // add definition of sr enum
 
-	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]);
+	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]); // Reset
 
 	inf.af = 0
 		| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info

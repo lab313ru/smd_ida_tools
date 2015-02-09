@@ -186,3 +186,12 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Other extensions
+*.bin
+*.7z
+*.zip
+*.rar
+*.id*
+*.nam
+*.til
