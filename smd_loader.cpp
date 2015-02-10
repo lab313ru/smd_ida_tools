@@ -335,305 +335,414 @@ static void add_vdp_status_enum(enum_t vdp_status)
 #define SET 1
 #define CLEAR 0
 
-static unsigned int form_mask(unsigned int init_mask, unsigned char bit_idx, bool lower_word)
+static unsigned int form_value(unsigned char bit_idx, unsigned int bit, bool lower_word)
 {
-	return (init_mask | ((1 << (bit_idx + 1)) - 1)) << (lower_word ? 0 : 16);
+	return (bit << bit_idx) << (lower_word ? 0 : 16);
 }
 
-static unsigned int form_value(unsigned int init_mask, unsigned char bit, unsigned char bit_idx, bool lower_word)
+static void add_vdp_reg_mask(enum_t send_enum, unsigned char reg_idx, const char *name_lo, const char *name_hi)
 {
-	return (init_mask | (bit << bit_idx)) << (lower_word ? 0 : 16);
+	set_bmask_name(send_enum, 0x9F00, "REG_MASK_LO"); set_bmask_name(send_enum, 0x9F00 << 16, "REG_MASK_HI");
+	set_bmask_name(send_enum, 0x00FF, "VAL_MASK_LO"); set_bmask_name(send_enum, 0x00FF << 16, "VAL_MASK_HI");
+
+	add_enum_member_with_mask(send_enum, name_lo, (0x8000 + (reg_idx << 8)) << 0, 0x9F00 << 0);
+	add_enum_member_with_mask(send_enum, name_hi, (0x8000 + (reg_idx << 8)) << 16, 0x9F00 << 16);
 }
 
-static void add_vdp_reg_mask_lo(enum_t vdp_regs_send_enum, unsigned char reg_idx, unsigned char bit, unsigned char bit_idx, const char *name, const char *cmt = NULL)
+static void add_vdp_reg_bits(enum_t send_enum, unsigned char reg_idx, const char *name_lo, const char *name_hi, unsigned char bit_idx, unsigned int bits)
 {
-	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | reg_idx /*REG IDX*/) << 8 /*REG SEND DATA BITS*/;
-	add_enum_member_with_mask(vdp_regs_send_enum, name, form_value(reg_value, bit, bit_idx, true), form_mask(0x9F00, bit_idx, true));
+	add_enum_member_with_mask(send_enum, name_lo, form_value(bit_idx, bits, true), 0xFF << 0);
+	add_enum_member_with_mask(send_enum, name_hi, form_value(bit_idx, bits, false), 0xFF << 16);
 }
 
-static void add_vdp_reg_mask_hi(enum_t vdp_regs_send_enum, unsigned char reg_idx, unsigned char bit, unsigned char bit_idx, const char *name, const char *cmt = NULL)
+static void add_vdp_reg_0()
 {
-	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | reg_idx /*REG IDX*/) << 8 /*REG SEND DATA BITS*/;
-	add_enum_member_with_mask(vdp_regs_send_enum, name, form_value(reg_value, bit, bit_idx, false), form_mask(0x9F00, bit_idx, false));
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg00", hexflag());
+	set_enum_bf(send_enum, true);
+
+	add_vdp_reg_mask(send_enum, 0, "REG_00", "REG__00");
+
+	add_vdp_reg_bits(send_enum, 0, "DISPLAY_OFF", "DISPLAY__OFF", 0, SET);
+	add_vdp_reg_bits(send_enum, 0, "DISPLAY_ON", "DISPLAY__ON", 0, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 0, "PAUSE_HV_WHEN_EXT_INT_HAPPENS", "PAUSE_HV_WHEN_EXT_INT__HAPPENS", 1, SET);
+	add_vdp_reg_bits(send_enum, 0, "NORMAL_HV_COUNTER", "NORMAL_HV__COUNTER", 1, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 0, "EIGHT_COLORS_MODE", "EIGHT_COLORS__MODE", 2, SET);
+	add_vdp_reg_bits(send_enum, 0, "FULL_COLORS_MODE", "FULL_COLORS__MODE", 2, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 0, "ENABLE_HBLANK", "ENABLE__HBLANK", 4, SET);
+	add_vdp_reg_bits(send_enum, 0, "DISABLE_HBLANK", "DISABLE__HBLANK", 4, CLEAR);
 }
 
-static void add_vdp_reg_0(enum_t vdp_regs_send_enum)
+static void add_vdp_reg_1()
 {
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, SET, 0, "DISPLAY_OFF"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, SET, 0, "DISPLAY__OFF");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, CLEAR, 0, "DISPLAY_ON"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, CLEAR, 0, "DISPLAY__ON");
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg01", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 1, "REG_01", "REG__01");
 
-	.BUG DONT COMPILE!(Mask intersects with an other masks)
-		add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, SET, 1, "PAUSE_HV_WHEN_EXT_INT_HAPPENS"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, SET, 1, "PAUSE_HV_WHEN_EXT_INT__HAPPENS");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, CLEAR, 1, "NORMAL_HV_COUNTER"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, CLEAR, 1, "NORMAL_HV__COUNTER");
+	add_vdp_reg_bits(send_enum, 1, "GENESIS_DISP_MODE", "GENESIS_DISP__MODE", 2, SET);
+	add_vdp_reg_bits(send_enum, 1, "SMS_DISP_MODE", "SMS_DISP__MODE", 2, CLEAR);
 
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, SET, 2, "EIGHT_COLORS_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, SET, 2, "EIGHT_COLORS__MODE");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, CLEAR, 2, "FULL_COLORS_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, CLEAR, 2, "FULL_COLORS__MODE");
+	add_vdp_reg_bits(send_enum, 1, "SET_PAL_MODE", "SET_PAL__MODE", 3, SET);
+	add_vdp_reg_bits(send_enum, 1, "SET_NTSC_MODE", "SET_NTSC__MODE", 3, CLEAR);
 
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, SET, 4, "ENABLE_HBLANK"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, SET, 4, "ENABLE__HBLANK");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 0, CLEAR, 4, "DISABLE_HBLANK"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 0, CLEAR, 4, "DISABLE__HBLANK");
+	add_vdp_reg_bits(send_enum, 1, "ENABLE_DMA", "ENABLE__DMA", 4, SET);
+	add_vdp_reg_bits(send_enum, 1, "DISABLE_DMA", "DISABLE__DMA", 4, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 1, "ENABLE_VBLANK", "ENABLE__VBLANK", 5, SET);
+	add_vdp_reg_bits(send_enum, 1, "DISABLE_VBLANK", "DISABLE__VBLANK", 5, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 1, "ENABLE_DISPLAY", "ENABLE__DISPLAY", 6, SET);
+	add_vdp_reg_bits(send_enum, 1, "DISABLE_DISPLAY", "DISABLE__DISPLAY", 6, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 1, "TMS9918_DISP_MODE", "TMS9918_DISP__MODE", 7, SET);
+	add_vdp_reg_bits(send_enum, 1, "GENESIS__DISP_MODE", "GENESIS__DISP__MODE", 7, CLEAR);
 }
 
-static void add_vdp_reg_1(enum_t vdp_regs_send_enum)
+static void add_vdp_reg_2()
 {
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 2, "GENESIS_DISP_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 2, "GENESIS_DISP__MODE");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 2, "SMS_DISP_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 2, "SMS_DISP__MODE");
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg02", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 2, "REG_02", "REG__02");
 
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 3, "SET_PAL_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 3, "SET_PAL__MODE");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 3, "SET_NTSC_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 3, "SET_NTSC__MODE");
-
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 4, "ENABLE_DMA"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 4, "ENABLE__DMA");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 4, "DISABLE_DMA"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 4, "DISABLE__DMA");
-
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 5, "ENABLE_VBLANK"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 5, "ENABLE__VBLANK");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 5, "DISABLE_VBLANK"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 5, "DISABLE__VBLANK");
-
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 6, "ENABLE_DISPLAY"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 6, "ENABLE__DISPLAY");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 6, "DISABLE_DISPLAY"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 6, "DISABLE__DISPLAY");
-
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, SET, 7, "TMS9918_DISP_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, SET, 7, "TMS9918_DISP__MODE");
-	add_vdp_reg_mask_lo(vdp_regs_send_enum, 1, CLEAR, 7, "GENESIS__DISP_MODE"); add_vdp_reg_mask_hi(vdp_regs_send_enum, 1, CLEAR, 7, "GENESIS__DISP__MODE");
-}
-
-static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
-{
-	char buf[100];
-
-	add_vdp_reg_0(vdp_regs_send_enum);
-	add_vdp_reg_1(vdp_regs_send_enum);
-
-	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 2 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $02
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 3); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR_0x%.4X", (i << 3) * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR__0x%.4X", (i << 3) * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_PLANE_A_ADDR_$%.4X", (i << 3) * 0x400);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_PLANE_A_ADDR__$%.4X", (i << 3) * 0x400);
+		add_vdp_reg_bits(send_enum, 2, name_lo, name_hi, 3, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 3 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $03
+static void add_vdp_reg_3()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg03", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 3, "REG_03", "REG__03");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 3); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_WINDOW_PLANE_ADDR_0x%.4X", (i << 3) * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_WINDOW_PLANE_ADDR__0x%.4X", (i << 3) * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_WINDOW_PLANE_ADDR_$%.4X", (i << 3) * 0x400);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_WINDOW_PLANE_ADDR__$%.4X", (i << 3) * 0x400);
+		add_vdp_reg_bits(send_enum, 3, name_lo, name_hi, 3, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 4 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $04
+static void add_vdp_reg_4()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg04", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 4, "REG_04", "REG__04");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 3); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_B_ADDR_0x%.4X", i * 0x2000);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_B_ADDR__0x%.4X", i * 0x2000);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_PLANE_B_ADDR_$%.4X", i * 0x2000);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_PLANE_B_ADDR__$%.4X", i * 0x2000);
+		add_vdp_reg_bits(send_enum, 4, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 5 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $05
+static void add_vdp_reg_5()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg05", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 5, "REG_05", "REG__05");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 7); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_SPRITE_TBL_ADDR_0x%.4X", i * 0x200);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_SPRITE_TBL_ADDR__0x%.4X", i * 0x200);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_SPRITE_TBL_ADDR_$%.4X", i * 0x200);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_SPRITE_TBL_ADDR__$%.4X", i * 0x200);
+		add_vdp_reg_bits(send_enum, 5, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 6 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $06
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES_REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES__REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SPRITES_REBASE", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SPRITES__REBASE", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_6()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg06", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 6, "REG_06", "REG__06");
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 7 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $07
+	add_vdp_reg_bits(send_enum, 6, "ENABLE_SPRITES_REBASE", "ENABLE_SPRITES__REBASE", 5, SET);
+	add_vdp_reg_bits(send_enum, 6, "DISABLE_SPRITES_REBASE", "DISABLE_SPRITES__REBASE", 5, CLEAR);
+}
+
+static void add_vdp_reg_7()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg07", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 7, "REG_07", "REG__07");
+
+	char name_lo[100], name_hi[100];
 	for (int xx = 0; xx < (1 << 2); xx++)
 	{
 		for (int yyyy = 0; yyyy < (1 << 4); yyyy++)
 		{
-			qsnprintf(buf, sizeof(buf), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
-			add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | ((xx << 4) | yyyy) /*00XXYYYY*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-			qsnprintf(buf, sizeof(buf), "SET_BG_AS__%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
-			add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | ((xx << 4) | yyyy) /*00XXYYYY*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+			qsnprintf(name_lo, sizeof(name_lo), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+			qsnprintf(name_hi, sizeof(name_hi), "SET_BG_AS__%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+			add_vdp_reg_bits(send_enum, 7, name_lo, name_hi, 0, ((xx << 4) | yyyy));
 		}
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0A /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0A
+static void add_vdp_reg_a()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0A", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0A, "REG_0A", "REG__0A");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 8); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_HBLANK_COUNTER_VALUE_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_HBLANK_COUNTER_VALUE__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_HBLANK_COUNTER_VALUE_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_HBLANK_COUNTER_VALUE__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x0A, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0B /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0B
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_FULLSCREEN", (reg_value | 0 /*00*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__FULLSCREEN", (reg_value | 0 /*00*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_LINE_SCROLL", (reg_value | 1 /*01*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__LINE_SCROLL", (reg_value | 1 /*01*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_CELL_SCROLL", (reg_value | 2 /*10*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__CELL_SCROLL", (reg_value | 2 /*10*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_LINE__SCROLL", (reg_value | 3 /*11*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__LINE__SCROLL", (reg_value | 3 /*11*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_b()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0B", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0B, "REG_0B", "REG__0B");
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "_2CELLS_COLUMN_VSCROLL_MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "_2CELLS_COLUMN_VSCROLL__MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "FULLSCREEN_VSCROLL_MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "FULLSCREEN_VSCROLL__MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0B, "SET_HSCROLL_TYPE_AS_FULLSCREEN", "SET_HSCROLL_TYPE_AS__FULLSCREEN", 0, 0 /*00*/);
+	add_vdp_reg_bits(send_enum, 0x0B, "SET_HSCROLL_TYPE_AS_LINE_SCROLL", "SET_HSCROLL_TYPE_AS__LINE_SCROLL", 0, 1 /*01*/);
+	add_vdp_reg_bits(send_enum, 0x0B, "SET_HSCROLL_TYPE_AS_CELL_SCROLL", "SET_HSCROLL_TYPE_AS__CELL_SCROLL", 0, 2 /*10*/);
+	add_vdp_reg_bits(send_enum, 0x0B, "SET_HSCROLL_TYPE_AS_LINE__SCROLL", "SET_HSCROLL_TYPE_AS__LINE__SCROLL", 0, 3 /*11*/);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXT_INTERRUPT", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXT__INTERRUPT", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXT_INTERRUPT", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXT__INTERRUPT", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0B, "_2CELLS_COLUMN_VSCROLL_MODE", "_2CELLS_COLUMN_VSCROLL__MODE", 2, SET);
+	add_vdp_reg_bits(send_enum, 0x0B, "FULLSCREEN_VSCROLL_MODE", "FULLSCREEN_VSCROLL__MODE", 2, CLEAR);
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0C /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0C
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_32_TILES_WIDTH_MODE", (reg_value | ((0 << 7) | (0 << 0))) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_32_TILES_WIDTH__MODE", (reg_value | ((0 << 7) | (0 << 0))) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_40_TILES_WIDTH_MODE", (reg_value | ((1 << 7) | (1 << 0))) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_40_TILES_WIDTH__MODE", (reg_value | ((1 << 7) | (1 << 0))) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0B, "ENABLE_EXT_INTERRUPT", "ENABLE_EXT__INTERRUPT", 3, SET);
+	add_vdp_reg_bits(send_enum, 0x0B, "DISABLE_EXT_INTERRUPT", "DISABLE_EXT__INTERRUPT", 3, CLEAR);
+}
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SHADOW_HIGHLIGHT_MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SHADOW_HIGHLIGHT__MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SHADOW_HIGHLIGHT_MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SHADOW_HIGHLIGHT__MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_c()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0C", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0C, "REG_0C", "REG__0C");
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "NO_INTERLACE_MODE", (reg_value | (0 /*00*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "NO_INTERLACE__MODE", (reg_value | (0 /*00*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SIMPLE_INTERLACE_MODE", (reg_value | (1 /*01*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SIMPLE_INTERLACE__MODE", (reg_value | (1 /*01*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DOUBLE_INTERLACE_MODE", (reg_value | (3 /*11*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DOUBLE_INTERLACE__MODE", (reg_value | (3 /*11*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0C, "SET_32_TILES_WIDTH_MODE", "SET_32_TILES_WIDTH__MODE", 0, ((0 << 7) | (0 << 0)));
+	add_vdp_reg_bits(send_enum, 0x0C, "SET_40_TILES_WIDTH_MODE", "SET_40_TILES_WIDTH__MODE", 0, ((1 << 7) | (1 << 0)));
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXTERNAL_PIXEL_BUS", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXTERNAL_PIXEL__BUS", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXTERNAL_PIXEL_BUS", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXTERNAL_PIXEL__BUS", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0C, "ENABLE_SHADOW_HIGHLIGHT_MODE", "ENABLE_SHADOW_HIGHLIGHT__MODE", 3, SET);
+	add_vdp_reg_bits(send_enum, 0x0C, "DISABLE_SHADOW_HIGHLIGHT_MODE", "DISABLE_SHADOW_HIGHLIGHT__MODE", 3, CLEAR);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "DO_PIXEL_CLOCK_INSTEAD_OF_VSYNC", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DO_PIXEL_CLOCK_INSTEAD_OF__VSYNC", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DO_VSYNC_INSTEAD_OF_PIXEL_CLOCK", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DO_VSYNC_INSTEAD_OF_PIXEL__CLOCK", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0C, "NO_INTERLACE_MODE", "NO_INTERLACE__MODE", 1, 0 /*00*/);
+	add_vdp_reg_bits(send_enum, 0x0C, "ENABLE_SIMPLE_INTERLACE_MODE", "ENABLE_SIMPLE_INTERLACE__MODE", 1, 1 /*01*/);
+	add_vdp_reg_bits(send_enum, 0x0C, "ENABLE_DOUBLE_INTERLACE_MODE", "ENABLE_DOUBLE_INTERLACE__MODE", 1, 3 /*11*/);
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0D /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0D
+	add_vdp_reg_bits(send_enum, 0x0C, "ENABLE_EXTERNAL_PIXEL_BUS", "ENABLE_EXTERNAL_PIXEL__BUS", 4, SET);
+	add_vdp_reg_bits(send_enum, 0x0C, "DISABLE_EXTERNAL_PIXEL_BUS", "DISABLE_EXTERNAL_PIXEL__BUS", 4, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 0x0C, "DO_PIXEL_CLOCK_INSTEAD_OF_VSYNC", "DO_PIXEL_CLOCK_INSTEAD_OF__VSYNC", 6, SET);
+	add_vdp_reg_bits(send_enum, 0x0C, "DO_VSYNC_INSTEAD_OF_PIXEL_CLOCK", "DO_VSYNC_INSTEAD_OF_PIXEL__CLOCK", 6, CLEAR);
+}
+
+static void add_vdp_reg_d()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0D", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0D, "REG_0D", "REG__0D");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 6); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_HSCROLL_DATA_ADDR_0x%.4X", i * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_HSCROLL_DATA_ADDR__0x%.4X", i * 0x400);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_HSCROLL_DATA_ADDR_$%.2X", i * 0x400);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_HSCROLL_DATA_ADDR__$%.2X", i * 0x400);
+		add_vdp_reg_bits(send_enum, 0x0D, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0E /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0E
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_A_REBASE", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_A__REBASE", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_A_REBASE", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_A__REBASE", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_e()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0E", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0E, "REG_0E", "REG__0E");
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_B_REBASE", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_B__REBASE", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_B_REBASE", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_B__REBASE", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x0E, "ENABLE_PLANE_A_REBASE", "ENABLE_PLANE_A__REBASE", 0, SET);
+	add_vdp_reg_bits(send_enum, 0x0E, "DISABLE_PLANE_A_REBASE", "DISABLE_PLANE_A__REBASE", 0, CLEAR);
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
+	add_vdp_reg_bits(send_enum, 0x0E, "ENABLE_PLANE_B_REBASE", "ENABLE_PLANE_B__REBASE", 4, SET);
+	add_vdp_reg_bits(send_enum, 0x0E, "DISABLE_PLANE_B_REBASE", "DISABLE_PLANE_B__REBASE", 4, CLEAR);
+}
+
+static void add_vdp_reg_f()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg0F", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x0F, "REG_0F", "REG__0F");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 8); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_VDP_AUTO_INC_VALUE_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_VDP_AUTO_INC_VALUE__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_VDP_AUTO_INC_VALUE_$%.2X", i * 0x400);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_VDP_AUTO_INC_VALUE__$%.2X", i * 0x400);
+		add_vdp_reg_bits(send_enum, 0x0F, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x10 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $10
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_32_TILES", (reg_value | 0 /*00*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_32__TILES", (reg_value | 0 /*00*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_64_TILES", (reg_value | 1 /*01*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_64__TILES", (reg_value | 1 /*01*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_128_TILES", (reg_value | 3 /*11*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_128__TILES", (reg_value | 3 /*11*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_10()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg10", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x10, "REG_10", "REG__10");
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", (reg_value | (0 /*00*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_32__TILES", (reg_value | (0 /*00*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", (reg_value | (1 /*01*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_64__TILES", (reg_value | (1 /*01*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", (reg_value | (3 /*11*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128__TILES", (reg_value | (3 /*11*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_WIDTH_TO_32_TILES", "SET_PLANEA_PLANEB_WIDTH_TO_32__TILES", 0, 0 /*00*/);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_WIDTH_TO_64_TILES", "SET_PLANEA_PLANEB_WIDTH_TO_64__TILES", 0, 1 /*01*/);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_WIDTH_TO_128_TILES", "SET_PLANEA_PLANEB_WIDTH_TO_128__TILES", 0, 3 /*11*/);
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x11 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $11
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ_RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ__RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ_LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ__LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", "SET_PLANEA_PLANEB_HEIGHT_TO_32__TILES", 4, 0 /*00*/);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", "SET_PLANEA_PLANEB_HEIGHT_TO_64__TILES", 4, 1 /*01*/);
+	add_vdp_reg_bits(send_enum, 0x10, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", "SET_PLANEA_PLANEB_HEIGHT_TO_128__TILES", 4, 3 /*11*/);
+}
+
+static void add_vdp_reg_11()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg11", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x11, "REG_11", "REG__11");
+
+	add_vdp_reg_bits(send_enum, 0x11, "MOVE_WINDOW_HORZ_RIGHT", "MOVE_WINDOW_HORZ__RIGHT", 7, SET);
+	add_vdp_reg_bits(send_enum, 0x11, "MOVE_WINDOW_HORZ_LEFT", "MOVE_WINDOW_HORZ__LEFT", 7, CLEAR);
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 5); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "MOVE_BY_%d_CELLS", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "MOVE_BY__%d_CELLS", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "MOVE_BY_%d_CELLS", i);
+		qsnprintf(name_hi, sizeof(name_hi), "MOVE_BY__%d_CELLS", i);
+		add_vdp_reg_bits(send_enum, 0x11, name_lo, name_hi, 0, i);
 	}
+}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x12 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $12
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT_RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT__RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT_LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT__LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+static void add_vdp_reg_12()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg12", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x12, "REG_12", "REG__12");
+
+	add_vdp_reg_bits(send_enum, 0x12, "MOVE_WINDOW_VERT_RIGHT", "MOVE_WINDOW_VERT__RIGHT", 7, SET);
+	add_vdp_reg_bits(send_enum, 0x12, "MOVE_WINDOW_VERT_LEFT", "MOVE_WINDOW_VERT__LEFT", 7, CLEAR);
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 5); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "MOVE_BY_%d__CELLS", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "MOVE_BY__%d__CELLS", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		qsnprintf(name_lo, sizeof(name_lo), "MOVE_BY_%d__CELLS", i);
+		qsnprintf(name_hi, sizeof(name_hi), "MOVE_BY__%d__CELLS", i);
+		add_vdp_reg_bits(send_enum, 0x12, name_lo, name_hi, 0, i);
 	}
+}
 
-	static const char INTERPRET_AS_LEN_IN_WORDS[] = "Interpret as length in words";
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x13 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $13
-	for (int i = 0; i < (1 << 8); i++)
-	{
-		qsnprintf(buf, sizeof(buf), "SET_LOWER_BYTE_OF_DMA_LEN_TO_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, INTERPRET_AS_LEN_IN_WORDS);
-		qsnprintf(buf, sizeof(buf), "SET_LOWER_BYTE_OF_DMA_LEN_TO__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, INTERPRET_AS_LEN_IN_WORDS);
-	}
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x14 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $14
-	for (int i = 0; i < (1 << 8); i++)
-	{
-		qsnprintf(buf, sizeof(buf), "SET_HIGHER_BYTE_OF_DMA_LEN_TO_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, INTERPRET_AS_LEN_IN_WORDS);
-		qsnprintf(buf, sizeof(buf), "SET_HIGHER_BYTE_OF_DMA_LEN_TO__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, INTERPRET_AS_LEN_IN_WORDS);
-	}
+static void add_vdp_reg_13()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg13", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x13, "REG_13", "REG__13");
 
-	static const char SHIFT_FINAL_DWORD_BY_1_TO_LEFT[] = "Shift final address by 1 to left";
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x15 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $15
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 8); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_LOWER_BYTE_OF_DMA_SRC_TO_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
-		qsnprintf(buf, sizeof(buf), "SET_LOWER_BYTE_OF_DMA_SRC_TO__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_LOWER_BYTE_OF_DMA_LEN_TO_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_LOWER_BYTE_OF_DMA_LEN_TO__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x13, name_lo, name_hi, 0, i);
 	}
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x16 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $16
+}
+
+static void add_vdp_reg_14()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg14", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x14, "REG_14", "REG__14");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 8); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
-		qsnprintf(buf, sizeof(buf), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_HIGHER_BYTE_OF_DMA_LEN_TO_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_HIGHER_BYTE_OF_DMA_LEN_TO__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x14, name_lo, name_hi, 0, i);
 	}
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x17 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $17
+}
+
+static void add_vdp_reg_15()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg15", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x15, "REG_15", "REG__15");
+
+	char name_lo[100], name_hi[100];
+	for (int i = 0; i < (1 << 8); i++)
+	{
+		qsnprintf(name_lo, sizeof(name_lo), "SET_LOWER_BYTE_OF_DMA_SRC_TO_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_LOWER_BYTE_OF_DMA_SRC_TO__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x15, name_lo, name_hi, 0, i);
+	}
+}
+
+static void add_vdp_reg_16()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg16", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x16, "REG_16", "REG__16");
+
+	char name_lo[100], name_hi[100];
+	for (int i = 0; i < (1 << 8); i++)
+	{
+		qsnprintf(name_lo, sizeof(name_lo), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x16, name_lo, name_hi, 0, i);
+	}
+}
+
+static void add_vdp_reg_17()
+{
+	enum_t send_enum = add_enum(BADADDR, "enum_vdp_reg17", hexflag());
+	set_enum_bf(send_enum, true);
+	add_vdp_reg_mask(send_enum, 0x17, "REG_17", "REG__17");
+
+	char name_lo[100], name_hi[100];
 	for (int i = 0; i < (1 << 6); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_HIGH_BYTE_OF_DMA_SRC_TO_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
-		qsnprintf(buf, sizeof(buf), "SET_HIGH_BYTE_OF_DMA_SRC_TO__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, SHIFT_FINAL_DWORD_BY_1_TO_LEFT);
+		qsnprintf(name_lo, sizeof(name_lo), "SET_HIGH_BYTE_OF_DMA_SRC_TO_$%.2X", i);
+		qsnprintf(name_hi, sizeof(name_hi), "SET_HIGH_BYTE_OF_DMA_SRC_TO__$%.2X", i);
+		add_vdp_reg_bits(send_enum, 0x17, name_lo, name_hi, 0, i);
 	}
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_COPY_M68K_TO_VRAM_DMA_MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_COPY_M68K_TO_VRAM_DMA__MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ADD_$800000_TO_DMA_SRC_ADDR", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "ADD_$800000_TO_DMA_SRC__ADDR", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_VRAM_FILL_DMA_MODE", (reg_value | (2 /*10*/ << 6)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_VRAM_FILL_DMA__MODE", (reg_value | (2 /*10*/ << 6)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_VRAM_COPY_DMA_MODE", (reg_value | (3 /*11*/ << 6)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-	add_enum_member_with_mask(vdp_regs_send_enum, "SET_VRAM_COPY_DMA__MODE", (reg_value | (3 /*11*/ << 6)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_vdp_reg_bits(send_enum, 0x17, "ADD_$800000_TO_DMA_SRC_ADDR", "ADD_$800000_TO_DMA_SRC__ADDR", 7, SET);
+	add_vdp_reg_bits(send_enum, 0x17, "SET_COPY_M68K_TO_VRAM_DMA_MODE", "SET_COPY_M68K_TO_VRAM_DMA__MODE", 7, CLEAR);
+
+	add_vdp_reg_bits(send_enum, 0x17, "SET_VRAM_FILL_DMA_MODE", "SET_VRAM_FILL_DMA__MODE", 6, 2 /*10*/);
+	add_vdp_reg_bits(send_enum, 0x17, "SET_VRAM_COPY_DMA_MODE", "SET_VRAM_COPY_DMA__MODE", 6, 3 /*11*/);
+}
+
+static void add_vdp_reg_send_enums()
+{
+	add_vdp_reg_0();
+	add_vdp_reg_1();
+	add_vdp_reg_2();
+	add_vdp_reg_3();
+	add_vdp_reg_4();
+	add_vdp_reg_5();
+	add_vdp_reg_6();
+	add_vdp_reg_7();
+	add_vdp_reg_a();
+	add_vdp_reg_b();
+	add_vdp_reg_c();
+	add_vdp_reg_d();
+	add_vdp_reg_e();
+	add_vdp_reg_f();
+	add_vdp_reg_10();
+	add_vdp_reg_11();
+	add_vdp_reg_12();
+	add_vdp_reg_13();
+	add_vdp_reg_14();
+	add_vdp_reg_15();
+	add_vdp_reg_16();
+	add_vdp_reg_17();
 }
 
 //--------------------------------------------------------------------------
@@ -654,9 +763,7 @@ static void add_enums()
 	set_enum_bf(vdp_status, true);
 	add_vdp_status_enum(vdp_status);
 
-	enum_t vdp_regs_send_enum = add_enum(BADADDR, "enum_vdp_regs_send", hexflag());
-	set_enum_bf(vdp_regs_send_enum, true);
-	add_vdp_regs_send_enum(vdp_regs_send_enum);
+	add_vdp_reg_send_enums();
 }
 
 //--------------------------------------------------------------------------
