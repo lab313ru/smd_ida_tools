@@ -423,6 +423,8 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 6 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $06
 	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES_REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES__REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SPRITES_REBASE", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SPRITES__REBASE", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 7 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $07
 	for (int xx = 0; xx < (1 << 2); xx++)
@@ -501,6 +503,17 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 		qsnprintf(buf, sizeof(buf), "SET_HSCROLL_DATA_ADDR__0x%.4X", i * 0x400);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 6 /*REG IDX*/) << 0x0E /*REG SEND DATA BITS*/; // REG $0E
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_A_REBASE", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_A__REBASE", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_A_REBASE", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_A__REBASE", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_B_REBASE", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_PLANE_B__REBASE", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_B_REBASE", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_PLANE_B__REBASE", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
 	for (int i = 0; i < (1 << 8); i++)
