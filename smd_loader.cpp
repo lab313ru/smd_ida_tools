@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.3"
+#define VERSION "1.0.4"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>, v1.0, 07/02/2015
@@ -444,6 +444,16 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 		qsnprintf(buf, sizeof(buf), "SET_HBLANK_COUNTER_VALUE__0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0B /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0B
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_FULLSCREEN", (reg_value | 0 /*00*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__FULLSCREEN", (reg_value | 0 /*00*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_LINE_SCROLL", (reg_value | 1 /*01*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__LINE_SCROLL", (reg_value | 1 /*01*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_CELL_SCROLL", (reg_value | 2 /*10*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__CELL_SCROLL", (reg_value | 2 /*10*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_LINE__SCROLL", (reg_value | 3 /*11*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__LINE__SCROLL", (reg_value | 3 /*11*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
 	for (int i = 0; i < (1 << 8); i++)
