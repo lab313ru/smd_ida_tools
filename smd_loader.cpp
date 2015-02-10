@@ -5,13 +5,12 @@
 *
 */
 
-#define VERSION "1.0.2"
+#define VERSION "1.0.3"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>, v1.0, 07/02/2015
 */
 
-#define NO_OBSOLETE_FUNCS
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <ida.hpp>
@@ -184,17 +183,10 @@ static void define_vectors_struct()
 }
 
 //--------------------------------------------------------------------------
-static void add_enum_const_member(enum_t id, unsigned int value, const char *name, const char *cmt = NULL)
+static void add_enum_member_with_mask(enum_t id, const char *name, unsigned int value, unsigned int mask = DEFMASK, const char *cmt = NULL)
 {
-	int res = add_enum_member(id, name, value);
-	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, false);
-}
-
-//--------------------------------------------------------------------------
-static void add_enum_member_with_mask(enum_t id, unsigned int value, unsigned int mask, const char *name, const char *cmt = NULL)
-{
-	int res = add_enum_member(id, name, value, mask);
-	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, false);
+	int res = add_const(id, name, value, mask); // we have to use old name, because of IDA v5.2
+	if (cmt != NULL) set_enum_member_cmt(get_const_by_name(name), cmt, false);
 }
 
 //------------------------------------------------------------------------
@@ -285,112 +277,112 @@ static void make_segments()
 //--------------------------------------------------------------------------
 static void add_other_enum(enum_t ot)
 {
-	add_enum_const_member(ot, 0x200, "ROM_START");
-	add_enum_const_member(ot, 0x10FF, "IO_PCBVER_REF");
-	add_enum_const_member(ot, 0x2F00, "IO_TMSS_REF"); // IO_TMSS
+	add_enum_member_with_mask(ot, "ROM_START", 0x200);
+	add_enum_member_with_mask(ot, "IO_PCBVER_REF", 0x10FF);
+	add_enum_member_with_mask(ot, "IO_TMSS_REF", 0x2F00); // IO_TMSS
 }
 
 //--------------------------------------------------------------------------
 static void add_ccr_enum(enum_t ccr)
 {
 	// bits 7..5 is clear
-	add_enum_member_with_mask(ccr, (1 << 4), (1 << 4), "X", "Extend flag");
-	add_enum_member_with_mask(ccr, (1 << 3), (1 << 3), "N", "Negative flag");
-	add_enum_member_with_mask(ccr, (1 << 2), (1 << 2), "Z", "Zero flag");
-	add_enum_member_with_mask(ccr, (1 << 1), (1 << 1), "V", "Overflow flag");
-	add_enum_member_with_mask(ccr, (1 << 0), (1 << 0), "C", "Carry flag");
+	add_enum_member_with_mask(ccr, "X", (1 << 4), (1 << 4), "Extend flag");
+	add_enum_member_with_mask(ccr, "N", (1 << 3), (1 << 3), "Negative flag");
+	add_enum_member_with_mask(ccr, "Z", (1 << 2), (1 << 2), "Zero flag");
+	add_enum_member_with_mask(ccr, "V", (1 << 1), (1 << 1), "Overflow flag");
+	add_enum_member_with_mask(ccr, "C", (1 << 0), (1 << 0), "Carry flag");
 }
 
 //--------------------------------------------------------------------------
 static void add_sr_enum(enum_t sr)
 {
-	add_enum_member_with_mask(sr, (1 << 15), (1 << 15), "T1", "Trace bit 2. If set, trace is allowed on any instruction");
-	add_enum_member_with_mask(sr, (1 << 14), (1 << 14), "T0", "Trace bit 1. If set, trace on change of program flow");
-	add_enum_member_with_mask(sr, (1 << 13), (1 << 13), "SF", "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to");
-	add_enum_member_with_mask(sr, (1 << 12), (1 << 12), "MF", "Always clear (???)");
+	add_enum_member_with_mask(sr, "T1", (1 << 15), (1 << 15), "Trace bit 2. If set, trace is allowed on any instruction");
+	add_enum_member_with_mask(sr, "T0", (1 << 14), (1 << 14), "Trace bit 1. If set, trace on change of program flow");
+	add_enum_member_with_mask(sr, "SF", (1 << 13), (1 << 13), "Supervisor Mode flag. If clear, SP refers to USP.\nIf set, look at M to determine what stack SP points to");
+	add_enum_member_with_mask(sr, "MF", (1 << 12), (1 << 12), "Always clear (???)");
 	// bit 11 is clear
-	add_enum_member_with_mask(sr, (7 << 8) /*111*/, (7 << 8), "DISABLE_ALL_INTERRUPTS");
-	add_enum_member_with_mask(sr, (6 << 8)  /*110*/, (7 << 8), "ENABLE_NO_INTERRUPTS");
+	add_enum_member_with_mask(sr, "DISABLE_ALL_INTERRUPTS", (7 << 8) /*111*/, (7 << 8));
+	add_enum_member_with_mask(sr, "ENABLE_NO_INTERRUPTS", (6 << 8)  /*110*/, (7 << 8));
 
-	add_enum_member_with_mask(sr, (5 << 8)  /*101*/, (7 << 8), "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK");
-	add_enum_member_with_mask(sr, (4 << 8)  /*100*/, (7 << 8), "ENABLE_ONLY_VBLANK_INTERRUPT");
+	add_enum_member_with_mask(sr, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", (5 << 8)  /*101*/, (7 << 8));
+	add_enum_member_with_mask(sr, "ENABLE_ONLY_VBLANK_INTERRUPT", (4 << 8)  /*100*/, (7 << 8));
 
-	add_enum_member_with_mask(sr, (3 << 8)  /*011*/, (7 << 8), "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK");
-	add_enum_member_with_mask(sr, (2 << 8)  /*010*/, (7 << 8), "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS");
+	add_enum_member_with_mask(sr, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", (3 << 8)  /*011*/, (7 << 8));
+	add_enum_member_with_mask(sr, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", (2 << 8)  /*010*/, (7 << 8));
 
-	add_enum_member_with_mask(sr, (1 << 8)  /*001*/, (7 << 8), "DISABLE_NO_INTERRUPTS");
-	add_enum_member_with_mask(sr, (0 << 8)  /*000*/, (7 << 8), "ENABLE_ALL_INTERRUPTS");
+	add_enum_member_with_mask(sr, "DISABLE_NO_INTERRUPTS", (1 << 8)  /*001*/, (7 << 8));
+	add_enum_member_with_mask(sr, "ENABLE_ALL_INTERRUPTS", (0 << 8)  /*000*/, (7 << 8));
 }
 
 static void add_vdp_status_enum(enum_t vdp_status)
 {
-	add_enum_member_with_mask(vdp_status, (1 << 9), (1 << 9), "FIFO_EMPTY");
-	add_enum_member_with_mask(vdp_status, (1 << 8), (1 << 8), "FIFO_FULL");
-	add_enum_member_with_mask(vdp_status, (1 << 7), (1 << 7), "VBLANK_PENDING");
-	add_enum_member_with_mask(vdp_status, (1 << 6), (1 << 6), "SPRITE_OVERFLOW");
-	add_enum_member_with_mask(vdp_status, (1 << 5), (1 << 5), "SPRITE_COLLISION");
-	add_enum_member_with_mask(vdp_status, (1 << 4), (1 << 4), "ODD_FRAME");
-	add_enum_member_with_mask(vdp_status, (1 << 3), (1 << 3), "VBLANKING");
-	add_enum_member_with_mask(vdp_status, (1 << 2), (1 << 2), "HBLANKING");
-	add_enum_member_with_mask(vdp_status, (1 << 1), (1 << 1), "DMA_IN_PROGRESS");
-	add_enum_member_with_mask(vdp_status, (1 << 0), (1 << 0), "PAL_MODE");
+	add_enum_member_with_mask(vdp_status, "FIFO_EMPTY", (1 << 9), (1 << 9));
+	add_enum_member_with_mask(vdp_status, "FIFO_FULL", (1 << 8), (1 << 8));
+	add_enum_member_with_mask(vdp_status, "VBLANK_PENDING", (1 << 7), (1 << 7));
+	add_enum_member_with_mask(vdp_status, "SPRITE_OVERFLOW", (1 << 6), (1 << 6));
+	add_enum_member_with_mask(vdp_status, "SPRITE_COLLISION", (1 << 5), (1 << 5));
+	add_enum_member_with_mask(vdp_status, "ODD_FRAME", (1 << 4), (1 << 4));
+	add_enum_member_with_mask(vdp_status, "VBLANKING", (1 << 3), (1 << 3));
+	add_enum_member_with_mask(vdp_status, "HBLANKING", (1 << 2), (1 << 2));
+	add_enum_member_with_mask(vdp_status, "DMA_IN_PROGRESS", (1 << 1), (1 << 1));
+	add_enum_member_with_mask(vdp_status, "PAL_MODE", (1 << 0), (1 << 0));
 }
 
 static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 {
 	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $00
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISPLAY_OFF");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISPLAY__OFF");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISPLAY_ON");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISPLAY__ON");
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY_OFF", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY__OFF", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY_ON", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY__ON", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 1 /*BIT 1*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "PAUSE_HV_WHEN_EXT_INT_HAPPENS");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 1 /*BIT 1*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "PAUSE_HV_WHEN_EXT_INT__HAPPENS");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 1 /*BIT 1*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "NORMAL_HV_COUNTER");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 1 /*BIT 1*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "NORMAL_HV__COUNTER");
+	add_enum_member_with_mask(vdp_regs_send_enum, "PAUSE_HV_WHEN_EXT_INT_HAPPENS", (reg_value | (1 /*SET*/ << 1 /*BIT 1*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "PAUSE_HV_WHEN_EXT_INT__HAPPENS", (reg_value | (1 /*SET*/ << 1 /*BIT 1*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "NORMAL_HV_COUNTER", (reg_value | (0 /*CLEAR*/ << 1 /*BIT 1*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "NORMAL_HV__COUNTER", (reg_value | (0 /*CLEAR*/ << 1 /*BIT 1*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "EIGHT_COLORS_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "EIGHT_COLORS__MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "FULL_COLORS_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "FULL_COLORS__MODE");
+	add_enum_member_with_mask(vdp_regs_send_enum, "EIGHT_COLORS_MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "EIGHT_COLORS__MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "FULL_COLORS_MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "FULL_COLORS__MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "ENABLE_HBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "ENABLE__HBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISABLE_HBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISABLE__HBLANK");
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_HBLANK", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE__HBLANK", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_HBLANK", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE__HBLANK", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 1 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $01
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "GENESIS_DISP_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "GENESIS_DISP__MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "SMS_DISP_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "SMS_DISP__MODE");
+	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS_DISP_MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS_DISP__MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SMS_DISP_MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SMS_DISP__MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "SET_PAL_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "SET_PAL__MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "SET_NTSC_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "SET_NTSC__MODE");
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PAL_MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PAL__MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_NTSC_MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_NTSC__MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "ENABLE_DMA");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "ENABLE__DMA");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISABLE_DMA");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISABLE__DMA");
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DMA", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE__DMA", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_DMA", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE__DMA", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "ENABLE_VBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "ENABLE__VBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISABLE_VBLANK");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISABLE__VBLANK");
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_VBLANK", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE__VBLANK", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_VBLANK", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE__VBLANK", (reg_value | (0 /*CLEAR*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "ENABLE_DISPLAY");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "ENABLE__DISPLAY");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "DISABLE_DISPLAY");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "DISABLE__DISPLAY");
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DISPLAY", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE__DISPLAY", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_DISPLAY", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE__DISPLAY", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "TMS9918_DISP_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "TMS9918_DISP__MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/, "GENESIS__DISP_MODE");
-	add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, "GENESIS__DISP__MODE");
+	add_enum_member_with_mask(vdp_regs_send_enum, "TMS9918_DISP_MODE", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "TMS9918_DISP__MODE", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS__DISP_MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS__DISP__MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
 
@@ -398,9 +390,9 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	for (int i = 0; i < 0x100; i++)
 	{
 		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE_0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/, buf);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
 		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE__0x%.2X", i);
-		add_enum_member_with_mask(vdp_regs_send_enum, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16, buf);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 }
 
