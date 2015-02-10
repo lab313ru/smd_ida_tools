@@ -387,18 +387,18 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 2 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $02
 	for (int i = 0; i < (1 << 3); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR_0x%.4X", i * 0x400);
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR_0x%.4X", (i << 3) * 0x400);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR__0x%.4X", i * 0x400);
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR__0x%.4X", (i << 3) * 0x400);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 3 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $03
 	for (int i = 0; i < (1 << 3); i++)
 	{
-		qsnprintf(buf, sizeof(buf), "SET_WND_PLANE_ADDR_0x%.4X", i * 0x400);
+		qsnprintf(buf, sizeof(buf), "SET_WINDOW_PLANE_ADDR_0x%.4X", (i << 3) * 0x400);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "SET_WND_PLANE_ADDR__0x%.4X", i * 0x400);
+		qsnprintf(buf, sizeof(buf), "SET_WINDOW_PLANE_ADDR__0x%.4X", (i << 3) * 0x400);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 
@@ -538,6 +538,32 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_64__TILES", (reg_value | (1 /*01*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", (reg_value | (3 /*11*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128__TILES", (reg_value | (3 /*11*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x11 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $11
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ_RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ__RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ_LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_HORZ__LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	for (int i = 0; i < (1 << 5); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "MOVE_BY_%d_CELLS", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "MOVE_BY__%d_CELLS", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x12 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $12
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT_RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT__RIGHT", (reg_value | (1 /*SET*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT_LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "MOVE_WINDOW_VERT__LEFT", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	for (int i = 0; i < (1 << 5); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "MOVE_BY_%d__CELLS", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "MOVE_BY__%d__CELLS", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
 }
 
 //--------------------------------------------------------------------------
