@@ -523,6 +523,21 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 		qsnprintf(buf, sizeof(buf), "SET_VDP_AUTO_INC_VALUE__0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x10 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $10
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_32_TILES", (reg_value | 0 /*00*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_32__TILES", (reg_value | 0 /*00*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_64_TILES", (reg_value | 1 /*01*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_64__TILES", (reg_value | 1 /*01*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_128_TILES", (reg_value | 3 /*11*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_WIDTH_TO_128__TILES", (reg_value | 3 /*11*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", (reg_value | (0 /*00*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_32__TILES", (reg_value | (0 /*00*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", (reg_value | (1 /*01*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_64__TILES", (reg_value | (1 /*01*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", (reg_value | (3 /*11*/ << 4)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_PLANEA_PLANEB_HEIGHT_TO_128__TILES", (reg_value | (3 /*11*/ << 4)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 }
 
 //--------------------------------------------------------------------------
