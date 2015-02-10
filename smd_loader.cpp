@@ -330,8 +330,9 @@ static void add_vdp_status_enum(enum_t vdp_status)
 
 static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 {
-	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $00
+	char buf[100];
 
+	unsigned int reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $00
 	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY_OFF", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY__OFF", (reg_value | (1 /*SET*/ << 0 /*BIT 0*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	add_enum_member_with_mask(vdp_regs_send_enum, "DISPLAY_ON", (reg_value | (0 /*CLEAR*/ << 0 /*BIT 0*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
@@ -353,7 +354,6 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE__HBLANK", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 1 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $01
-
 	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS_DISP_MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS_DISP__MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	add_enum_member_with_mask(vdp_regs_send_enum, "SMS_DISP_MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
@@ -384,14 +384,48 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS__DISP_MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "GENESIS__DISP__MODE", (reg_value | (0 /*CLEAR*/ << 7 /*BIT 7*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 2 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $02
+	for (int i = 0; i < (1 << 3); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR_0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_A_ADDR__0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
 
-	char buf[25];
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 3 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $03
+	for (int i = 0; i < (1 << 3); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_WND_PLANE_ADDR_0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_WND_PLANE_ADDR__0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | (i << 3)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 4 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $04
+	for (int i = 0; i < (1 << 3); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_B_ADDR_0x%.4X", i * 0x2000);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_PLANE_B_ADDR__0x%.4X", i * 0x2000);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 5 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $05
+	for (int i = 0; i < (1 << 7); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_SPRITE_TBL_ADDR_0x%.4X", i * 0x200);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_SPRITE_TBL_ADDR__0x%.4X", i * 0x200);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
 	for (int i = 0; i < 0x100; i++)
 	{
-		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE_0x%.2X", i);
+		qsnprintf(buf, sizeof(buf), "VDP_AUTO_INC_VALUE_0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, 25, "VDP_AUTO_INC_VALUE__0x%.2X", i);
+		qsnprintf(buf, sizeof(buf), "VDP_AUTO_INC_VALUE__0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 }
