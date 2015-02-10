@@ -455,6 +455,53 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS_LINE__SCROLL", (reg_value | 3 /*11*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
 	add_enum_member_with_mask(vdp_regs_send_enum, "SET_HSCROLL_TYPE_AS__LINE__SCROLL", (reg_value | 3 /*11*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 
+	add_enum_member_with_mask(vdp_regs_send_enum, "_2CELLS_COLUMN_VSCROLL_MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "_2CELLS_COLUMN_VSCROLL__MODE", (reg_value | (1 /*SET*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "FULLSCREEN_VSCROLL_MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "FULLSCREEN_VSCROLL__MODE", (reg_value | (0 /*CLEAR*/ << 2 /*BIT 2*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXT_INTERRUPT", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXT__INTERRUPT", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXT_INTERRUPT", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXT__INTERRUPT", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0C /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0C
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_32_TILES_WIDTH_MODE", (reg_value | ((0 << 7) | (0 << 0))) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_32_TILES_WIDTH__MODE", (reg_value | ((0 << 7) | (0 << 0))) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_40_TILES_WIDTH_MODE", (reg_value | ((1 << 7) | (1 << 0))) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "SET_40_TILES_WIDTH__MODE", (reg_value | ((1 << 7) | (1 << 0))) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SHADOW_HIGHLIGHT_MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SHADOW_HIGHLIGHT__MODE", (reg_value | (1 /*SET*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SHADOW_HIGHLIGHT_MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_SHADOW_HIGHLIGHT__MODE", (reg_value | (0 /*CLEAR*/ << 3 /*BIT 3*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "NO_INTERLACE_MODE", (reg_value | (0 /*00*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "NO_INTERLACE__MODE", (reg_value | (0 /*00*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SIMPLE_INTERLACE_MODE", (reg_value | (1 /*01*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SIMPLE_INTERLACE__MODE", (reg_value | (1 /*01*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DOUBLE_INTERLACE_MODE", (reg_value | (3 /*11*/ << 1)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_DOUBLE_INTERLACE__MODE", (reg_value | (3 /*11*/ << 1)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXTERNAL_PIXEL_BUS", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_EXTERNAL_PIXEL__BUS", (reg_value | (1 /*SET*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXTERNAL_PIXEL_BUS", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DISABLE_EXTERNAL_PIXEL__BUS", (reg_value | (0 /*CLEAR*/ << 4 /*BIT 4*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	add_enum_member_with_mask(vdp_regs_send_enum, "DO_PIXEL_CLOCK_INSTEAD_OF_VSYNC", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DO_PIXEL_CLOCK_INSTEAD_OF__VSYNC", (reg_value | (1 /*SET*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DO_VSYNC_INSTEAD_OF_PIXEL_CLOCK", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "DO_VSYNC_INSTEAD_OF_PIXEL__CLOCK", (reg_value | (0 /*CLEAR*/ << 6 /*BIT 6*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0D /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0D
+	for (int i = 0; i < (1 << 6); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_HSCROLL_DATA_ADDR_0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_HSCROLL_DATA_ADDR__0x%.4X", i * 0x400);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
 	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
 	for (int i = 0; i < (1 << 8); i++)
 	{
