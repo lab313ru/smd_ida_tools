@@ -420,12 +420,37 @@ static void add_vdp_regs_send_enum(enum_t vdp_regs_send_enum)
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 
-	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
-	for (int i = 0; i < 0x100; i++)
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 6 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $06
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES_REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 0, 0x9FFF /*10?XXXXX11111111*/);
+	add_enum_member_with_mask(vdp_regs_send_enum, "ENABLE_SPRITES__REBASE", (reg_value | (1 /*SET*/ << 5 /*BIT 5*/)) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 7 /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $07
+	for (int xx = 0; xx < (1 << 2); xx++)
 	{
-		qsnprintf(buf, sizeof(buf), "VDP_AUTO_INC_VALUE_0x%.2X", i);
+		for (int yyyy = 0; yyyy < (1 << 4); yyyy++)
+		{
+			qsnprintf(buf, sizeof(buf), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+			add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | ((xx << 4) | yyyy) /*00XXYYYY*/) << 0, 0x9FFF /*10?XXXXX11111111*/);
+			qsnprintf(buf, sizeof(buf), "SET_BG_AS__%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+			add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | ((xx << 4) | yyyy) /*00XXYYYY*/) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+		}
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0A /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0A
+	for (int i = 0; i < (1 << 8); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_HBLANK_COUNTER_VALUE_0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
-		qsnprintf(buf, sizeof(buf), "VDP_AUTO_INC_VALUE__0x%.2X", i);
+		qsnprintf(buf, sizeof(buf), "SET_HBLANK_COUNTER_VALUE__0x%.2X", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
+	}
+
+	reg_value = (((2/*10*/ << 1 /*ANY BIT*/) << 5 /*REG NUM BITS*/) | 0x0F /*REG IDX*/) << 8 /*REG SEND DATA BITS*/; // REG $0F
+	for (int i = 0; i < (1 << 8); i++)
+	{
+		qsnprintf(buf, sizeof(buf), "SET_VDP_AUTO_INC_VALUE_0x%.2X", i);
+		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 0, 0x9FFF /*10?XXXXX11111111*/);
+		qsnprintf(buf, sizeof(buf), "SET_VDP_AUTO_INC_VALUE__0x%.2X", i);
 		add_enum_member_with_mask(vdp_regs_send_enum, buf, (reg_value | i) << 16, 0x9FFF /*10?XXXXX11111111*/ << 16);
 	}
 }
