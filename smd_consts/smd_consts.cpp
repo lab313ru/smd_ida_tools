@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.1"
+#define VERSION "1.0.2"
 /*
 *      SEGA MEGA DRIVE/GENESIS constants identifier plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -17,7 +17,8 @@
 #include <loader.hpp>
 #include <kernwin.hpp>
 
-static const char format[] = "Sega Genesis/Megadrive constants identifier plugin v%s;\nAuthor: Dr. MefistO [Lab 313] <meffi@lab313.ru>.";
+static const char format[] = "Sega Genesis/Megadrive constants identifier plugin v%s;\nAuthor: Dr. MefistO [Lab 313] <meffi@lab313.ru>.\n";
+static const char wrong_vdp_cmd[] = "Wrong command to send to VDP_CTRL!\n";
 
 //--------------------------------------------------------------------------
 static void print_version()
@@ -43,11 +44,60 @@ static unsigned int mask(unsigned char bit_idx, unsigned char bits_cnt = 1)
 	return (((1 << bits_cnt) - 1) << bit_idx);
 }
 
+//--------------------------------------------------------------------------
 static bool is_vdp_send_cmd(uval_t val)
 {
-	return (((val & 0x9F00) >= 0x8000) && ((val & 0x9F00) <= 0x9700)) || (((val & 0x9F000000) >= 0x80000000) && ((val & 0x9F000000) <= 0x97000000));
+	if (val & 0xFFFF0000)
+	{
+		return ((val & 0x9F000000) >= 0x80000000) && ((val & 0x9F000000) <= 0x97000000);
+	}
+	else
+	{
+		return ((val & 0x9F00) >= 0x8000) && ((val & 0x9F00) <= 0x9700);
+	}
 }
 
+//--------------------------------------------------------------------------
+static bool is_vdp_rw_cmd(uval_t val)
+{
+	if (val & 0xFFFF0000) // command was sended by one dword
+	{
+		switch ((val >> 24) & mask(6, 2))
+		{
+		case 0 /*00*/ << 6:
+		case 1 /*01*/ << 6:
+		case 3 /*11*/ << 6:
+		{
+			switch ((val & 0xFF) & mask(4, 2))
+			{
+			case 0 /*00*/ << 4:
+			case 1 /*01*/ << 4:
+			case 2 /*10*/ << 4:
+			{
+				return true;
+			}
+			}
+			return false;
+		}
+		}
+		return false;
+	}
+	else // command was sended by halfs (this is high word of it)
+	{
+		switch ((val >> 8) & mask(6, 2))
+		{
+		case 0 /*00*/ << 6:
+		case 1 /*01*/ << 6:
+		case 3 /*11*/ << 6:
+		{
+			return true;
+		}
+		}
+		return false;
+	}
+}
+
+//--------------------------------------------------------------------------
 static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 {
 	if (!val) return false;
@@ -74,8 +124,8 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 	}
 	case 0x8100:
 	{
-		if (val & mask(2))	append_cmt(ea, "GENESIS_DISP_MODE", false);
-		else append_cmt(ea, "SMS_DISP_MODE", false);
+		if (val & mask(2))	append_cmt(ea, "GENESIS_DISPLAY_MODE_BIT2", false);
+		else append_cmt(ea, "SMS_DISPLAY_MODE_BIT2", false);
 
 		if (val & mask(3))	append_cmt(ea, "SET_PAL_MODE", false);
 		else append_cmt(ea, "SET_NTSC_MODE", false);
@@ -89,8 +139,8 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 		if (val & mask(6))	append_cmt(ea, "ENABLE_DISPLAY", false);
 		else append_cmt(ea, "DISABLE_DISPLAY", false);
 
-		if (val & mask(7))	append_cmt(ea, "TMS9918_DISP_MODE", false);
-		else append_cmt(ea, "GENESIS__DISP_MODE", false);
+		if (val & mask(7))	append_cmt(ea, "TMS9918_DISPLAY_MODE_BIT7", false);
+		else append_cmt(ea, "GENESIS_DISPLAY_MODE_BIT7", false);
 
 		return true;
 	}
@@ -299,7 +349,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 	}
 	default:
 	{
-		msg("Wrong command to send to VDP Control!\n");
+		msg(wrong_vdp_cmd);
 		return false;
 	}
 	}
@@ -352,34 +402,119 @@ static void do_cmt_sr_ccr_reg_const(ea_t ea, uval_t val)
 }
 
 //--------------------------------------------------------------------------
+static void do_cmt_vdp_rw_command(ea_t ea, uval_t val)
+{
+	char name[250];
+
+	if (val & 0xFFFF0000) // command was sended by one dword
+	{
+		unsigned int addr = ((val & mask(0, 2)) << 14) | ((val & mask(16, 14)) >> 16);
+
+		switch ((val >> 24) & mask(6))
+		{
+		case 0 << 6: // read operation
+		{
+			switch (val & ((1 << 31) | (1 << 5) | (1 << 4)))
+			{
+			case ((0 << 31) | (0 << 5) | (0 << 4)) /*000*/ : // VRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_READ_VRAM_FROM_$%.4X", addr);
+				append_cmt(ea, name, false);
+			} break;
+			case ((0 << 31) | (0 << 5) | (1 << 4)) /*001*/ : // VSRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_READ_VSRAM_FROM_$%.4X", addr);
+				append_cmt(ea, name, false);
+			} break;
+			case ((0 << 31) | (1 << 5) | (0 << 4)) /*010*/ : // CRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_READ_CRAM_FROM_$%.4X", addr);
+				append_cmt(ea, name, false);
+			} break;
+			default:
+			{
+				msg(wrong_vdp_cmd);
+			} break;
+			}
+		} break;
+		case 1 << 6: // write operation
+		{
+			switch (val & ((1 << 31) | (1 << 5) | (1 << 4)))
+			{
+			case ((0 << 31) | (0 << 5) | (0 << 4)) /*000*/ : // VRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_WRITE_TO_VRAM_AT_$%.4X_ADDR", addr);
+				append_cmt(ea, name, false);
+			} break;
+			case ((0 << 31) | (0 << 5) | (1 << 4)) /*001*/ : // VSRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_WRITE_TO_VSRAM_AT_$%.4X_ADDR", addr);
+				append_cmt(ea, name, false);
+			} break;
+			case ((1 << 31) | (0 << 5) | (0 << 4)) /*100*/ : // CRAM
+			{
+				qsnprintf(name, sizeof(name), "DO_WRITE_TO_CRAM_AT_$%.4X_ADDR", addr);
+				append_cmt(ea, name, false);
+			} break;
+			default:
+			{
+				msg(wrong_vdp_cmd);
+			} break;
+			}
+		} break;
+		default:
+		{
+			msg(wrong_vdp_cmd);
+		} break;
+		}
+	}
+	else // command was sended by halfs (this is high word of it)
+	{
+		switch ((val >> 8) & mask(6, 2))
+		{
+		case 0 /*00*/ << 6: append_cmt(ea, "VRAM_OR_VSRAM_OR_CRAM_READ_MODE", false); break;
+		case 1 /*01*/ << 6: append_cmt(ea, "VRAM_OR_VSRAM_WRITE_MODE", false); break;
+		case 3 /*11*/ << 6: append_cmt(ea, "CRAM_WRITE_MODE", false); break;
+		}
+	}
+
+	if (val & mask(6)) append_cmt(ea, "VRAM_COPY_DMA_MODE", false);
+
+	if (val & mask(7)) append_cmt(ea, "DO_OPERATION_USING_DMA", false);
+	else append_cmt(ea, "DO_OPERATION_WITHOUT_DMA", false);
+}
+
+//--------------------------------------------------------------------------
 void idaapi run(int /*arg*/)
 {
 	char name[250];
 	ea_t ea = get_screen_ea();
 	if (isEnabled(ea)) // address belongs to disassembly
 	{
-		if (get_cmt(ea, false, name, sizeof(name)) != -1)
+		if (get_cmt(ea, false, name, sizeof(name)) != -1) // remove previous comment and exit
 		{
 			set_cmt(ea, "", false);
 			return;
 		}
 
 		ua_ana0(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
+		ua_outop(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
+		tag_remove(name, name, sizeof(name));
 
-		if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg)
+		uval_t value = 0;
+		get_operand_immvals(ea, 0, &value);
+		if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg && !qstrcmp(name, "sr"))
 		{
-			ua_outop(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
-			tag_remove(name, name, sizeof(name));
-
-			if (!qstrcmp(name, "sr")) // SR register
-			{
-				do_cmt_sr_ccr_reg_const(ea, cmd.Operands[0].value);
-			}
+			do_cmt_sr_ccr_reg_const(ea, value);
 		}
-		else if (is_vdp_send_cmd(cmd.Operands[0].value)) // comment set vdp reg cmd
+		else if (is_vdp_rw_cmd(value))
 		{
-			do_cmt_vdp_reg_const(ea, cmd.Operands[0].value);
-			do_cmt_vdp_reg_const(ea, cmd.Operands[0].value >> 16);
+			do_cmt_vdp_rw_command(ea, value);
+		}
+		else if (is_vdp_send_cmd(value)) // comment set vdp reg cmd
+		{
+			do_cmt_vdp_reg_const(ea, value);
+			do_cmt_vdp_reg_const(ea, value >> 16);
 			return;
 		}
 	}
