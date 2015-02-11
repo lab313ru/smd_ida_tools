@@ -39,11 +39,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>d:\ida66\plugins\</OutDir>
+    <OutDir>d:\ida65\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>d:\ida66\plugins\</OutDir>
+    <OutDir>d:\ida65\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -64,6 +64,7 @@
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
+      <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,7 +90,7 @@
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
-      <AdditionalOptions>/EXPORT:PLUGIN %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

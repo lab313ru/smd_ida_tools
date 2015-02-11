@@ -41,11 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>d:\ida66\loaders\</OutDir>
+    <OutDir>d:\ida65\loaders\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>d:\ida66\loaders\</OutDir>
+    <OutDir>d:\ida65\loaders\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
