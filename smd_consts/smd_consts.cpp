@@ -177,9 +177,9 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 
 		switch (val & mask(1, 2))
 		{
-		case 0 /*00*/: append_cmt(ea, "NO_INTERLACE_MODE", false); break;
-		case 1 /*01*/: append_cmt(ea, "ENABLE_SIMPLE_INTERLACE_MODE", false); break;
-		case 3 /*11*/: append_cmt(ea, "ENABLE_DOUBLE_INTERLACE_MODE", false); break;
+		case 0 /*00*/ << 1: append_cmt(ea, "NO_INTERLACE_MODE", false); break;
+		case 1 /*01*/ << 1: append_cmt(ea, "ENABLE_SIMPLE_INTERLACE_MODE", false); break;
+		case 3 /*11*/ << 1: append_cmt(ea, "ENABLE_DOUBLE_INTERLACE_MODE", false); break;
 		}
 
 		if (val & mask(4)) append_cmt(ea, "ENABLE_EXTERNAL_PIXEL_BUS", false);
@@ -225,9 +225,9 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 
 		switch (val & mask(4, 2))
 		{
-		case 0 /*00*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", false); break;
-		case 1 /*01*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", false); break;
-		case 3 /*11*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", false); break;
+		case 0 /*00*/ << 4: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", false); break;
+		case 1 /*01*/ << 4: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", false); break;
+		case 3 /*11*/ << 4: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", false); break;
 		}
 
 		return true;
@@ -291,8 +291,8 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 
 		switch (val & mask(6, 2))
 		{
-		case 2 /*10*/: append_cmt(ea, "SET_VRAM_FILL_DMA_MODE", false); break;
-		case 3 /*11*/: append_cmt(ea, "SET_VRAM_COPY_DMA_MODE", false); break;
+		case 2 /*10*/ << 6: append_cmt(ea, "SET_VRAM_FILL_DMA_MODE", false); break;
+		case 3 /*11*/ << 6: append_cmt(ea, "SET_VRAM_COPY_DMA_MODE", false); break;
 		}
 
 		return true;
@@ -337,17 +337,17 @@ static void do_cmt_sr_ccr_reg_const(ea_t ea, uval_t val)
 
 	switch ((val & mask(8, 3)))
 	{
-	case 0x700 /*11100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS", false); break;
-	case 0x600 /*11000000000*/: append_cmt(ea, "ENABLE_NO_INTERRUPTS", false); break;
+	case 0x7 /*111*/ << 8: append_cmt(ea, "DISABLE_ALL_INTERRUPTS", false); break;
+	case 0x6 /*110*/ << 8: append_cmt(ea, "ENABLE_NO_INTERRUPTS", false); break;
 
-	case 0x500 /*10100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", false); break;
-	case 0x400 /*10000000000*/: append_cmt(ea, "ENABLE_ONLY_VBLANK_INTERRUPT", false); break;
+	case 0x5 /*101*/ << 8: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", false); break;
+	case 0x4 /*100*/ << 8: append_cmt(ea, "ENABLE_ONLY_VBLANK_INTERRUPT", false); break;
 
-	case 0x300 /*01100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", false); break;
-	case 0x200 /*01000000000*/: append_cmt(ea, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", false); break;
+	case 0x3 /*011*/ << 8: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", false); break;
+	case 0x2 /*010*/ << 8: append_cmt(ea, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", false); break;
 
-	case 0x100 /*00100000000*/: append_cmt(ea, "DISABLE_NO_INTERRUPTS", false); break;
-	case 0x000 /*00000000000*/: append_cmt(ea, "ENABLE_ALL_INTERRUPTS", false); break;
+	case 0x1 /*001*/ << 8: append_cmt(ea, "DISABLE_NO_INTERRUPTS", false); break;
+	case 0x0 /*000*/ << 8: append_cmt(ea, "ENABLE_ALL_INTERRUPTS", false); break;
 	}
 }
 
