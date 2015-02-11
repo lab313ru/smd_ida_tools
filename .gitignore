@@ -7,19 +7,29 @@
 *.sln.docstates
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-x64/
-bld/
-[Bb]in/
-[Oo]bj/
+smd_consts/[Dd]ebug/
+smd_loader/[Dd]ebug/
+smd_consts/[Dd]ebugPublic/
+smd_loader/[Dd]ebugPublic/
+smd_consts/[Rr]elease/
+smd_loader/[Rr]elease/
+smd_consts/x64/
+smd_loader/x64/
+smd_consts/bld/
+smd_loader/bld/
+smd_consts/[Bb]in/
+smd_loader/[Bb]in/
+smd_consts/[Oo]bj/
+smd_loader/[Oo]bj/
 
 # Roslyn cache directories
-*.ide/
+smd_consts/*.ide/
+smd_loader/*.ide/
 
 # MSTest test Results
-[Tt]est[Rr]esult*/
+smd_consts/[Tt]est[Rr]esult*/
+smd_loader/[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
 [Bb]uild[Ll]og.*
 
 #NUNIT
@@ -27,8 +37,10 @@ bld/
 TestResult.xml
 
 # Build Results of an ATL Project
-[Dd]ebugPS/
-[Rr]eleasePS/
+smd_consts/[Dd]ebugPS/
+smd_loader/[Dd]ebugPS/
+smd_consts/[Rr]eleasePS/
+smd_loader/[Rr]eleasePS/
 dlldata.c
 
 *_i.c
@@ -60,7 +72,8 @@ dlldata.c
 _Chutzpah*
 
 # Visual C++ cache files
-ipch/
+smd_consts/ipch/
+smd_loader/ipch/
 *.aps
 *.ncb
 *.opensdf
@@ -73,13 +86,15 @@ ipch/
 *.vspx
 
 # TFS 2012 Local Workspace
-$tf/
+smd_consts/$tf/
+smd_loader/$tf/
 
 # Guidance Automation Toolkit
 *.gpState
 
 # ReSharper is a .NET coding add-in
-_ReSharper*/
+smd_consts/_ReSharper*/
+smd_loader/_ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
@@ -98,26 +113,38 @@ _NCrunch_*
 
 # MightyMoose
 *.mm.*
-AutoTest.Net/
+smd_consts/AutoTest.Net/
+smd_loader/AutoTest.Net/
 
 # Web workbench (sass)
-.sass-cache/
+smd_consts/.sass-cache/
+smd_loader/.sass-cache/
 
 # Installshield output folder
-[Ee]xpress/
+smd_consts/[Ee]xpress/
+smd_loader/[Ee]xpress/
 
 # DocProject is a documentation generator add-in
-DocProject/buildhelp/
-DocProject/Help/*.HxT
-DocProject/Help/*.HxC
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/Html2
-DocProject/Help/html
+smd_consts/DocProject/buildhelp/
+smd_loader/DocProject/buildhelp/
+smd_consts/DocProject/Help/*.HxT
+smd_loader/DocProject/Help/*.HxT
+smd_consts/DocProject/Help/*.HxC
+smd_loader/DocProject/Help/*.HxC
+smd_consts/DocProject/Help/*.hhc
+smd_loader/DocProject/Help/*.hhc
+smd_consts/DocProject/Help/*.hhk
+smd_loader/DocProject/Help/*.hhk
+smd_consts/DocProject/Help/*.hhp
+smd_loader/DocProject/Help/*.hhp
+smd_consts/DocProject/Help/Html2
+smd_loader/DocProject/Help/Html2
+smd_consts/DocProject/Help/html
+smd_loader/DocProject/Help/html
 
 # Click-Once directory
-publish/
+smd_consts/publish/
+smd_loader/publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml
@@ -128,7 +155,8 @@ publish/
 #*.pubxml
 
 # NuGet Packages Directory
-packages/*
+smd_consts/packages/*
+smd_loader/packages/*
 ## TODO: If the tool you use requires repositories.config
 ## uncomment the next line
 #!packages/repositories.config
@@ -140,16 +168,20 @@ packages/*
 !packages/build/
 
 # Windows Azure Build Output
-csx/
+smd_consts/csx/
+smd_loader/csx/
 *.build.csdef
 
 # Windows Store app package directory
-AppPackages/
+smd_consts/AppPackages/
+smd_loader/AppPackages/
 
 # Others
-sql/
+smd_consts/sql/
+smd_loader/sql/
 *.Cache
-ClientBin/
+smd_consts/ClientBin/
+smd_loader/ClientBin/
 [Ss]tyle[Cc]op.*
 ~$*
 *~
@@ -157,16 +189,20 @@ ClientBin/
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
-node_modules/
+smd_consts/node_modules/
+smd_loader/node_modules/
 
 # RIA/Silverlight projects
-Generated_Code/
+smd_consts/Generated_Code/
+smd_loader/Generated_Code/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,
 # because we have git ;-)
-_UpgradeReport_Files/
-Backup*/
+smd_consts/_UpgradeReport_Files/
+smd_loader/_UpgradeReport_Files/
+smd_consts/Backup*/
+smd_loader/Backup*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 
@@ -180,11 +216,14 @@ UpgradeLog*.htm
 *.bim_*.settings
 
 # Microsoft Fakes
-FakesAssemblies/
+smd_consts/FakesAssemblies/
+smd_loader/FakesAssemblies/
 
 # LightSwitch generated files
-GeneratedArtifacts/
-_Pvt_Extensions/
+smd_consts/GeneratedArtifacts/
+smd_loader/GeneratedArtifacts/
+smd_consts/_Pvt_Extensions/
+smd_loader/_Pvt_Extensions/
 ModelManifest.xml
 
 # Other extensions
