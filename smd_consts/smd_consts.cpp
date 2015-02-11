@@ -1,12 +1,34 @@
+/*
+*      Interactive disassembler (IDA).
+*      Copyright (c) 1990-2000 by Ilfak Guilfanov, <ig@datarescue.com>
+*      ALL RIGHTS RESERVED.
+*
+*/
+
+#define VERSION "1.0.0"
+/*
+*      SEGA MEGA DRIVE/GENESIS constants identifier plugin
+*      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
+*/
+
 #include <ida.hpp>
 #include <idp.hpp>
 #include <bytes.hpp>
 #include <loader.hpp>
 #include <kernwin.hpp>
 
+static const char format[] = "Sega Genesis/Megadrive constants identifier plugin v%s;\nAuthor: Dr. MefistO [Lab 313] <meffi@lab313.ru>.";
+
+//--------------------------------------------------------------------------
+static void print_version()
+{
+	msg(format, VERSION);
+}
+
 //--------------------------------------------------------------------------
 int idaapi init(void)
 {
+	print_version();
 	return PLUGIN_OK;
 }
 
