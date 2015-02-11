@@ -356,8 +356,14 @@ void idaapi run(int /*arg*/)
 {
 	char name[250];
 	ea_t ea = get_screen_ea();
-	if (isEnabled(ea) && (get_cmt(ea, false, name, sizeof(name)) == -1)) // address belongs to disassembly
+	if (isEnabled(ea)) // address belongs to disassembly
 	{
+		if (get_cmt(ea, false, name, sizeof(name)) != -1)
+		{
+			set_cmt(ea, "", false);
+			return;
+		}
+
 		ua_ana0(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
 
 		if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg)
