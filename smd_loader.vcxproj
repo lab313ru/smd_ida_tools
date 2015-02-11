@@ -76,7 +76,7 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>d:\idasdk66\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <PreprocessorDefinitions>__NT__;__IDP__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <CallingConvention>StdCall</CallingConvention>
