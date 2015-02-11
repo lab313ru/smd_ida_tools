@@ -1,0 +1,400 @@
+#include <ida.hpp>
+#include <idp.hpp>
+#include <bytes.hpp>
+#include <loader.hpp>
+#include <kernwin.hpp>
+
+//--------------------------------------------------------------------------
+int idaapi init(void)
+{
+	return PLUGIN_OK;
+}
+
+//--------------------------------------------------------------------------
+void idaapi term(void)
+{
+}
+
+//--------------------------------------------------------------------------
+static unsigned int mask(unsigned char bit_idx, unsigned char bits_cnt = 1)
+{
+	return (((1 << bits_cnt) - 1) << bit_idx);
+}
+
+static bool is_vdp_send_cmd(uval_t val)
+{
+	return (((val & 0x9F00) >= 0x8000) && ((val & 0x9F00) <= 0x9700)) || (((val & 0x9F000000) >= 0x80000000) && ((val & 0x9F000000) <= 0x97000000));
+}
+
+static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
+{
+	if (!val) return false;
+
+	char name[250];
+	unsigned int addr = 0;
+	switch (val & 0x9F00)
+	{
+	case 0x8000:
+	{
+		if (val & mask(0))	append_cmt(ea, "DISPLAY_OFF", false);
+		else append_cmt(ea, "DISPLAY_ON", false);
+
+		if (val & mask(1))	append_cmt(ea, "PAUSE_HV_WHEN_EXT_INT", false);
+		else append_cmt(ea, "NORMAL_HV_COUNTER", false);
+
+		if (val & mask(2))	append_cmt(ea, "EIGHT_COLORS_MODE", false);
+		else append_cmt(ea, "FULL_COLORS_MODE", false);
+
+		if (val & mask(4))	append_cmt(ea, "ENABLE_HBLANK", false);
+		else append_cmt(ea, "DISABLE_HBLANK", false);
+
+		return true;
+	}
+	case 0x8100:
+	{
+		if (val & mask(2))	append_cmt(ea, "GENESIS_DISP_MODE", false);
+		else append_cmt(ea, "SMS_DISP_MODE", false);
+
+		if (val & mask(3))	append_cmt(ea, "SET_PAL_MODE", false);
+		else append_cmt(ea, "SET_NTSC_MODE", false);
+
+		if (val & mask(4))	append_cmt(ea, "ENABLE_DMA", false);
+		else append_cmt(ea, "DISABLE_DMA", false);
+
+		if (val & mask(5))	append_cmt(ea, "ENABLE_VBLANK", false);
+		else append_cmt(ea, "DISABLE_VBLANK", false);
+
+		if (val & mask(6))	append_cmt(ea, "ENABLE_DISPLAY", false);
+		else append_cmt(ea, "DISABLE_DISPLAY", false);
+
+		if (val & mask(7))	append_cmt(ea, "TMS9918_DISP_MODE", false);
+		else append_cmt(ea, "GENESIS__DISP_MODE", false);
+
+		return true;
+	}
+	case 0x8200:
+	{
+		addr = (val & mask(3, 3));
+		qsnprintf(name, sizeof(name), "SET_PLANE_A_ADDR_$%.4X", addr * 0x400);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x8300:
+	{
+		addr = (val & mask(3, 3));
+		qsnprintf(name, sizeof(name), "SET_WINDOW_PLANE_ADDR_$%.4X", addr * 0x400);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x8400:
+	{
+		addr = (val & mask(0, 3));
+		qsnprintf(name, sizeof(name), "SET_PLANE_B_ADDR_$%.4X", addr * 0x2000);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x8500:
+	{
+		addr = (val & mask(0, 7));
+		qsnprintf(name, sizeof(name), "SET_SPRITE_TBL_ADDR_$%.4X", addr * 0x200);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x8600:
+	{
+		if (val & mask(5))	append_cmt(ea, "ENABLE_SPRITES_REBASE", false);
+		else append_cmt(ea, "DISABLE_SPRITES_REBASE", false);
+
+		return true;
+	}
+	case 0x8700:
+	{
+		unsigned int xx = (val & mask(4, 2));
+		unsigned int yyyy = (val & mask(0, 4));
+
+		qsnprintf(name, sizeof(name), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+		append_cmt(ea, name, false);
+
+		return true;
+	}
+	case 0x8A00:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_HBLANK_COUNTER_VALUE_$%.4X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	} break;
+	case 0x8B00:
+	{
+		switch (val & mask(0, 2))
+		{
+		case 0 /*00*/: append_cmt(ea, "SET_HSCROLL_TYPE_AS_FULLSCREEN", false); break;
+		case 1 /*01*/: append_cmt(ea, "SET_HSCROLL_TYPE_AS_LINE_SCROLL", false); break;
+		case 2 /*10*/: append_cmt(ea, "SET_HSCROLL_TYPE_AS_CELL_SCROLL", false); break;
+		case 3 /*11*/: append_cmt(ea, "SET_HSCROLL_TYPE_AS_LINE__SCROLL", false); break;
+		}
+
+		if (val & mask(2))	append_cmt(ea, "_2CELLS_COLUMN_VSCROLL_MODE", false);
+		else append_cmt(ea, "FULLSCREEN_VSCROLL_MODE", false);
+
+		if (val & mask(3))	append_cmt(ea, "ENABLE_EXT_INTERRUPT", false);
+		else append_cmt(ea, "DISABLE_EXT_INTERRUPT", false);
+
+		return true;
+	}
+	case 0x8C00:
+	{
+		switch (val & 0x81)
+		{
+		case 0 /*0XXXXXX0*/: append_cmt(ea, "SET_40_TILES_WIDTH_MODE", false); break;
+		case 0x81 /*1XXXXXX1*/: append_cmt(ea, "SET_32_TILES_WIDTH_MODE", false); break;
+		}
+
+		if (val & mask(3)) append_cmt(ea, "ENABLE_SHADOW_HIGHLIGHT_MODE", false);
+		else append_cmt(ea, "DISABLE_SHADOW_HIGHLIGHT_MODE", false);
+
+		switch (val & mask(1, 2))
+		{
+		case 0 /*00*/: append_cmt(ea, "NO_INTERLACE_MODE", false); break;
+		case 1 /*01*/: append_cmt(ea, "ENABLE_SIMPLE_INTERLACE_MODE", false); break;
+		case 3 /*11*/: append_cmt(ea, "ENABLE_DOUBLE_INTERLACE_MODE", false); break;
+		}
+
+		if (val & mask(4)) append_cmt(ea, "ENABLE_EXTERNAL_PIXEL_BUS", false);
+		else append_cmt(ea, "DISABLE_EXTERNAL_PIXEL_BUS", false);
+
+		if (val & mask(6)) append_cmt(ea, "DO_PIXEL_CLOCK_INSTEAD_OF_VSYNC", false);
+		else append_cmt(ea, "DO_VSYNC_INSTEAD_OF_PIXEL_CLOCK", false);
+
+		return true;
+	}
+	case 0x8D00:
+	{
+		addr = (val & mask(0, 6));
+		qsnprintf(name, sizeof(name), "SET_HSCROLL_DATA_ADDR_$%.4X", addr * 0x400);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x8E00:
+	{
+		if (val & mask(0))	append_cmt(ea, "ENABLE_PLANE_A_REBASE", false);
+		else append_cmt(ea, "DISABLE_PLANE_A_REBASE", false);
+
+		if (val & mask(4))	append_cmt(ea, "ENABLE_PLANE_B_REBASE", false);
+		else append_cmt(ea, "DISABLE_PLANE_B_REBASE", false);
+
+		return true;
+	}
+	case 0x8F00:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_VDP_AUTO_INC_VALUE_$%.4X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9000:
+	{
+		switch (val & mask(0, 2))
+		{
+		case 0 /*00*/: append_cmt(ea, "SET_PLANEA_PLANEB_WIDTH_TO_32_TILES", false); break;
+		case 1 /*01*/: append_cmt(ea, "SET_PLANEA_PLANEB_WIDTH_TO_64_TILES", false); break;
+		case 3 /*11*/: append_cmt(ea, "SET_PLANEA_PLANEB_WIDTH_TO_128_TILES", false); break;
+		}
+
+		switch (val & mask(4, 2))
+		{
+		case 0 /*00*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_32_TILES", false); break;
+		case 1 /*01*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_64_TILES", false); break;
+		case 3 /*11*/: append_cmt(ea, "SET_PLANEA_PLANEB_HEIGHT_TO_128_TILES", false); break;
+		}
+
+		return true;
+	}
+	case 0x9100:
+	{
+		if (val & mask(7)) append_cmt(ea, "MOVE_WINDOW_HORZ_RIGHT", false);
+		else append_cmt(ea, "MOVE_WINDOW_HORZ_LEFT", false);
+
+		addr = (val & mask(0, 5));
+		qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9200:
+	{
+		if (val & mask(7)) append_cmt(ea, "MOVE_WINDOW_VERT_RIGHT", false);
+		else append_cmt(ea, "MOVE_WINDOW_VERT_LEFT", false);
+
+		addr = (val & mask(0, 5));
+		qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9300:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9400:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_HIGHER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9500:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9600:
+	{
+		addr = (val & mask(0, 8));
+		qsnprintf(name, sizeof(name), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+		append_cmt(ea, name, false);
+		return true;
+	}
+	case 0x9700:
+	{
+		addr = (val & mask(0, 6));
+		qsnprintf(name, sizeof(name), "SET_HIGH_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+		append_cmt(ea, name, false);
+
+		if (val & mask(7)) append_cmt(ea, "ADD_$800000_TO_DMA_SRC_ADDR", false);
+		else append_cmt(ea, "SET_COPY_M68K_TO_VRAM_DMA_MODE", false);
+
+		switch (val & mask(6, 2))
+		{
+		case 2 /*10*/: append_cmt(ea, "SET_VRAM_FILL_DMA_MODE", false); break;
+		case 3 /*11*/: append_cmt(ea, "SET_VRAM_COPY_DMA_MODE", false); break;
+		}
+
+		return true;
+	}
+	default:
+	{
+		msg("Wrong command to send to VDP Control!\n");
+		return false;
+	}
+	}
+}
+
+//--------------------------------------------------------------------------
+static void do_cmt_sr_ccr_reg_const(ea_t ea, uval_t val)
+{
+	if (val & mask(4)) append_cmt(ea, "SET_X", false);
+	else append_cmt(ea, "CLR_X", false);
+
+	if (val & mask(3)) append_cmt(ea, "SET_N", false);
+	else append_cmt(ea, "CLR_N", false);
+
+	if (val & mask(2)) append_cmt(ea, "SET_Z", false);
+	else append_cmt(ea, "CLR_Z", false);
+
+	if (val & mask(1)) append_cmt(ea, "SET_V", false);
+	else append_cmt(ea, "CLR_V", false);
+
+	if (val & mask(0)) append_cmt(ea, "SET_C", false);
+	else append_cmt(ea, "CLR_C", false);
+
+	if (val & mask(15)) append_cmt(ea, "SET_T1", false);
+	else append_cmt(ea, "CLR_T1", false);
+
+	if (val & mask(14)) append_cmt(ea, "SET_T0", false);
+	else append_cmt(ea, "CLR_T0", false);
+
+	if (val & mask(13)) append_cmt(ea, "SET_SF", false);
+	else append_cmt(ea, "CLR_SF", false);
+
+	if (val & mask(12)) append_cmt(ea, "SET_MF", false);
+	else append_cmt(ea, "CLR_MF", false);
+
+	switch ((val & mask(8, 3)))
+	{
+	case 0x700 /*11100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS", false); break;
+	case 0x600 /*11000000000*/: append_cmt(ea, "ENABLE_NO_INTERRUPTS", false); break;
+
+	case 0x500 /*10100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK", false); break;
+	case 0x400 /*10000000000*/: append_cmt(ea, "ENABLE_ONLY_VBLANK_INTERRUPT", false); break;
+
+	case 0x300 /*01100000000*/: append_cmt(ea, "DISABLE_ALL_INTERRUPTS_EXCEPT_VBLANK_HBLANK", false); break;
+	case 0x200 /*01000000000*/: append_cmt(ea, "ENABLE_ONLY_VBLANK_HBLANK_INTERRUPTS", false); break;
+
+	case 0x100 /*00100000000*/: append_cmt(ea, "DISABLE_NO_INTERRUPTS", false); break;
+	case 0x000 /*00000000000*/: append_cmt(ea, "ENABLE_ALL_INTERRUPTS", false); break;
+	}
+}
+
+//--------------------------------------------------------------------------
+void idaapi run(int /*arg*/)
+{
+	char name[250];
+	ea_t ea = get_screen_ea();
+	if (isEnabled(ea) && (get_cmt(ea, false, name, sizeof(name)) == -1)) // address belongs to disassembly
+	{
+		decode_insn(ea);
+
+		if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg)
+		{
+			ua_outop2(ea, name, sizeof(name), 1);
+			tag_remove(name, name, sizeof(name));
+
+			if (!qstrcmp(name, "sr")) // SR register
+			{
+				do_cmt_sr_ccr_reg_const(ea, cmd.Operands[0].value);
+			}
+		}
+		else if (is_vdp_send_cmd(cmd.Operands[0].value)) // comment set vdp reg cmd
+		{
+			do_cmt_vdp_reg_const(ea, cmd.Operands[0].value);
+			do_cmt_vdp_reg_const(ea, cmd.Operands[0].value >> 16);
+			return;
+		}
+	}
+}
+
+//--------------------------------------------------------------------------
+static const char comment[] = "Identify SMD constant";
+static const char help[] = "Identify SMD constant\n";
+
+//--------------------------------------------------------------------------
+// This is the preferred name of the plugin module in the menu system
+// The preferred name may be overriden in plugins.cfg file
+
+static const char wanted_name[] = "Identify SMD constant";
+
+// This is the preferred hotkey for the plugin module
+// The preferred hotkey may be overriden in plugins.cfg file
+// Note: IDA won't tell you if the hotkey is not correct
+//       It will just disable the hotkey.
+
+static const char wanted_hotkey[] = "J";
+
+//--------------------------------------------------------------------------
+//
+//      PLUGIN DESCRIPTION BLOCK
+//
+//--------------------------------------------------------------------------
+plugin_t PLUGIN =
+{
+	IDP_INTERFACE_VERSION,
+	0,                    // plugin flags
+	init,                 // initialize
+
+	term,                 // terminate. this pointer may be NULL.
+
+	run,                  // invoke plugin
+
+	comment,              // long comment about the plugin
+	// it could appear in the status line
+	// or as a hint
+
+	help,                 // multiline help about the plugin
+
+	wanted_name,          // the preferred short name of the plugin
+	wanted_hotkey         // the preferred hotkey to run the plugin
+};
