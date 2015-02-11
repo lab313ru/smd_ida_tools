@@ -336,11 +336,11 @@ void idaapi run(int /*arg*/)
 	ea_t ea = get_screen_ea();
 	if (isEnabled(ea) && (get_cmt(ea, false, name, sizeof(name)) == -1)) // address belongs to disassembly
 	{
-		decode_insn(ea);
+		ua_ana0(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
 
 		if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg)
 		{
-			ua_outop2(ea, name, sizeof(name), 1);
+			ua_outop(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
 			tag_remove(name, name, sizeof(name));
 
 			if (!qstrcmp(name, "sr")) // SR register
