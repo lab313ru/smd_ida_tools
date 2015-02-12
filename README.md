@@ -1,5 +1,5 @@
-# ida_smd_loader
-Sega Genesis/Megadrive ROMs loader plugin for IDA Pro.
+# smd_ida_tools
+Special IDA Pro tools for the Sega Genesis/Megadrive romhackers.
 
 ## Supported versions of IDA Pro
 Tested work on v5.2, v6.6. Should work on other versions.
