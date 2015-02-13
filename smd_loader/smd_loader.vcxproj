@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <PreprocessorDefinitions>__NT__;__IDP__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>d:\idasdk66\include</AdditionalIncludeDirectories>
       <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
