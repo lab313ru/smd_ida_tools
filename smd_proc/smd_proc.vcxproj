@@ -63,6 +63,7 @@
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
+      <AdditionalOptions>/EXPORT:LPH </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,9 +89,17 @@
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
+      <AdditionalOptions>/EXPORT:LPH </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ana.cpp" />
+    <ClCompile Include="ins.cpp" />
+    <ClCompile Include="reg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ins.hpp" />
+    <ClInclude Include="m68k.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
