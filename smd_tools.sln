@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_loader", "smd_loader\sm
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_consts", "smd_consts\smd_consts.vcxproj", "{11B91D38-364D-4A0B-9721-5BC7F4BE553A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_proc", "smd_proc\smd_proc.vcxproj", "{6A957C7F-BD00-4590-A218-203EEAC32B80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{11B91D38-364D-4A0B-9721-5BC7F4BE553A}.Debug|Win32.Build.0 = Debug|Win32
 		{11B91D38-364D-4A0B-9721-5BC7F4BE553A}.Release|Win32.ActiveCfg = Release|Win32
 		{11B91D38-364D-4A0B-9721-5BC7F4BE553A}.Release|Win32.Build.0 = Release|Win32
+		{6A957C7F-BD00-4590-A218-203EEAC32B80}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6A957C7F-BD00-4590-A218-203EEAC32B80}.Debug|Win32.Build.0 = Debug|Win32
+		{6A957C7F-BD00-4590-A218-203EEAC32B80}.Release|Win32.ActiveCfg = Release|Win32
+		{6A957C7F-BD00-4590-A218-203EEAC32B80}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
