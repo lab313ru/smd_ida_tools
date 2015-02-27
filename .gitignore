@@ -9,6 +9,8 @@
 *.7z
 *.zip
 *.rar
-*.id*
+*.id0
+*.id1
+vc*.idb
 *.nam
 *.til
