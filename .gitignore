@@ -5,7 +5,6 @@
 *.exp
 
 # Other extensions
-*.bin
 *.7z
 *.zip
 *.rar
