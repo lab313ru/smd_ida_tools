@@ -94,10 +94,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ana.cpp" />
+    <ClCompile Include="desa68\desa68.c" />
     <ClCompile Include="ins.cpp" />
     <ClCompile Include="reg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="desa68\desa68.h" />
     <ClInclude Include="ins.hpp" />
     <ClInclude Include="m68k.hpp" />
   </ItemGroup>
