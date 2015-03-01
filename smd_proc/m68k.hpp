@@ -17,6 +17,9 @@ enum m68k_regs {
 	r_pc, r_ccr, r_sr, r_usp, r_sp, r_cs, r_ds
 };
 
+// specflag1 flags
+#define SPEC1_WSIZE 0x10
+
 int idaapi ana(void);
 
 #pragma pack()
