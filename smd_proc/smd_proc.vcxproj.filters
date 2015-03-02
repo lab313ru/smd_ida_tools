@@ -4,20 +4,9 @@
     <ClCompile Include="ins.cpp" />
     <ClCompile Include="reg.cpp" />
     <ClCompile Include="ana.cpp" />
-    <ClCompile Include="desa68\desa68.c">
-      <Filter>desa68</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ins.hpp" />
     <ClInclude Include="m68k.hpp" />
-    <ClInclude Include="desa68\desa68.h">
-      <Filter>desa68</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="desa68">
-      <UniqueIdentifier>{1c9811c6-6f2a-4067-a0b6-d445e86b5f80}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>
