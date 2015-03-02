@@ -157,6 +157,97 @@ static char set_dtype_op1_op2(char sz)
 	return sz + 1;
 }
 
+static void exchange_Op1_Op2()
+{
+	uchar n = cmd.Op1.n;
+	ea_t addr = cmd.Op1.addr;
+	ea_t specval = cmd.Op1.specval;
+	uchar flags = cmd.Op1.flags;
+	char specflag1 = cmd.Op1.specflag1;
+	uval_t value = cmd.Op1.value;
+
+	cmd.Op1.n = cmd.Op2.n;
+	cmd.Op1.flags = cmd.Op2.flags;
+	cmd.Op1.value = cmd.Op2.value;
+	cmd.Op1.addr = cmd.Op2.addr;
+	cmd.Op1.specval = cmd.Op2.specval;
+	cmd.Op1.specflag1 = cmd.Op2.specflag1;
+
+	cmd.Op2.n = n;
+	cmd.Op2.flags = addr;
+	cmd.Op2.value = value;
+	cmd.Op2.addr = addr;
+	cmd.Op2.specval = specval;
+	cmd.Op2.specflag1 = specflag1;
+
+	cmd.Op1.n = 0;
+	cmd.Op2.n = 1;
+}
+
+static uint16 check_desa_adda_suba(line *d)
+{
+	if (d->opsz != 3) return 0;
+
+	cmd.itype = ((d->line == 0xD) ? adda : suba);
+	cmd.Op2.reg += 8;
+
+	if (d->mode6 & 4)
+	{
+		cmd.Op1.dtyp = dt_dword;
+		cmd.Op2.dtyp = dt_dword;
+	}
+
+	return (get_ea_2(d->mode3, &cmd.Op1, d->reg0) ? cmd.size : 0);
+}
+
+static uint16 check_desa_addx_subx(line *d)
+{
+	if (d->mode6 < 4 && d->mode3 > 1) return 0;
+
+	cmd.itype = ((d->line == 0xD) ? addx : subx);
+	cmd.Op1.reg = d->reg0;
+	cmd.Op1.type = o_reg;
+	return cmd.size;
+}
+
+static uint16 check_desa_add_sub(line *d)
+{
+	if (!get_ea_2(d->mode3, &cmd.Op1, d->reg0)) return 0;
+	if (!(d->mode6 & 4)) return cmd.size;
+
+	exchange_Op1_Op2();
+	return cmd.size;
+}
+
+/**************
+*
+*   LINE 9 :
+*   -SUB, SUBX, SUBA
+*
+*   LINE D :
+*   -ADD, ADDX, ADDA
+*
+**************/
+
+static uint16 desa_line9D(line *d)
+{
+	cmd.Op2.type = o_reg;
+	cmd.Op2.reg = d->reg9;
+
+	uint16 adda_suba = check_desa_adda_suba(d);
+	if (adda_suba) return adda_suba;
+
+	set_dtype_op1_op2(d->opsz);
+
+	uint16 addx_subx = check_desa_addx_subx(d);
+	if (addx_subx) return addx_subx;
+
+	uint16 add_sub = check_desa_add_sub(d);
+	if (add_sub) return add_sub;
+
+	return 0;
+}
+
 /**************
 *
 *   LINE E :
@@ -225,6 +316,8 @@ int idaapi ana(void) {
 
 	switch (d.line)
 	{
+	case 0x9:
+	case 0xD: return desa_line9D(&d);
 	case 0xE: return desa_lineE(&d);
 	}
 
