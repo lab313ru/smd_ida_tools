@@ -3,7 +3,6 @@
 //
 
 #include "m68k.hpp"
-#include "desa68/desa68.h"
 #include <ua.hpp>
 
 enum adressingword
@@ -166,7 +165,7 @@ static char set_dtype_op1_op2(char sz)
 * Format Reg: 1110 VAL D SZ I TY RG0
 * Format Mem: 1110 0TY D 11 MODRG0
 ***************/
-static const char shift_regs[] = { 0x0A, 0x7A, 0xA4, 0xA2, 0x09, 0x79, 0xA3, 0xA1 };
+static const char shift_instr[] = { asr, lsr, roxr, ror, asl, lsl, roxl, rol };
 
 static uint16 desa_lineE(line *d)
 {
@@ -201,7 +200,7 @@ static uint16 desa_lineE(line *d)
 		}
 		shift_reg = (d->mode3 & 3);
 	}
-	cmd.itype = shift_regs[shift_reg | (d->mode6 & 4)];
+	cmd.itype = shift_instr[shift_reg | (d->mode6 & 4)];
 	return cmd.size;
 }
 
