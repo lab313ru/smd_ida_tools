@@ -1479,15 +1479,15 @@ static void message(void)
 int main(int na, char **a)
 {
 	FILE *f;
-	//u8 *b;
-	int l, i, nline = 50;
+	u8 *b;
+	int l, i, nline = 1;
 	static char s[256];
 
 	DESA68parm_t d;
 
 	message();
 
-	/*if (na < 2)
+	if (na < 2)
 	{
 	perror("No input file\n");
 	return 1;
@@ -1524,31 +1524,22 @@ int main(int na, char **a)
 	}
 	}
 
-	fclose(f);*/
+	fclose(f);
 
+	d.mem = b;
+	d.memmsk = 0xFFFFFF;
+	d.pc = 0;
+	d.str = s;
+
+	for (i = 0; i < nline; i++)
 	{
-		char b[1024];
-		b[0] = 0x32;
-		b[1] = 0x7C;
-		b[2] = 0x12;
-		b[3] = 0x34;
-		b[4] = 0x00;
-		b[5] = 0x01;
-
-		d.mem = b;
-		d.memmsk = 0xFFFFFF;
-		d.pc = 0;
-		d.str = s;
-
-		for (i = 0; i < nline; i++)
-		{
-			printf("%06X  ", d.pc);
-			desa68(&d);
-			printf("%s\n", d.str);
-		}
-
-		//free(b);
+		printf("%06X  ", d.pc);
+		desa68(&d);
+		printf("%s\n", d.str);
 	}
+
+	free(b);
+
 	return 0;
 }
 
