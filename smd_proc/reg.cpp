@@ -53,6 +53,52 @@ processor_t LPH =
 	NULL,//,
 
 	ana,
+	emu,
+
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	qnumber(RegNames),
+	RegNames,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+
+	r_cs,
+	r_ds,
+	0,
+	r_cs,
+	r_ds,
+
+	NULL,
+	NULL,
+
+	m68k_opcodes::null,
+	m68k_opcodes::last,
+	Instructions,
+
+	NULL,
+	NULL,
+	0,
+	NULL,
+	0, 0, 0, 0,
+	NULL, // is_switch
+	NULL,
+	NULL,
+	is_sp_based,
+	NULL,
+	NULL,
+	NULL,
+	gen_spcdef,
+	0,
+	NULL,
+	NULL,
+	0,
+	0
 };
 
 //-----------------------------------------------------------------------
