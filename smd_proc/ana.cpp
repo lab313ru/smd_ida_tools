@@ -30,8 +30,6 @@ typedef struct
 	int reg0;
 	int line;
 	int opsz;
-	int adrmode0;
-	int adrmode6;
 } line;
 
 #define REG0(W)		(((W))&7)
@@ -195,6 +193,11 @@ static uint16 check_desa_adda_suba(line *d)
 	{
 		cmd.Op1.dtyp = dt_dword;
 		cmd.Op2.dtyp = dt_dword;
+		cmd.segpref = 3;
+	}
+	else
+	{
+		cmd.segpref = 2;
 	}
 
 	return (get_ea_2(d->mode3, &cmd.Op1, d->reg0) ? cmd.size : 0);
@@ -217,6 +220,140 @@ static uint16 check_desa_add_sub(line *d)
 
 	exchange_Op1_Op2();
 	return cmd.size;
+}
+
+static uint16 check_desa_abcd_sbcd(line *d)
+{
+	if (d->mode6 != 4) return 0;
+
+	cmd.itype = ((d->line == 0xC) ? abcd : sbcd);
+	cmd.Op2.dtyp = dt_byte;
+	cmd.Op1.dtyp = dt_byte;
+
+	cmd.Op1.reg = d->reg0;
+	cmd.Op1.type = o_reg;
+	return cmd.size;
+}
+
+static uint16 check_desa_mul_div(line *d)
+{
+	if (d->opsz != 3 || d->mode3 == 1) return 0;
+
+	cmd.itype = (((d->line == 0xC) ? mulu : divu) - ((d->w & 0x100) ? 1 : 0));
+	return (get_ea_2(d->mode3, &cmd.Op1, d->reg0) ? cmd.size : 0);
+}
+
+static uint16 check_desa_exg(line *d)
+{
+	cmd.itype = exg;
+	cmd.Op1.type = o_reg;
+	cmd.Op2.reg = d->reg0;
+	cmd.Op1.reg = d->reg9;
+	cmd.Op2.dtyp = dt_dword;
+	cmd.Op1.dtyp = dt_dword;
+
+	if (d->mode3)
+	{
+		cmd.Op2.reg += 8;
+
+		if (d->mode6 == 5)
+		{
+			cmd.Op1.reg += 8;
+			return cmd.size;
+		}
+		return ((d->mode6 == 6) ? cmd.size : 0);
+	}
+	else return ((d->mode6 == 5) ? cmd.size : 0);
+}
+
+static uint16 check_desa_and_or(line *d)
+{
+	if (d->mode6 >= 4 || d->mode3 <= 1) return 0;
+	
+	cmd.itype = ((d->line == 0xC) ? and : or);
+	set_dtype_op1_op2(d->opsz);
+
+	if (!get_ea_2(d->mode3, &cmd.Op1, d->reg0)) return 0;
+	if (!(d->mode6 & 4)) return cmd.size;
+
+	exchange_Op1_Op2();
+	return cmd.size;
+}
+
+static uint16 check_desa_cmpa(line *d)
+{
+	if (d->opsz != 3) return 0;
+
+	cmd.itype = cmpa;
+	cmd.Op2.reg += 8;
+
+	if (d->mode6 & 4)
+	{
+		cmd.Op1.dtyp = dt_dword;
+		cmd.Op2.dtyp = dt_dword;
+		cmd.segpref = 3;
+	}
+	else cmd.segpref = 2;
+
+	return (get_ea_2(d->mode3, &cmd.Op1, d->reg0) ? cmd.size : 0);
+}
+
+static uint16 check_desa_eor_cmp(line *d)
+{
+	if (d->opsz == 3) return 0;
+
+	cmd.itype = ((d->w & 0x100) ? eor : cmp);
+	return (get_ea_2(d->mode3, &cmd.Op2, d->reg0) ? cmd.size : 0);
+}
+
+static uint16 desa_lineB(line *d)
+{
+	cmd.Op2.type = o_reg;
+	cmd.Op2.reg = d->reg9;
+	
+	uint16 cmpa_retn = check_desa_cmpa(d);
+	if (cmpa_retn) return cmpa_retn;
+
+	set_dtype_op1_op2(d->opsz);
+
+	uint16 eor_cmp = check_desa_eor_cmp(d);
+	if (eor_cmp) return eor_cmp;
+}
+
+/**************
+*
+*   LINE 8 :
+*   -OR
+*   -SBCD
+*   -DIVU
+*
+*
+*   LINE C :
+*   -EXG
+*   -MULS,MULU
+*   -ABCD
+*   -AND
+*
+***************/
+
+static uint16 desa_line8C(line *d)
+{
+	cmd.Op2.type = o_reg;
+	cmd.Op2.reg = d->reg9;
+
+	uint16 abcd_sbcd = check_desa_abcd_sbcd(d);
+	if (abcd_sbcd) return abcd_sbcd;
+
+	uint16 mul_div = check_desa_mul_div(d);
+	if (mul_div) return mul_div;
+
+	uint16 exg_retn = check_desa_exg(d);
+	if (exg_retn) return exg_retn;
+
+	uint16 and_or = check_desa_and_or(d);
+	if (and_or) return and_or;
+
+	return 0;
 }
 
 /**************
@@ -308,11 +445,12 @@ int idaapi ana(void) {
 	d.reg0 = REG0(d.w);
 	d.line = LINE(d.w);
 	d.opsz = OPSZ(d.w);
-	d.adrmode0 = d.mode3 + ((d.mode3 == MODE_ABSW) ? d.reg0 : 0);
-	d.adrmode6 = d.mode6 + ((d.mode6 == MODE_ABSW) ? d.reg9 : 0);
 
 	switch (d.line)
 	{
+	case 0xB: return desa_lineB(&d);
+	case 0x8:
+	case 0xC: return desa_line8C(&d);
 	case 0x9:
 	case 0xD: return desa_line9D(&d);
 	case 0xE: return desa_lineE(&d);
