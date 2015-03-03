@@ -21,6 +21,8 @@ enum m68k_regs {
 #define SPEC1_WSIZE 0x10
 
 int idaapi ana(void);
+int idaapi emu(void);
+int idaapi is_sp_based(const op_t &x);
 
 #pragma pack()
 #endif
