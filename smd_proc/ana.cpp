@@ -256,19 +256,16 @@ static uint16 desa_line9D(line *d)
 * Format Reg: 1110 VAL D SZ I TY RG0
 * Format Mem: 1110 0TY D 11 MODRG0
 ***************/
-static const char shift_instr[] = { asr, lsr, roxr, ror, asl, lsl, roxl, rol };
 
 static uint16 desa_lineE(line *d)
 {
+	static const m68k_opcodes shift_instr[] = { asr, lsr, roxr, ror, asl, lsl, roxl, rol };
+	
 	char shift_reg;
 
 	if (d->opsz == 3){
-		if ((d->mode3 <= MODE_AN) ||
-			(d->mode3 == MODE_ABSW && d->reg0 > 1 /*dPC, dPCXI, IMM*/) ||
-			!get_ea_2(d->mode3, &cmd.Op1, d->reg0))
-		{
-			return false;
-		}
+		if ((d->mode3 <= MODE_AN) || (d->mode3 == MODE_ABSW && d->reg0 > 1 /*dPC, dPCXI, IMM*/) || !get_ea_2(d->mode3, &cmd.Op1, d->reg0)) return false;
+
 		shift_reg = (char)d->reg9;
 	}
 	else
