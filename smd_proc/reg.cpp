@@ -54,9 +54,9 @@ processor_t LPH =
 
 	ana,
 	emu,
+	out,
+	outop,
 
-	NULL,
-	NULL,
 	NULL,
 	NULL,
 	NULL,
