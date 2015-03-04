@@ -4,6 +4,8 @@
 
 #include "m68k.hpp"
 #include <offset.hpp>
+#include <auto.hpp>
+#include <queue.hpp>
 
 bool no_stop_flag = false;
 
@@ -56,6 +58,46 @@ static void doImmdValue(op_t *op)
 	}
 }
 
+static int getOutValueFlags(op_t *op)
+{
+	switch (op->type)
+	{
+	case o_imm:
+	{
+		switch (op->specflag1)
+		{
+		case 0: return 0;
+		case 1: return OOFW_16 | OOFS_NOSIGN;
+		case 4:
+		case 5: return OOFW_8 | OOFS_NOSIGN;
+		default: return 0;
+		}
+	}
+	case o_mem:
+	{
+		isDefArg(uFlag, op->n);
+		return OOF_ADDR | OOFW_32;
+	}
+	case o_displ:
+	{
+		if (op->specflag2 >= 0)
+		{
+			return OOF_ADDR | OOFW_32;
+		}
+		else if (op->specflag2 & OF_OUTER_DISP)
+		{
+			return OOF_OUTER | OOFW_32 | OOF_SIGNED;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	case o_near: return ((op->n != 0) ? OOFW_16 : OOFW_32) | OOF_ADDR | OOFS_NOSIGN;
+	default: return 0;
+	}
+}
+
 static void DataSet(ea_t mem_base, ea_t ea, op_t *op, bool isLoad)
 {
 	if (cmd.itype != lea && cmd.itype != pea)
@@ -65,6 +107,8 @@ static void DataSet(ea_t mem_base, ea_t ea, op_t *op, bool isLoad)
 	}
 	else if (op_adds_xrefs(uFlag, op->n))
 	{
+		int out_value_flags = getOutValueFlags(op);
+		ua_add_off_drefs2(*op, dr_O, out_value_flags);
 	}
 }
 
@@ -91,7 +135,9 @@ static void TouchArg(op_t *op, bool isAlt, bool isLoad)
 		{
 			if (!isAlt)
 			{
+				DataSet(op->addr + 16 * cmd.cs, op->offb, op, isLoad);
 			}
+			return;
 		}
 	}
 	case o_near:
@@ -120,6 +166,47 @@ static void TouchArg(op_t *op, bool isAlt, bool isLoad)
 		}
 		return;
 	}
+	default:
+	{
+		const char *name;
+		if (cmd.itype < ph.instruc_start || cmd.itype >= ph.instruc_end)
+			name = NULL;
+		else
+			name = ph.instruc[cmd.itype - ph.instruc_start].name;
+
+		warning("%a: %s,%d: bad optype %d", cmd.ea, name, op->n, o->type);
+		return;
+	}
+	case o_displ:
+	case o_void:
+	case o_reg:
+	case o_phrase:
+	case o_idpspec0:
+	case o_idpspec1:
+	case o_idpspec2:
+	case o_idpspec3:
+	case o_idpspec4:
+	case o_idpspec5: return;
+	}
+}
+
+static void processReturn()
+{
+	insn_t cmd_copy;
+	
+	ea_t ea = cmd.ea;
+	memcpy(&cmd_copy, &cmd, sizeof(cmd));
+	cmd_copy.flags = cmd.flags;
+
+	if (decode_prev_insn(ea) != BADADDR)
+	{
+		if (cmd.itype == addi && cmd.Op2.type == o_phrase)
+		{
+			if ((cmd.Op2.reg & 7 + r_a0) == r_a7)
+			{
+
+			}
+		}
 	}
 }
 
@@ -145,5 +232,18 @@ int idaapi emu(void) {
 	bool forced_op2 = is_forced_operand(ea, 1);
 	bool forced_op3 = is_forced_operand(ea, 2);
 
-	if (feature & CF_USE1)
+	if (feature & CF_USE1) TouchArg(&cmd.Op1, forced_op1, true);
+	if (feature & CF_USE2) TouchArg(&cmd.Op2, forced_op2, true);
+	if (feature & CF_USE3) TouchArg(&cmd.Op3, forced_op2, true);
+
+	if (feature & CF_JUMP) QueueSet(Q_jumps, cmd.ea);
+
+	if (feature & CF_CHG1) TouchArg(&cmd.Op1, forced_op1, false);
+	if (feature & CF_CHG2) TouchArg(&cmd.Op2, forced_op2, false);
+	if (feature & CF_CHG3) TouchArg(&cmd.Op3, forced_op3, false);
+
+	if (cmd.itype == rts)
+	{
+
+	}
 }
