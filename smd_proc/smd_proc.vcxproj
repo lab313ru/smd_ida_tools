@@ -96,6 +96,7 @@
     <ClCompile Include="ana.cpp" />
     <ClCompile Include="emu.cpp" />
     <ClCompile Include="ins.cpp" />
+    <ClCompile Include="out.cpp" />
     <ClCompile Include="reg.cpp" />
   </ItemGroup>
   <ItemGroup>

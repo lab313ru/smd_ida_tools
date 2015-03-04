@@ -5,6 +5,7 @@
     <ClCompile Include="reg.cpp" />
     <ClCompile Include="ana.cpp" />
     <ClCompile Include="emu.cpp" />
+    <ClCompile Include="out.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ins.hpp" />
