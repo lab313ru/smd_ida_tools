@@ -17,11 +17,22 @@ enum m68k_regs {
 	r_pc, r_ccr, r_sr, r_usp, r_sp, r_cs, r_ds
 };
 
+// general regs mask
+#define REG_MASK 0x7
+
+// ext reg flags (pre-, post- addressing)
+#define REG_EXT_FLAG    0x38
+#define   REG_PRE_DECR  0x20
+#define   REG_POST_INCR 0x18
+
 // specflag1 flags
 #define SPEC1_WSIZE 0x10
+#define SPEC1_HEX 0x80
 
 int idaapi ana(void);
 int idaapi emu(void);
+void idaapi out(void);
+bool idaapi outop(op_t &x);
 int idaapi is_sp_based(const op_t &x);
 
 #pragma pack()
