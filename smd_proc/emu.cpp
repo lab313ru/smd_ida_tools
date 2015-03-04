@@ -193,7 +193,7 @@ static void TouchArg(op_t *op, bool isAlt, bool isLoad)
 static void processReturn()
 {
 	insn_t cmd_copy;
-	
+
 	ea_t ea = cmd.ea;
 	memcpy(&cmd_copy, &cmd, sizeof(cmd));
 	cmd_copy.flags = cmd.flags;
@@ -204,7 +204,6 @@ static void processReturn()
 		{
 			if ((cmd.Op2.reg & 7 + r_a0) == r_a7)
 			{
-
 			}
 		}
 	}
@@ -242,8 +241,8 @@ int idaapi emu(void) {
 	if (feature & CF_CHG2) TouchArg(&cmd.Op2, forced_op2, false);
 	if (feature & CF_CHG3) TouchArg(&cmd.Op3, forced_op3, false);
 
-	if (cmd.itype == rts)
-	{
+	if (cmd.get_canon_feature() & CF_STOP == 0)
+		ua_add_cref(0, cmd.ea + cmd.size, fl_F);
 
-	}
+	return 1;
 }
