@@ -3,7 +3,6 @@
 //
 
 #include "m68k.hpp"
-#include <ua.hpp>
 
 enum adressingword
 {
@@ -89,7 +88,7 @@ static bool get_ea_2(int mode, op_t *op, char idx)
 
 		uint16 w2 = ua_next_word();
 		op->specflag1 = DISPL(w2); // displacement register
-		op->specflag1 |= ((w2 & WSIZE_SET) ? 0 : SPEC1_WSIZE);
+		op->specflag1 |= ((w2 & WSIZE_SET) ? 0 : 0x10);
 
 		op->offb = cmd.size - 1;
 		op->addr = (char)w2;
@@ -186,7 +185,7 @@ static uint16 check_desa_adda_suba(line *d)
 {
 	if (d->opsz != 3) return 0;
 
-	cmd.itype = ((d->line == 0xD) ? adda : suba);
+	cmd.itype = ((d->line == 0xD) ? opc_adda : opc_suba);
 	cmd.Op2.reg += 8;
 
 	if (d->mode6 & 4)
@@ -207,7 +206,7 @@ static uint16 check_desa_addx_subx(line *d)
 {
 	if (d->mode6 < 4 && d->mode3 > 1) return 0;
 
-	cmd.itype = ((d->line == 0xD) ? addx : subx);
+	cmd.itype = ((d->line == 0xD) ? opc_addx : opc_subx);
 	cmd.Op1.reg = d->reg0;
 	cmd.Op1.type = o_reg;
 	return cmd.size;
@@ -226,7 +225,7 @@ static uint16 check_desa_abcd_sbcd(line *d)
 {
 	if (d->mode6 != 4) return 0;
 
-	cmd.itype = ((d->line == 0xC) ? abcd : sbcd);
+	cmd.itype = ((d->line == 0xC) ? opc_abcd : opc_sbcd);
 	cmd.Op2.dtyp = dt_byte;
 	cmd.Op1.dtyp = dt_byte;
 
@@ -239,13 +238,13 @@ static uint16 check_desa_mul_div(line *d)
 {
 	if (d->opsz != 3 || d->mode3 == 1) return 0;
 
-	cmd.itype = (((d->line == 0xC) ? mulu : divu) - ((d->w & 0x100) ? 1 : 0));
+	cmd.itype = (((d->line == 0xC) ? opc_mulu : opc_divu) - ((d->w & 0x100) ? 1 : 0));
 	return (get_ea_2(d->mode3, &cmd.Op1, d->reg0) ? cmd.size : 0);
 }
 
 static uint16 check_desa_exg(line *d)
 {
-	cmd.itype = exg;
+	cmd.itype = opc_exg;
 	cmd.Op1.type = o_reg;
 	cmd.Op2.reg = d->reg0;
 	cmd.Op1.reg = d->reg9;
@@ -269,8 +268,8 @@ static uint16 check_desa_exg(line *d)
 static uint16 check_desa_and_or(line *d)
 {
 	if (d->mode6 >= 4 || d->mode3 <= 1) return 0;
-	
-	cmd.itype = ((d->line == 0xC) ? and : or);
+
+	cmd.itype = ((d->line == 0xC) ? opc_and : opc_or);
 	set_dtype_op1_op2(d->opsz);
 
 	if (!get_ea_2(d->mode3, &cmd.Op1, d->reg0)) return 0;
@@ -284,7 +283,7 @@ static uint16 check_desa_cmpa(line *d)
 {
 	if (d->opsz != 3) return 0;
 
-	cmd.itype = cmpa;
+	cmd.itype = opc_cmpa;
 	cmd.Op2.reg += 8;
 
 	if (d->mode6 & 4)
@@ -302,7 +301,7 @@ static uint16 check_desa_eor_cmp(line *d)
 {
 	if (d->opsz == 3) return 0;
 
-	cmd.itype = ((d->w & 0x100) ? eor : cmp);
+	cmd.itype = ((d->w & 0x100) ? opc_eor : opc_cmp);
 	return (get_ea_2(d->mode3, &cmd.Op2, d->reg0) ? cmd.size : 0);
 }
 
@@ -310,7 +309,7 @@ static uint16 desa_lineB(line *d)
 {
 	cmd.Op2.type = o_reg;
 	cmd.Op2.reg = d->reg9;
-	
+
 	uint16 cmpa_retn = check_desa_cmpa(d);
 	if (cmpa_retn) return cmpa_retn;
 
@@ -396,8 +395,8 @@ static uint16 desa_line9D(line *d)
 
 static uint16 desa_lineE(line *d)
 {
-	static const m68k_opcodes shift_instr[] = { asr, lsr, roxr, ror, asl, lsl, roxl, rol };
-	
+	static const m68k_opcodes shift_instr[] = { opc_asr, opc_lsr, opc_roxr, opc_ror, opc_asl, opc_lsl, opc_roxl, opc_rol };
+
 	char shift_reg;
 
 	if (d->opsz == 3){
