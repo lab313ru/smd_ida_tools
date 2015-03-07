@@ -5,8 +5,7 @@
 #ifndef __M68K_HPP
 #define __M68K_HPP
 
-#include <pro.h>
-#include <idp.hpp>
+#include <loader.hpp>
 #include "ins.hpp"
 
 #pragma pack(1)
@@ -25,14 +24,20 @@ enum m68k_regs {
 #define   REG_PRE_DECR  0x20
 #define   REG_POST_INCR 0x18
 
-// specflag1 flags
-#define SPEC1_WSIZE 0x10
-#define SPEC1_HEX 0x80
+// idpflags
+#define MC68K_UNSIGNED_OPS 1
+
+void idaapi header(void);
+void idaapi footer(void);
+
+void idaapi segstart(ea_t ea);
+void idaapi segend(ea_t ea);
 
 int idaapi ana(void);
 int idaapi emu(void);
 void idaapi out(void);
 bool idaapi outop(op_t &x);
+void idaapi data(ea_t ea);
 int idaapi is_sp_based(const op_t &x);
 
 #pragma pack()
