@@ -103,6 +103,9 @@
     <ClInclude Include="ins.hpp" />
     <ClInclude Include="m68k.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="smd.cfg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
