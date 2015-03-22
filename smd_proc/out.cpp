@@ -5,11 +5,9 @@
 #include "m68k.hpp"
 
 void idaapi header(void) {
-	MakeLine("My header line");
 }
 
 void idaapi footer(void) {
-	MakeLine("My footer line");
 }
 
 void idaapi segstart(ea_t ea) {
@@ -33,32 +31,30 @@ void idaapi data(ea_t ea)
 bool idaapi outop(op_t &op) {
 	switch (op.type)
 	{
-	case o_void: return 0;
-	case o_reg: OutReg(op.reg); break;
-	case o_phrase:
-	{
-		if ((op.reg & REG_EXT_FLAG) == REG_PRE_DECR) out_symbol('-');
-		if (isDefArg(uFlag, op.n)) OutValue(op);
+	case o_reg:
+		OutReg(op.reg);
+		return true;
+	case o_displ:
+		if (op.addr)
+		{
+			OutValue(op, OOFS_NOSIGN | OOF_ADDR);
+		}
 
 		out_symbol('(');
-		OutReg(op.reg & REG_MASK + r_a0);
+		OutReg(op.phrase);
 		out_symbol(')');
+		return true;
+	}
 
-		if ((op.reg & REG_EXT_FLAG) == REG_POST_INCR) out_symbol('+');
-	}
-	case o_imm:
-	{
-	}
-	case o_mem:
-	{
-	}
-	}
+	return false;
 }
 
 void idaapi out(void) {
 	char str[MAXSTR];
 
 	init_output_buffer(str, sizeof(str));
+
+	OutMnem();
 
 	if (cmd.Op1.type != o_void)
 		out_one_operand(0);

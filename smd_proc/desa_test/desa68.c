@@ -1480,7 +1480,7 @@ int main(int na, char **a)
 {
 	FILE *f;
 	u8 *b;
-	int l, i, nline = 1;
+	int l, i, nline = 5;
 	static char s[256];
 
 	DESA68parm_t d;
@@ -1489,14 +1489,14 @@ int main(int na, char **a)
 
 	if (na < 2)
 	{
-	perror("No input file\n");
-	return 1;
+		perror("No input file\n");
+		return 1;
 	}
 
 	if (f = fopen(a[1], "rb"), f == NULL)
 	{
-	perror("Can't open input file\n");
-	return 2;
+		perror("Can't open input file\n");
+		return 2;
 	}
 
 	fseek(f, 0L, SEEK_END);
@@ -1504,24 +1504,24 @@ int main(int na, char **a)
 	fseek(f, 0L, SEEK_SET);
 	if (b = malloc(l), b == NULL)
 	{
-	fclose(f);
-	perror("Can't alloc memory\n");
-	return 3;
+		fclose(f);
+		perror("Can't alloc memory\n");
+		return 3;
 	}
 
 	if (fread(b, l, 1, f) != 1)
 	{
-	fclose(f);
-	free(b);
-	perror("Read error\n");
-	return 4;
+		fclose(f);
+		free(b);
+		perror("Read error\n");
+		return 4;
 	}
 
 	if (na > 2) {
-	int n = atoi(a[2]);
-	if (n > 0) {
-	nline = n;
-	}
+		int n = atoi(a[2]);
+		if (n > 0) {
+			nline = n;
+		}
 	}
 
 	fclose(f);

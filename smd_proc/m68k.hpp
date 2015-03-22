@@ -21,9 +21,6 @@ extern netnode helper;
 segment_t* segROM();
 segment_t* segRAM();
 segment_t* segIOP();
-ea_t toROM(ea_t ea);
-ea_t toRAM(ea_t ea);
-ea_t toIOP(ea_t ea);
 
 // general regs mask
 #define REG_MASK 0x7
@@ -32,9 +29,6 @@ ea_t toIOP(ea_t ea);
 #define REG_EXT_FLAG    0x38
 #define   REG_PRE_DECR  0x20
 #define   REG_POST_INCR 0x18
-
-// idpflags
-#define MC68K_UNSIGNED_OPS 1
 
 void idaapi header(void);
 void idaapi footer(void);
