@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.5"
+#define VERSION "1.0.6"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -324,7 +324,9 @@ int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], 
 //--------------------------------------------------------------------------
 void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 {
-	set_processor_type(M68K, SETPROC_ALL | SETPROC_FATAL); // Motorola 68000
+	if (ph.id != PLFM_68K) {
+		set_processor_type(M68K, SETPROC_ALL | SETPROC_FATAL); // Motorola 68000
+	}
 
 	unsigned int size = qlsize(li); // size of rom
 

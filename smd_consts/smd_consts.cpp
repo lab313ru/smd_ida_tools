@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.2"
+#define VERSION "1.0.3"
 /*
 *      SEGA MEGA DRIVE/GENESIS constants identifier plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -26,11 +26,26 @@ static void print_version()
 	msg(format, VERSION);
 }
 
+static bool init_plugin(void);
+
 //--------------------------------------------------------------------------
 int idaapi init(void)
 {
-	print_version();
-	return PLUGIN_OK;
+    if (init_plugin())
+    {
+        print_version();
+        return PLUGIN_OK;
+    }
+    return PLUGIN_SKIP;
+}
+
+//--------------------------------------------------------------------------
+static bool init_plugin(void)
+{
+    if (ph.id != PLFM_68K)
+        return false;
+
+    return true;
 }
 
 //--------------------------------------------------------------------------
