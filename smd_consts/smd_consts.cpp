@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.3"
+#define VERSION "1.0.4"
 /*
 *      SEGA MEGA DRIVE/GENESIS constants identifier plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -168,7 +168,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 	}
 	case 0x8300:
 	{
-		addr = (val & mask(3, 3));
+		addr = (val & mask(1, 5));
 		qsnprintf(name, sizeof(name), "SET_WINDOW_PLANE_ADDR_$%.4X", addr * 0x400);
 		append_cmt(ea, name, false);
 		return true;
