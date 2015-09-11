@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.6"
+#define VERSION "1.0.7"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -186,10 +186,6 @@ static void define_vectors_struct()
 static void add_enum_member_with_mask(enum_t id, const char *name, unsigned int value, unsigned int mask = DEFMASK, const char *cmt = NULL)
 {
 	int res = add_const(id, name, value, mask); // we have to use old name, because of IDA v5.2
-	if (res)
-	{
-		res = res;
-	}
 	if (cmt != NULL) set_enum_member_cmt(get_const_by_name(name), cmt, false);
 }
 
@@ -279,26 +275,37 @@ static void make_segments()
 }
 
 //--------------------------------------------------------------------------
-static void add_other_enum(enum_t ot)
+static void add_other_enum()
 {
+    enum_t ot = add_enum(BADADDR, "consts_other", hexflag());
 	add_enum_member_with_mask(ot, "ROM_START", 0x200);
 	add_enum_member_with_mask(ot, "IO_PCBVER_REF", 0x10FF);
 	add_enum_member_with_mask(ot, "IO_TMSS_REF", 0x2F00); // IO_TMSS
 }
 
 //--------------------------------------------------------------------------
-static void add_vdp_status_enum(enum_t vdp_status)
+static void add_vdp_status_enum()
 {
-	add_enum_member_with_mask(vdp_status, "FIFO_EMPTY", (1 << 9), (1 << 9));
-	add_enum_member_with_mask(vdp_status, "FIFO_FULL", (1 << 8), (1 << 8));
-	add_enum_member_with_mask(vdp_status, "VBLANK_PENDING", (1 << 7), (1 << 7));
-	add_enum_member_with_mask(vdp_status, "SPRITE_OVERFLOW", (1 << 6), (1 << 6));
-	add_enum_member_with_mask(vdp_status, "SPRITE_COLLISION", (1 << 5), (1 << 5));
-	add_enum_member_with_mask(vdp_status, "ODD_FRAME", (1 << 4), (1 << 4));
-	add_enum_member_with_mask(vdp_status, "VBLANKING", (1 << 3), (1 << 3));
-	add_enum_member_with_mask(vdp_status, "HBLANKING", (1 << 2), (1 << 2));
-	add_enum_member_with_mask(vdp_status, "DMA_IN_PROGRESS", (1 << 1), (1 << 1));
-	add_enum_member_with_mask(vdp_status, "PAL_MODE", (1 << 0), (1 << 0));
+    enum_t vdp_status = add_enum(BADADDR, "vdp_status", hexflag());
+	add_enum_member_with_mask(vdp_status, "FIFO_EMPTY", 9);
+	add_enum_member_with_mask(vdp_status, "FIFO_FULL", 8);
+	add_enum_member_with_mask(vdp_status, "VBLANK_PENDING", 7);
+	add_enum_member_with_mask(vdp_status, "SPRITE_OVERFLOW", 6);
+	add_enum_member_with_mask(vdp_status, "SPRITE_COLLISION", 5);
+	add_enum_member_with_mask(vdp_status, "ODD_FRAME", 4);
+	add_enum_member_with_mask(vdp_status, "VBLANKING", 3);
+	add_enum_member_with_mask(vdp_status, "HBLANKING", 2);
+	add_enum_member_with_mask(vdp_status, "DMA_IN_PROGRESS", 1);
+	add_enum_member_with_mask(vdp_status, "PAL_MODE", 0);
+}
+
+static void add_version_reg_enum()
+{
+    enum_t ver_enum = add_enum(BADADDR, "version_reg", hexflag());
+    add_enum_member_with_mask(ver_enum, "USA_EUROPE_JAPAN", 7);
+    add_enum_member_with_mask(ver_enum, "PAL_OR_NTSC", 6);
+    add_enum_member_with_mask(ver_enum, "SEGA_CD_CONNECTED", 5);
+    add_enum_member_with_mask(ver_enum, "HARDWARE_VERSION", 0);
 }
 
 //--------------------------------------------------------------------------
@@ -342,6 +349,10 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	define_header_struct(); // add definition of header struct
 	set_spec_register_names(); // apply names for special addresses of registers
 	add_subroutines(&_vect, size); // mark vector subroutines as procedures
+
+    add_other_enum();
+    add_vdp_status_enum();
+    add_version_reg_enum();
 
 	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]); // Reset
 
