@@ -3,6 +3,12 @@
 *.tlog
 *.opensdf
 *.exp
+*.suo
+*.log
+*.obj
+*.lib
+*.pdb
+*.user
 
 # Other extensions
 *.7z

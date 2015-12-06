@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.7"
+#define VERSION "1.0.8"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -75,7 +75,6 @@ static const char VECTORS[] = "vectors";
 static const char VECTORS_STRUCT[] = "struct_vectors";
 static const char HEADER[] = "header";
 static const char HEADER_STRUCT[] = "struct_header";
-static const char SETUP[] = "setup";
 
 //------------------------------------------------------------------------
 static unsigned int SWAP_BYTES_32(unsigned int a)
@@ -185,8 +184,8 @@ static void define_vectors_struct()
 //--------------------------------------------------------------------------
 static void add_enum_member_with_mask(enum_t id, const char *name, unsigned int value, unsigned int mask = DEFMASK, const char *cmt = NULL)
 {
-	int res = add_const(id, name, value, mask); // we have to use old name, because of IDA v5.2
-	if (cmt != NULL) set_enum_member_cmt(get_const_by_name(name), cmt, false);
+	int res = add_enum_member(id, name, value, mask); // we have to use old name, because of IDA v5.2
+	if (cmt != NULL) set_enum_member_cmt(get_enum_member_by_name(name), cmt, false);
 }
 
 //------------------------------------------------------------------------

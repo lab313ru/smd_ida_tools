@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.4"
+#define VERSION "1.0.5"
 /*
 *      SEGA MEGA DRIVE/GENESIS constants identifier plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -512,8 +512,8 @@ void idaapi run(int /*arg*/)
 			return;
 		}
 
-		ua_ana0(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
-		ua_outop(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
+		decode_insn(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
+		ua_outop2(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
 		tag_remove(name, name, sizeof(name));
 
 		uval_t value = 0;
