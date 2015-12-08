@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.5"
+#define VERSION "1.0.6"
 /*
 *      SEGA MEGA DRIVE/GENESIS constants identifier plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
