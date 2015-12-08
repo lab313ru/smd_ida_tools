@@ -73,6 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <OutDir>d:\ida68\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>d:\ida68\plugins\</OutDir>
@@ -81,6 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
     <OutDir>d:\ida68\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

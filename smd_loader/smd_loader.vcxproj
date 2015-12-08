@@ -74,6 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
     <TargetExt>.l64</TargetExt>
     <OutDir>d:\ida68\loaders\</OutDir>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.ldw</TargetExt>
@@ -82,6 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <TargetExt>.l64</TargetExt>
     <OutDir>d:\ida68\loaders\</OutDir>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
