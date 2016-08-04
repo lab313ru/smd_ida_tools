@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_loader", "smd_loader\smd_loader.vcxproj", "{8795B2BB-AB6F-4CCB-9B1A-CB2243E2DDD9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_consts", "smd_consts\smd_consts.vcxproj", "{11B91D38-364D-4A0B-9721-5BC7F4BE553A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smd_helper", "smd_helper\smd_helper.vcxproj", "{11B91D38-364D-4A0B-9721-5BC7F4BE553A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
