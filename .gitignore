@@ -10,6 +10,7 @@
 *.pdb
 *.user
 *.db
+*.opendb
 
 # Other extensions
 *.7z
