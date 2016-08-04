@@ -179,9 +179,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="smd_helper.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="smd_helper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
