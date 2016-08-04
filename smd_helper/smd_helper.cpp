@@ -174,7 +174,7 @@ static unsigned int mask(unsigned char bit_idx, unsigned char bits_cnt = 1)
 }
 
 //--------------------------------------------------------------------------
-static bool is_vdp_send_cmd(uval_t val)
+static bool is_vdp_send_cmd(uint32 val)
 {
     if (val & 0xFFFF0000)
     {
@@ -187,7 +187,7 @@ static bool is_vdp_send_cmd(uval_t val)
 }
 
 //--------------------------------------------------------------------------
-static bool is_vdp_rw_cmd(uval_t val)
+static bool is_vdp_rw_cmd(uint32 val)
 {
     if (val & 0xFFFF0000) // command was sended by one dword
     {
@@ -227,7 +227,7 @@ static bool is_vdp_rw_cmd(uval_t val)
 }
 
 //--------------------------------------------------------------------------
-static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
+static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
 {
     if (!val) return false;
 
@@ -485,7 +485,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uval_t val)
 }
 
 //--------------------------------------------------------------------------
-static void do_cmt_sr_ccr_reg_const(ea_t ea, uval_t val)
+static void do_cmt_sr_ccr_reg_const(ea_t ea, uint32 val)
 {
     if (val & mask(4)) append_cmt(ea, "SET_X", false);
     else append_cmt(ea, "CLR_X", false);
@@ -531,7 +531,7 @@ static void do_cmt_sr_ccr_reg_const(ea_t ea, uval_t val)
 }
 
 //--------------------------------------------------------------------------
-static void do_cmt_vdp_rw_command(ea_t ea, uval_t val)
+static void do_cmt_vdp_rw_command(ea_t ea, uint32 val)
 {
     char name[250];
 
@@ -630,14 +630,16 @@ void idaapi run(int /*arg*/)
         ua_outop2(ea, name, sizeof(name), 1);
         tag_remove(name, name, sizeof(name));
 
-        uval_t value = 0;
-        get_operand_immvals(ea, 0, &value);
+        uval_t val = 0;
+        get_operand_immvals(ea, 0, &val);
+        uint32 value = (uint32)val;
         if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg && !qstrcmp(name, "sr"))
         {
             do_cmt_sr_ccr_reg_const(ea, value);
         }
         else if (is_vdp_rw_cmd(value))
         {
+
             do_cmt_vdp_rw_command(ea, value);
         }
         else if (is_vdp_send_cmd(value)) // comment set vdp reg cmd
