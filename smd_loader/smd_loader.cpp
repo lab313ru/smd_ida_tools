@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.0.9"
+#define VERSION "1.1"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -75,6 +75,7 @@ static const char VECTORS[] = "vectors";
 static const char VECTORS_STRUCT[] = "struct_vectors";
 static const char HEADER[] = "header";
 static const char HEADER_STRUCT[] = "struct_header";
+static const char SPRITE_STRUCT[] = "struct_sprite";
 
 //------------------------------------------------------------------------
 static unsigned int SWAP_BYTES_32(unsigned int a)
@@ -127,9 +128,19 @@ static void add_string_field(struc_t *st, const char *name, asize_t size)
 }
 
 //------------------------------------------------------------------------
-static void add_short_field(struc_t *st, const char *name)
+static void add_byte_field(struc_t *st, const char *name, const char *cmt = NULL)
+{
+    add_struc_member(st, name, BADADDR, byteflag() | hexflag(), NULL, 1);
+    member_t *mm = get_member_by_name(st, name);
+    set_member_cmt(mm, cmt, true);
+}
+
+//------------------------------------------------------------------------
+static void add_short_field(struc_t *st, const char *name, const char *cmt = NULL)
 {
 	add_struc_member(st, name, BADADDR, wordflag() | hexflag(), NULL, 2);
+    member_t *mm = get_member_by_name(st, name);
+    set_member_cmt(mm, cmt, true);
 }
 
 //------------------------------------------------------------------------
@@ -231,6 +242,21 @@ static void define_header_struct()
 	add_string_field(header, "CountryCode", 16);
 	doStruct(0x100, sizeof(gen_hdr), head_id);
 	set_name(0x100, HEADER);
+}
+
+//------------------------------------------------------------------------
+static void define_sprite_struct()
+{
+    tid_t sprite_id = add_struc(BADADDR, SPRITE_STRUCT);
+    struc_t *sprite = get_struc(sprite_id);
+
+    add_short_field(sprite, "y", "------yy yyyyyyyy (Vertical coordinate of sprite)");
+    add_byte_field(sprite, "hsize_vsize", "------yy yyyyyyyy (Vertical coordinate of sprite)");
+    add_byte_field(sprite, "hsize_vsize", "------yy yyyyyyyy (Vertical coordinate of sprite)");
+    add_short_field(sprite, "pcvhn", "pccvhnnn nnnnnnnn\n"
+    "(p - Priority, cc - Color palette,\n"
+    "v - VF, h - HF, n - Start tile index)");
+    add_short_field(sprite, "x", "------xx xxxxxxxx (Horizontal coordinate of sprite)");
 }
 
 //------------------------------------------------------------------------
@@ -346,6 +372,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
 	define_vectors_struct(); // add definition of vectors struct
 	define_header_struct(); // add definition of header struct
+    define_sprite_struct(); // add definition of sprite struct
 	set_spec_register_names(); // apply names for special addresses of registers
 	add_subroutines(&_vect, size); // mark vector subroutines as procedures
 
