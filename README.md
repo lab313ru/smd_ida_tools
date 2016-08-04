@@ -6,4 +6,4 @@ Special IDA Pro tools for the Sega Genesis/Megadrive romhackers.
 2. Use **Visual Studio 2013** or newer to compile.
 
 ## How to use
-Put the "*smd_loader.ldw*" file into your "<IDA>\loaders" folder. Put the "*smd_helper.plw*" file into your "<IDA>\plugins" folder. 
+Put the "**smd_loader.ldw**" file into your "***<IDA>\loaders***" folder. Put the "**smd_helper.plw**" file into your "***<IDA>\plugins***" folder. 
