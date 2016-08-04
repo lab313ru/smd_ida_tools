@@ -2,7 +2,7 @@
 Special IDA Pro tools for the Sega Genesis/Megadrive romhackers.
 
 ## How to compile
-1. Open **smd_helper.vcxproj** and **smd_loader.vcxproj** in any text editor and edit paths to **IDA_DIR** and **IDA_SDK** (version >= *5.2*) accordingly to your real paths;
+1. Edit paths to **IDA_DIR** and **IDA_SDK** (version >= *5.2*) accordingly to your real paths;
 2. Use **Visual Studio 2013** or newer to compile.
 
 ## How to use
