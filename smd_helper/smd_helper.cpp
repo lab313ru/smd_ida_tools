@@ -626,8 +626,8 @@ void idaapi run(int /*arg*/)
             return;
         }
 
-        decode_insn(ea); // deprecated, but should be used because of old IDAs (new decode_insn)
-        ua_outop2(ea, name, sizeof(name), 1); // deprecated, but should be used because of old IDAs (new ua_outop2)
+        decode_insn(ea);
+        ua_outop2(ea, name, sizeof(name), 1);
         tag_remove(name, name, sizeof(name));
 
         uval_t value = 0;
