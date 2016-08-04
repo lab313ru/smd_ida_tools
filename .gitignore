@@ -8,7 +8,6 @@
 *.obj
 *.lib
 *.pdb
-*.user
 *.db
 *.opendb
 

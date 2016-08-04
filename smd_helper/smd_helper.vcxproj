@@ -28,27 +28,27 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140_xp</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140_xp</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -67,20 +67,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>d:\ida68\plugins\</OutDir>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
-    <OutDir>d:\ida68\plugins\</OutDir>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>d:\ida68\plugins\</OutDir>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
-    <OutDir>d:\ida68\plugins\</OutDir>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>d:\idasdk68\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>d:\idasdk68\lib\x86_win_vc_32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x86_win_vc_32</AdditionalLibraryDirectories>
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>d:\idasdk68\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -119,7 +119,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>d:\idasdk68\lib\x86_win_vc_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x86_win_vc_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
@@ -134,7 +134,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>d:\idasdk68\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -145,7 +145,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>d:\idasdk68\lib\x86_win_vc_32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x86_win_vc_32</AdditionalLibraryDirectories>
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
@@ -160,7 +160,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>d:\idasdk68\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -171,7 +171,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>d:\idasdk68\lib\x86_win_vc_64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x86_win_vc_64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ida.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
