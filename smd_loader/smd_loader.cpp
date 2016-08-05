@@ -382,7 +382,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		| AF_PROC //         0x0010          // Create functions if call is present
 		| AF_USED //         0x0020          // Analyze and create all xrefs
 		//| AF_FLIRT //        0x0040          // Use flirt signatures
-		| AF_PROCPTR //      0x0080          // Create function if data xref data->code32 exists
+		//| AF_PROCPTR //      0x0080          // Create function if data xref data->code32 exists
 		| AF_JFUNC //        0x0100          // Rename jump functions as j_...
 		| AF_NULLSUB //      0x0200          // Rename empty functions as nullsub_...
 		//| AF_LVAR //         0x0400          // Create stack variables
