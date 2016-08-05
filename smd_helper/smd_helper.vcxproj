@@ -91,7 +91,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <CallingConvention>StdCall</CallingConvention>
@@ -112,7 +112,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <CallingConvention>StdCall</CallingConvention>
