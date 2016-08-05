@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.1"
+#define VERSION "1.1.1"
 /*
 *      SEGA MEGA DRIVE/GENESIS helper plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -22,6 +22,49 @@ static const char wrong_vdp_cmd[] = "Wrong command to send to VDP_CTRL!\n";
 
 static bool plugin_inited;
 static bool my_dbg;
+
+#ifdef _DEBUG
+static const char* const optype_names[] =
+{
+    "o_void",
+    "o_reg",
+    "o_mem",
+    "o_phrase",
+    "o_displ",
+    "o_imm",
+    "o_far",
+    "o_near",
+    "o_idpspec0",
+    "o_idpspec1",
+    "o_idpspec2",
+    "o_idpspec3",
+    "o_idpspec4",
+    "o_idpspec5",
+};
+
+static const char* const dtyp_names[] =
+{
+    "dt_byte",
+    "dt_word",
+    "dt_dword",
+    "dt_float",
+    "dt_double",
+    "dt_tbyte",
+    "dt_packreal",
+    "dt_qword",
+    "dt_byte16",
+    "dt_code",
+    "dt_void",
+    "dt_fword",
+    "dt_bitfild",
+    "dt_string",
+    "dt_unicode",
+    "dt_3byte",
+    "dt_ldbl",
+    "dt_byte32",
+    "dt_byte64",
+};
+#endif
 
 static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 {
@@ -100,10 +143,11 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             switch (op.type)
             {
             case o_mem:
-            case o_displ:
             {
+                op.addr &= 0xFFFFFF; // for any mirrors
+
                 if ((op.addr & 0xE00000) == 0xE00000) // RAM mirrors
-                    op.addr &= 0xFFFFFF;
+                    op.addr |= 0x1F0000;
 
                 if ((op.addr >= 0xC00000 && op.addr <= 0xC0001F) ||
                     (op.addr >= 0xC00020 && op.addr <= 0xC0003F)) // VDP mirrors
