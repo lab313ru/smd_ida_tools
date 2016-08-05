@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.1"
+#define VERSION "1.1.1"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -23,6 +23,7 @@
 #include <bytes.hpp>
 #include <struct.hpp>
 #include <enum.hpp>
+#include <fixup.hpp>
 
 #include "smd_loader.h"
 
@@ -57,6 +58,7 @@ static const reg spec_regs[] = {
 static const char M68K[] = "68000";
 static const char CODE[] = "CODE";
 static const char DATA[] = "DATA";
+static const char XTRN[] = "XTRN";
 static const char ROM[] = "ROM";
 static const char EPA[] = "EPA";
 static const char S32X[] = "S32X";
@@ -69,7 +71,6 @@ static const char UNLK[] = "UNLK";
 static const char VDP[] = "VDP";
 static const char RAM[] = "RAM";
 static const char M68K_RAM[] = "M68K_RAM";
-static const char M68K_RAM_[] = "M68K__RAM";
 static const char SRAM[] = "SRAM";
 static const char VECTORS[] = "vectors";
 static const char VECTORS_STRUCT[] = "struct_vectors";
@@ -266,25 +267,16 @@ static void make_segments()
 	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)");
 	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)");
 	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory");
-	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, DATA, "System registers");
-	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, DATA, "Z80 control (/BUSREQ and /RESET lines)");
-	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, DATA, "Assorted registers");
+	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, XTRN, "System registers");
+	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, XTRN, "Z80 control (/BUSREQ and /RESET lines)");
+	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, XTRN, "Assorted registers");
 	add_segment(0x00B00000, 0x00BFFFFF + 1, UNLK, DATA, "Unallocated");
 
-	for (int i = 0; i < 0x1; i++)
-	{
-		add_segment(0x00C00000 + i * 0x20, 0x00C00000 + i * 0x20 + 0x1F + 1, VDP, DATA, "VDP mirror");
-	}
-
-	for (int i = 0; i < 0x20; i++)
-	{
-		add_segment(0x00E00000 + i * 0x10000, 0x00E00000 + i * 0x10000 + 0xFFFF + 1, RAM, DATA, "RAM mirror");
-	}
-	add_segment(0xFFFF0000, 0xFFFFFFFE, RAM, DATA, "RAM mirror");
+    add_segment(0x00C00000, 0x00C0001F + 1, VDP, XTRN, "VDP Registers");
+    add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, DATA, "RAM segment");
 
 	set_name(0x00A00000, Z80_RAM);
 	set_name(0x00FF0000, M68K_RAM);
-	set_name(0xFFFF0000, M68K_RAM_);
 
 	// create SRAM segment
 	if ((READ_BE_WORD(&(_hdr.SramCode[0])) == 0x5241) && (_hdr.SramCode[2] == 0x20))
@@ -366,7 +358,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	if (qlread(li, &_vect, sizeof(_vect)) != sizeof(_vect)) loader_failure(); // trying to read rom vectors
 	if (qlread(li, &_hdr, sizeof(_hdr)) != sizeof(_hdr)) loader_failure(); // trying to read rom's header
 
-	file2base(li, 0, 0x0000000, size, FILEREG_PATCHABLE); // load rom to database
+	file2base(li, 0, 0x0000000, size, FILEREG_NOTPATCHABLE); // load rom to database
 
 	make_segments(); // create ROM, RAM, Z80 RAM and etc. segments
 	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
@@ -384,7 +376,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 
 	inf.af = 0
 		| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
-		| AF_MARKCODE  //     0x0002          // Mark typical code sequences as code
+		//| AF_MARKCODE  //     0x0002          // Mark typical code sequences as code
 		| AF_UNK //          0x0004          // Delete instructions with no xrefs
 		| AF_CODE //         0x0008          // Trace execution flow
 		| AF_PROC //         0x0010          // Create functions if call is present
@@ -395,7 +387,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		| AF_NULLSUB //      0x0200          // Rename empty functions as nullsub_...
 		//| AF_LVAR //         0x0400          // Create stack variables
 		//| AF_TRACE //        0x0800          // Trace stack pointer
-		| AF_ASCII //        0x1000          // Create ascii string if data xref exists
+		//| AF_ASCII //        0x1000          // Create ascii string if data xref exists
 		//| AF_IMMOFF //       0x2000          // Convert 32bit instruction operand to offset
 		//AF_DREFOFF //      0x4000          // Create offset if data xref to seg32 exists
 		//| AF_FINAL //       0x8000          // Final pass of analysis
