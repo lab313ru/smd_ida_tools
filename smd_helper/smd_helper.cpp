@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.1.1"
+#define VERSION "1.2"
 /*
 *      SEGA MEGA DRIVE/GENESIS helper plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -658,6 +658,30 @@ static void do_cmt_vdp_rw_command(ea_t ea, uint32 val)
 }
 
 //--------------------------------------------------------------------------
+static void do_cmt_z80_bus_command(ea_t ea, ea_t addr, uint32 val)
+{
+    switch (addr)
+    {
+    case 0xA11100: // IO_Z80BUS
+    {
+        switch (val)
+        {
+        case 0x0: append_cmt(ea, "Give the Z80 the bus back", false); break;
+        case 0x100: append_cmt(ea, "Send the Z80 a bus request", false); break;
+        }
+    } break;
+    case 0xA11200: // IO_Z80RES
+    {
+        switch (val)
+        {
+        case 0x0: append_cmt(ea, "Disable the Z80 reset", false); break;
+        case 0x100: append_cmt(ea, "Reset the Z80", false); break;
+        }
+    } break;
+    }
+}
+
+//--------------------------------------------------------------------------
 void idaapi run(int /*arg*/)
 {
     char name[250];
@@ -677,13 +701,17 @@ void idaapi run(int /*arg*/)
         uval_t val = 0;
         get_operand_immvals(ea, 0, &val);
         uint32 value = (uint32)val;
-        if (cmd.Operands[0].type == o_imm && cmd.Operands[1].type == o_reg && !qstrcmp(name, "sr"))
+        if (cmd.Op1.type == o_imm && cmd.Op2.type == o_reg && !qstrcmp(name, "sr"))
         {
             do_cmt_sr_ccr_reg_const(ea, value);
         }
+        else if (cmd.Op1.type == o_imm && cmd.Op2.type == o_mem &&
+            (cmd.Op2.addr == 0xA11200 || cmd.Op2.addr == 0xA11100))
+        {
+            do_cmt_z80_bus_command(ea, cmd.Op2.addr, value);
+        }
         else if (is_vdp_rw_cmd(value))
         {
-
             do_cmt_vdp_rw_command(ea, value);
         }
         else if (is_vdp_send_cmd(value)) // comment set vdp reg cmd
