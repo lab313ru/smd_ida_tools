@@ -252,8 +252,8 @@ static void define_sprite_struct()
     struc_t *sprite = get_struc(sprite_id);
 
     add_short_field(sprite, "y", "------yy yyyyyyyy (Vertical coordinate of sprite)");
-    add_byte_field(sprite, "hsize_vsize", "------yy yyyyyyyy (Vertical coordinate of sprite)");
-    add_byte_field(sprite, "hsize_vsize", "------yy yyyyyyyy (Vertical coordinate of sprite)");
+    add_byte_field(sprite, "hsize_vsize", "----hhvv (HSize and VSize in cells)");
+    add_byte_field(sprite, "link", "-lllllll (Link field)");
     add_short_field(sprite, "pcvhn", "pccvhnnn nnnnnnnn\n"
     "(p - Priority, cc - Color palette,\n"
     "v - VF, h - HF, n - Start tile index)");
