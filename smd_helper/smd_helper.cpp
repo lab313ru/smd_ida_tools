@@ -662,14 +662,13 @@ static bool init_plugin(void)
 static const char title[] = "Tile data preview";
 static const char action_name[] = "sit:paint_form";
 
-static void idaapi create_form();
-static void idaapi update_form();
+static void idaapi update_form(bool create);
 
 static int idaapi hook_view(void * /*ud*/, int notification_code, va_list va)
 {
     switch (notification_code)
     {
-    case view_curpos: update_form(); break;
+    case view_curpos: update_form(false); break;
     }
     return 0;
 }
@@ -678,7 +677,7 @@ struct ahandler_t : public action_handler_t
 {
     virtual int idaapi activate(action_activation_ctx_t * ctx)
     {
-        create_form();
+        update_form(true);
         return 1;
     }
 
@@ -707,8 +706,7 @@ static int idaapi hook_ui(void *user_data, int notification_code, va_list va)
             }
         }
     }
-
-    if (notification_code == ui_tform_visible)
+    else if (notification_code == ui_tform_visible)
     {
         TForm *form = va_arg(va, TForm *);
         if (form == user_data)
@@ -724,38 +722,36 @@ static int idaapi hook_ui(void *user_data, int notification_code, va_list va)
 }
 
 //--------------------------------------------------------------------------
-static void idaapi create_form()
-{
-    TForm *form = find_tform(title);
-    if (form != NULL)
-    {
-        switchto_tform(form, true);
-        update_form();
-        return;
-    }
-
-    HWND hwnd = NULL;
-    form = create_tform(title, &hwnd);
-
-    if (hwnd != NULL)
-    {
-        hook_to_notification_point(HT_UI, hook_ui, form);
-        open_tform(form, FORM_TAB | FORM_MENU | FORM_RESTORE | FORM_QWIDGET);
-    }
-    else
-    {
-        close_tform(form, FORM_SAVE);
-        unhook_from_notification_point(HT_UI, hook_ui);
-    }
-}
-
-//--------------------------------------------------------------------------
-static void idaapi update_form()
+static void idaapi update_form(bool create)
 {
     TForm *form = find_tform(title);
     if (form != NULL)
     {
         ((QWidget *)form)->update();
+    }
+    else if (create)
+    {
+        TForm *form = find_tform(title);
+        if (form != NULL)
+        {
+            switchto_tform(form, true);
+            update_form(false);
+            return;
+        }
+
+        HWND hwnd = NULL;
+        form = create_tform(title, &hwnd);
+
+        if (hwnd != NULL)
+        {
+            hook_to_notification_point(HT_UI, hook_ui, form);
+            open_tform(form, FORM_TAB | FORM_MENU | FORM_RESTORE | FORM_QWIDGET);
+        }
+        else
+        {
+            close_tform(form, FORM_SAVE);
+            unhook_from_notification_point(HT_UI, hook_ui);
+        }
     }
 }
 

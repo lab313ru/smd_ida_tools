@@ -1,6 +1,6 @@
 #include <ida.hpp>
 #include <kernwin.hpp>
-#include <bytes.hpp>
+#include <dbg.hpp>
 
 #include "PaintForm.h"
 
@@ -42,7 +42,16 @@ void PaintForm::paintEvent(QPaintEvent *event)
                 int _x = (i % VDP_TILES_IN_ROW) * VDP_TILE_W + x * 2;
                 int _y = (i / VDP_TILES_IN_ROW) * VDP_TILE_H + y;
 
-                uchar t = get_byte(start + i * 0x20 + y * (VDP_TILE_W / 2) + x);
+                ea_t addr = start + i * 0x20 + y * (VDP_TILE_W / 2) + x;
+                uint32 t = 0;
+                if (!get_dbg_byte(addr, &t))
+                {
+                    t = get_db_byte(start + i * 0x20 + y * (VDP_TILE_W / 2) + x);
+                }
+                else
+                {
+                    t = t & 0xFF;
+                }
 
                 myPen.setColor(palette[t >> 4]);
                 painter.setPen(myPen);

@@ -3,7 +3,8 @@
   <ItemGroup>
     <ClCompile Include="smd_helper.cpp" />
     <ClCompile Include="PaintForm.cpp" />
-    <ClCompile Include="moc_PaintForm.cpp" />
+    <ClCompile Include="moc_PaintForm_68.cpp" />
+    <ClCompile Include="moc_PaintForm_695.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PaintForm.h" />

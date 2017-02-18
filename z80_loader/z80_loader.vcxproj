@@ -169,7 +169,6 @@
       </SDLCheck>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -188,7 +187,6 @@
       </SDLCheck>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
-      <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -207,7 +205,6 @@
       </SDLCheck>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -226,7 +223,6 @@
       </SDLCheck>
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
-      <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -250,7 +246,6 @@
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -279,7 +274,6 @@
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -308,7 +302,6 @@
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -337,7 +330,6 @@
       <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>

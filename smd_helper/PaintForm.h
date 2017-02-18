@@ -2,8 +2,15 @@
 
 #include <ida.hpp>
 
+#undef __on_failure
+#undef __useHeader
+
+#ifdef __QT5__
+#include <QtWidgets/QtWidgets>
+#else
 #include <QtGui/QtGui>
-#include <QtGui/QWidget>
+//#include <QtGui/QWidget>
+#endif
 
 #define VDP_TILE_W 8
 #define VDP_TILE_H 8

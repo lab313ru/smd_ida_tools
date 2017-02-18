@@ -166,11 +166,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;_DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR68)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -187,16 +186,15 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;_DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR695)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__NT__;__IDP__;__QT5__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(IDA_SDK95)\lib\x86_win_vc_32;$(IDA_SDK95)\lib\x86_win_qt</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;QtCore4.lib;QtGui4.lib</AdditionalDependencies>
+      <AdditionalDependencies>ida.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
@@ -208,11 +206,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;__EA64__;PTR64;__X64__;_DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR68)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;__EA64__;PTR64;__X64__;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -229,16 +226,15 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;__EA64__;PTR64;__X64__;_DEBUG</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QTDIR695)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__NT__;__IDP__;__QT5__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;QT_NO_DEBUG;__EA64__;PTR64;__X64__;_DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(IDA_SDK95)\lib\x86_win_vc_64;$(IDA_SDK95)\lib\x86_win_qt</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;QtCore4.lib;QtGui4.lib</AdditionalDependencies>
+      <AdditionalDependencies>ida.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
@@ -252,12 +248,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR68)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -278,19 +273,18 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR695)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;__QT5__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(IDA_SDK95)\lib\x86_win_vc_32;$(IDA_SDK95)\lib\x86_win_qt</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;QtCore4.lib;QtGui4.lib</AdditionalDependencies>
+      <AdditionalDependencies>ida.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
@@ -304,12 +298,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR68)\include;$(IDA_SDK)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -330,26 +323,36 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR695)\include;$(IDA_SDK95)\include\</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <PreprocessorDefinitions>__NT__;__IDP__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__NT__;__IDP__;__QT5__;NO_OBSOLETE_FUNCS;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;__EA64__;PTR64;__X64__</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(IDA_SDK95)\lib\x86_win_vc_64;$(IDA_SDK95)\lib\x86_win_qt</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;QtCore4.lib;QtGui4.lib</AdditionalDependencies>
+      <AdditionalDependencies>ida.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/EXPORT:PLUGIN </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="moc_PaintForm.cpp" />
+    <ClCompile Include="moc_PaintForm_68.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="moc_PaintForm_695.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="PaintForm.cpp" />
     <ClCompile Include="smd_helper.cpp" />
   </ItemGroup>
