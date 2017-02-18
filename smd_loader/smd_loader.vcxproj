@@ -123,42 +123,42 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>$(IDA_DIR)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR68)\loaders\</OutDir>
     <TargetName>$(ProjectName)_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>$(IDA_DIR95)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR695)\loaders\</OutDir>
     <TargetName>$(ProjectName)_695</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">
     <TargetExt>.l64</TargetExt>
-    <OutDir>$(IDA_DIR)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR68)\loaders\</OutDir>
     <TargetName>$(ProjectName)64_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">
     <TargetExt>.l64</TargetExt>
-    <OutDir>$(IDA_DIR95)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR695)\loaders\</OutDir>
     <TargetName>$(ProjectName)64_695</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>$(IDA_DIR)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR68)\loaders\</OutDir>
     <TargetName>$(ProjectName)_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">
     <TargetExt>.ldw</TargetExt>
-    <OutDir>$(IDA_DIR95)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR695)\loaders\</OutDir>
     <TargetName>$(ProjectName)_695</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">
     <TargetExt>.l64</TargetExt>
-    <OutDir>$(IDA_DIR)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR68)\loaders\</OutDir>
     <TargetName>$(ProjectName)64_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">
     <TargetExt>.l64</TargetExt>
-    <OutDir>$(IDA_DIR95)\loaders\</OutDir>
+    <OutDir>$(IDA_DIR695)\loaders\</OutDir>
     <TargetName>$(ProjectName)64_695</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">
