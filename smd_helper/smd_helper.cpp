@@ -17,6 +17,10 @@
 #include <loader.hpp>
 #include <kernwin.hpp>
 
+#include <cstdarg>
+
+#include "PaintForm.h"
+
 static const char format[] = "Sega Genesis/Megadrive helper plugin v%s;\nAuthor: Dr. MefistO [Lab 313] <meffi@lab313.ru>.\n";
 static const char wrong_vdp_cmd[] = "Wrong command to send to VDP_CTRL!\n";
 
@@ -171,47 +175,6 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 }
 
 //--------------------------------------------------------------------------
-static void print_version()
-{
-    info(format, VERSION);
-    msg(format, VERSION);
-}
-
-static bool init_plugin(void)
-{
-    if (ph.id != PLFM_68K)
-        return false;
-
-    return true;
-}
-
-//--------------------------------------------------------------------------
-static int idaapi init(void)
-{
-    if (init_plugin())
-    {
-        plugin_inited = true;
-        my_dbg = false;
-
-        hook_to_notification_point(HT_IDP, hook_idp, NULL);
-
-        print_version();
-        return PLUGIN_KEEP;
-    }
-    return PLUGIN_SKIP;
-}
-
-//--------------------------------------------------------------------------
-void idaapi term(void)
-{
-    if (plugin_inited)
-    {
-        unhook_from_notification_point(HT_IDP, hook_idp, NULL);
-        plugin_inited = false;
-    }
-}
-
-//--------------------------------------------------------------------------
 static unsigned int mask(unsigned char bit_idx, unsigned char bits_cnt = 1)
 {
     return (((1 << bits_cnt) - 1) << bit_idx);
@@ -320,28 +283,28 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
     case 0x8200:
     {
         addr = (val & mask(3, 3));
-        qsnprintf(name, sizeof(name), "SET_PLANE_A_ADDR_$%.4X", addr * 0x400);
+        ::qsnprintf(name, sizeof(name), "SET_PLANE_A_ADDR_$%.4X", addr * 0x400);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x8300:
     {
         addr = (val & mask(1, 5));
-        qsnprintf(name, sizeof(name), "SET_WINDOW_PLANE_ADDR_$%.4X", addr * 0x400);
+        ::qsnprintf(name, sizeof(name), "SET_WINDOW_PLANE_ADDR_$%.4X", addr * 0x400);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x8400:
     {
         addr = (val & mask(0, 3));
-        qsnprintf(name, sizeof(name), "SET_PLANE_B_ADDR_$%.4X", addr * 0x2000);
+        ::qsnprintf(name, sizeof(name), "SET_PLANE_B_ADDR_$%.4X", addr * 0x2000);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x8500:
     {
         addr = (val & mask(0, 7));
-        qsnprintf(name, sizeof(name), "SET_SPRITE_TBL_ADDR_$%.4X", addr * 0x200);
+        ::qsnprintf(name, sizeof(name), "SET_SPRITE_TBL_ADDR_$%.4X", addr * 0x200);
         append_cmt(ea, name, false);
         return true;
     }
@@ -357,7 +320,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
         unsigned int xx = (val & mask(4, 2));
         unsigned int yyyy = (val & mask(0, 4));
 
-        qsnprintf(name, sizeof(name), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
+        ::qsnprintf(name, sizeof(name), "SET_BG_AS_%dPAL_%dTH_COLOR", xx + 1, yyyy + 1);
         append_cmt(ea, name, false);
 
         return true;
@@ -365,7 +328,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
     case 0x8A00:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_HBLANK_COUNTER_VALUE_$%.4X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_HBLANK_COUNTER_VALUE_$%.4X", addr);
         append_cmt(ea, name, false);
         return true;
     } break;
@@ -416,7 +379,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
     case 0x8D00:
     {
         addr = (val & mask(0, 6));
-        qsnprintf(name, sizeof(name), "SET_HSCROLL_DATA_ADDR_$%.4X", addr * 0x400);
+        ::qsnprintf(name, sizeof(name), "SET_HSCROLL_DATA_ADDR_$%.4X", addr * 0x400);
         append_cmt(ea, name, false);
         return true;
     }
@@ -433,7 +396,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
     case 0x8F00:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_VDP_AUTO_INC_VALUE_$%.4X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_VDP_AUTO_INC_VALUE_$%.4X", addr);
         append_cmt(ea, name, false);
         return true;
     }
@@ -461,7 +424,7 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
         else append_cmt(ea, "MOVE_WINDOW_HORZ_LEFT", false);
 
         addr = (val & mask(0, 5));
-        qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
+        ::qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
         append_cmt(ea, name, false);
         return true;
     }
@@ -471,42 +434,42 @@ static bool do_cmt_vdp_reg_const(ea_t ea, uint32 val)
         else append_cmt(ea, "MOVE_WINDOW_VERT_LEFT", false);
 
         addr = (val & mask(0, 5));
-        qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
+        ::qsnprintf(name, sizeof(name), "MOVE_BY_%d_CELLS", addr);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x9300:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x9400:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_HIGHER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_HIGHER_BYTE_OF_DMA_LEN_TO_$%.2X", addr);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x9500:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_LOWER_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x9600:
     {
         addr = (val & mask(0, 8));
-        qsnprintf(name, sizeof(name), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_MIDDLE_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
         append_cmt(ea, name, false);
         return true;
     }
     case 0x9700:
     {
         addr = (val & mask(0, 6));
-        qsnprintf(name, sizeof(name), "SET_HIGH_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
+        ::qsnprintf(name, sizeof(name), "SET_HIGH_BYTE_OF_DMA_SRC_TO_$%.2X", addr);
         append_cmt(ea, name, false);
 
         if (val & mask(7)) append_cmt(ea, "ADD_$800000_TO_DMA_SRC_ADDR", false);
@@ -591,17 +554,17 @@ static void do_cmt_vdp_rw_command(ea_t ea, uint32 val)
             {
             case ((0 << 31) | (0 << 5) | (0 << 4)) /*000*/: // VRAM
             {
-                qsnprintf(name, sizeof(name), "DO_READ_VRAM_FROM_$%.4X", addr);
+                ::qsnprintf(name, sizeof(name), "DO_READ_VRAM_FROM_$%.4X", addr);
                 append_cmt(ea, name, false);
             } break;
             case ((0 << 31) | (0 << 5) | (1 << 4)) /*001*/: // VSRAM
             {
-                qsnprintf(name, sizeof(name), "DO_READ_VSRAM_FROM_$%.4X", addr);
+                ::qsnprintf(name, sizeof(name), "DO_READ_VSRAM_FROM_$%.4X", addr);
                 append_cmt(ea, name, false);
             } break;
             case ((0 << 31) | (1 << 5) | (0 << 4)) /*010*/: // CRAM
             {
-                qsnprintf(name, sizeof(name), "DO_READ_CRAM_FROM_$%.4X", addr);
+                ::qsnprintf(name, sizeof(name), "DO_READ_CRAM_FROM_$%.4X", addr);
                 append_cmt(ea, name, false);
             } break;
             default:
@@ -616,17 +579,17 @@ static void do_cmt_vdp_rw_command(ea_t ea, uint32 val)
             {
             case ((0 << 31) | (0 << 5) | (0 << 4)) /*000*/: // VRAM
             {
-                qsnprintf(name, sizeof(name), "DO_WRITE_TO_VRAM_AT_$%.4X_ADDR", addr);
+                ::qsnprintf(name, sizeof(name), "DO_WRITE_TO_VRAM_AT_$%.4X_ADDR", addr);
                 append_cmt(ea, name, false);
             } break;
             case ((0 << 31) | (0 << 5) | (1 << 4)) /*001*/: // VSRAM
             {
-                qsnprintf(name, sizeof(name), "DO_WRITE_TO_VSRAM_AT_$%.4X_ADDR", addr);
+                ::qsnprintf(name, sizeof(name), "DO_WRITE_TO_VSRAM_AT_$%.4X_ADDR", addr);
                 append_cmt(ea, name, false);
             } break;
             case ((1 << 31) | (0 << 5) | (0 << 4)) /*100*/: // CRAM
             {
-                qsnprintf(name, sizeof(name), "DO_WRITE_TO_CRAM_AT_$%.4X_ADDR", addr);
+                ::qsnprintf(name, sizeof(name), "DO_WRITE_TO_CRAM_AT_$%.4X_ADDR", addr);
                 append_cmt(ea, name, false);
             } break;
             default:
@@ -682,6 +645,156 @@ static void do_cmt_z80_bus_command(ea_t ea, ea_t addr, uint32 val)
 }
 
 //--------------------------------------------------------------------------
+static void print_version()
+{
+    info(format, VERSION);
+    msg(format, VERSION);
+}
+
+static bool init_plugin(void)
+{
+    if (ph.id != PLFM_68K)
+        return false;
+
+    return true;
+}
+
+static const char title[] = "Tile data preview";
+static const char action_name[] = "sit:paint_form";
+
+static void idaapi create_form();
+static void idaapi update_form();
+
+static int idaapi hook_view(void * /*ud*/, int notification_code, va_list va)
+{
+    switch (notification_code)
+    {
+    case view_curpos: update_form(); break;
+    }
+    return 0;
+}
+
+struct ahandler_t : public action_handler_t
+{
+    virtual int idaapi activate(action_activation_ctx_t * ctx)
+    {
+        create_form();
+        return 1;
+    }
+
+    virtual action_state_t idaapi update(action_update_ctx_t *ctx)
+    {
+        return AST_ENABLE_ALWAYS;
+    }
+};
+
+static ahandler_t ah;
+static action_desc_t action = ACTION_DESC_LITERAL(action_name, "Paint data as tiles", &ah, "Shift+D", NULL, -1);
+
+//--------------------------------------------------------------------------
+static int idaapi hook_ui(void *user_data, int notification_code, va_list va)
+{
+    if (notification_code == ui_populating_tform_popup)
+    {
+        TForm *f = va_arg(va, TForm *);
+        if (get_tform_type(f) == BWN_DISASM)
+        {
+            TPopupMenu *p = va_arg(va, TPopupMenu *);
+            TCustomControl *view = get_tform_idaview(f);
+            if (view != NULL)
+            {
+                attach_action_to_popup(f, p, action_name);
+            }
+        }
+    }
+
+    if (notification_code == ui_tform_visible)
+    {
+        TForm *form = va_arg(va, TForm *);
+        if (form == user_data)
+        {
+            QHBoxLayout *mainLayout = new QHBoxLayout();
+            mainLayout->setMargin(0);
+            mainLayout->addWidget(new PaintForm());
+            ((QWidget *)form)->setLayout(mainLayout);
+        }
+    }
+
+    return 0;
+}
+
+//--------------------------------------------------------------------------
+static void idaapi create_form()
+{
+    TForm *form = find_tform(title);
+    if (form != NULL)
+    {
+        switchto_tform(form, true);
+        update_form();
+        return;
+    }
+
+    HWND hwnd = NULL;
+    form = create_tform(title, &hwnd);
+
+    if (hwnd != NULL)
+    {
+        hook_to_notification_point(HT_UI, hook_ui, form);
+        open_tform(form, FORM_TAB | FORM_MENU | FORM_RESTORE | FORM_QWIDGET);
+    }
+    else
+    {
+        close_tform(form, FORM_SAVE);
+        unhook_from_notification_point(HT_UI, hook_ui);
+    }
+}
+
+//--------------------------------------------------------------------------
+static void idaapi update_form()
+{
+    TForm *form = find_tform(title);
+    if (form != NULL)
+    {
+        ((QWidget *)form)->update();
+    }
+}
+
+//--------------------------------------------------------------------------
+static int idaapi init(void)
+{
+    if (init_plugin())
+    {
+        plugin_inited = true;
+        my_dbg = false;
+
+        register_action(action);
+
+        hook_to_notification_point(HT_VIEW, hook_view, NULL);
+        hook_to_notification_point(HT_UI, hook_ui, NULL);
+        hook_to_notification_point(HT_IDP, hook_idp, NULL);
+
+        print_version();
+        return PLUGIN_KEEP;
+    }
+    return PLUGIN_SKIP;
+}
+
+//--------------------------------------------------------------------------
+void idaapi term(void)
+{
+    if (plugin_inited)
+    {
+        unhook_from_notification_point(HT_VIEW, hook_view);
+        unhook_from_notification_point(HT_UI, hook_ui);
+        unhook_from_notification_point(HT_IDP, hook_idp);
+
+        unregister_action(action_name);
+
+        plugin_inited = false;
+    }
+}
+
+//--------------------------------------------------------------------------
 void idaapi run(int /*arg*/)
 {
     char name[250];
@@ -701,7 +814,7 @@ void idaapi run(int /*arg*/)
         uval_t val = 0;
         get_operand_immvals(ea, 0, &val);
         uint32 value = (uint32)val;
-        if (cmd.Op1.type == o_imm && cmd.Op2.type == o_reg && !qstrcmp(name, "sr"))
+        if (cmd.Op1.type == o_imm && cmd.Op2.type == o_reg && !::qstrcmp(name, "sr"))
         {
             do_cmt_sr_ccr_reg_const(ea, value);
         }
