@@ -2,5 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="smd_helper.cpp" />
+    <ClCompile Include="PaintForm.cpp" />
+    <ClCompile Include="moc_PaintForm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PaintForm.h" />
   </ItemGroup>
 </Project>
