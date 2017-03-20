@@ -76,6 +76,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
     {
     case processor_t::idp_notify::custom_ana:
     {
+#if (IDA_SDK_VERSION <= 695)
         (*ph.u_ana)();
 
 #ifdef _DEBUG
@@ -146,6 +147,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
             switch (op.type)
             {
+			case o_near:
             case o_mem:
             {
                 op.addr &= 0xFFFFFF; // for any mirrors
@@ -160,7 +162,8 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             }
         }
 
-        return cmd.size;
+        return cmd.size + 1;
+#endif
     } break;
     default:
 #ifdef _DEBUG
