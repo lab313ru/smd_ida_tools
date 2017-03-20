@@ -126,7 +126,7 @@
     <TargetName>$(ProjectName)_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">
-    <OutDir>$(IDA_DIR95)\plugins\</OutDir>
+    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
     <TargetName>$(ProjectName)_695</TargetName>
   </PropertyGroup>
@@ -136,7 +136,7 @@
     <TargetName>$(ProjectName)64_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">
-    <OutDir>$(IDA_DIR95)\plugins\</OutDir>
+    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
     <TargetName>$(ProjectName)64_695</TargetName>
   </PropertyGroup>
@@ -146,7 +146,7 @@
     <TargetName>$(ProjectName)_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">
-    <OutDir>$(IDA_DIR95)\plugins\</OutDir>
+    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
     <TargetExt>.plw</TargetExt>
     <TargetName>$(ProjectName)_695</TargetName>
   </PropertyGroup>
@@ -156,7 +156,7 @@
     <TargetName>$(ProjectName)64_68</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">
-    <OutDir>$(IDA_DIR95)\plugins\</OutDir>
+    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
     <TargetExt>.p64</TargetExt>
     <TargetName>$(ProjectName)64_695</TargetName>
   </PropertyGroup>
