@@ -153,10 +153,19 @@ static void add_dword_array(struc_t *st, const char *name, asize_t length)
 //------------------------------------------------------------------------
 static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
 {
-	if (!add_segm(0, start, end, name, class_name)) loader_failure();
+	segment_t s;
+	s.sel = 0;
+	s.startEA = start;
+	s.endEA = end;
+	s.align = saRelByte;
+	s.comb = scPub;
+	s.bitness = 1; // 32-bit
+
+	if (!add_segm_ex(&s, name, class_name, ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET | ADDSEG_NOAA)) loader_failure();
 	segment_t *segm = getseg(start);
 	set_segment_cmt(segm, cmnt, false);
 	doByte(start, 1);
+	segm->update();
 }
 
 //------------------------------------------------------------------------
@@ -350,6 +359,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 {
 	if (ph.id != PLFM_68K) {
 		set_processor_type(M68K, SETPROC_ALL | SETPROC_FATAL); // Motorola 68000
+		set_target_assembler(0);
 	}
 
 	unsigned int size = qlsize(li); // size of rom
