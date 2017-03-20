@@ -76,7 +76,9 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
     {
     case processor_t::idp_notify::custom_ana:
     {
-#if (IDA_SDK_VERSION <= 695)
+        if (!isCode(getFlags(cmd.ea)))
+            break;
+
         (*ph.u_ana)();
 
 #ifdef _DEBUG
@@ -163,7 +165,6 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
         }
 
         return cmd.size + 1;
-#endif
     } break;
     default:
 #ifdef _DEBUG

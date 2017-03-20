@@ -161,7 +161,13 @@ static void add_segment(ea_t start, ea_t end, const char *name, const char *clas
 	s.comb = scPub;
 	s.bitness = 1; // 32-bit
 
-	if (!add_segm_ex(&s, name, class_name, ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET | ADDSEG_NOAA)) loader_failure();
+    int flags = ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET;
+
+#if (IDA_SDK_VERSION == 695)
+    //flags |= ADDSEG_NOAA;
+#endif
+
+	if (!add_segm_ex(&s, name, class_name, flags)) loader_failure();
 	segment_t *segm = getseg(start);
 	set_segment_cmt(segm, cmnt, false);
 	doByte(start, 1);
@@ -282,7 +288,7 @@ static void make_segments()
 	add_segment(0x00B00000, 0x00BFFFFF + 1, UNLK, DATA, "Unallocated");
 
     add_segment(0x00C00000, 0x00C0001F + 1, VDP, XTRN, "VDP Registers");
-    add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, DATA, "RAM segment");
+    add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, CODE, "RAM segment");
 
 	set_name(0x00A00000, Z80_RAM);
 	set_name(0x00FF0000, M68K_RAM);
@@ -385,7 +391,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]); // Reset
 
 	inf.af = 0
-		| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
+		//| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
 		//| AF_MARKCODE  //     0x0002          // Mark typical code sequences as code
 		| AF_UNK //          0x0004          // Delete instructions with no xrefs
 		| AF_CODE //         0x0008          // Trace execution flow
@@ -398,7 +404,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF_LVAR //         0x0400          // Create stack variables
 		//| AF_TRACE //        0x0800          // Trace stack pointer
 		//| AF_ASCII //        0x1000          // Create ascii string if data xref exists
-		//| AF_IMMOFF //       0x2000          // Convert 32bit instruction operand to offset
+		| AF_IMMOFF //       0x2000          // Convert 32bit instruction operand to offset
 		//AF_DREFOFF //      0x4000          // Create offset if data xref to seg32 exists
 		//| AF_FINAL //       0x8000          // Final pass of analysis
 		;
@@ -417,7 +423,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF2_VERSP  //      0x0800          // Perform full SP-analysis (ph.verify_sp)
 		//| AF2_DOCODE  //     0x1000          // Coagulate code segs at the final pass
 		| AF2_TRFUNC  //     0x2000          // Truncate functions upon code deletion
-		//| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
+		| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
 		//| AF2_MEMFUNC //    0x8000          // Try to guess member function types
 		;
 
