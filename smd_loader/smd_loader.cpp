@@ -368,29 +368,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		set_target_assembler(0);
 	}
 
-	unsigned int size = qlsize(li); // size of rom
-
-	qlseek(li, 0, SEEK_SET);
-	if (qlread(li, &_vect, sizeof(_vect)) != sizeof(_vect)) loader_failure(); // trying to read rom vectors
-	if (qlread(li, &_hdr, sizeof(_hdr)) != sizeof(_hdr)) loader_failure(); // trying to read rom's header
-
-	file2base(li, 0, 0x0000000, size, FILEREG_NOTPATCHABLE); // load rom to database
-
-	make_segments(); // create ROM, RAM, Z80 RAM and etc. segments
-	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
-	define_vectors_struct(); // add definition of vectors struct
-	define_header_struct(); // add definition of header struct
-    define_sprite_struct(); // add definition of sprite struct
-	set_spec_register_names(); // apply names for special addresses of registers
-	add_subroutines(&_vect, size); // mark vector subroutines as procedures
-
-    add_other_enum();
-    add_vdp_status_enum();
-    add_version_reg_enum();
-
-	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]); // Reset
-
-	inf.af = 0
+    inf.af = 0
 		//| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
 		//| AF_MARKCODE  //     0x0002          // Mark typical code sequences as code
 		| AF_UNK //          0x0004          // Delete instructions with no xrefs
@@ -426,6 +404,28 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
 		//| AF2_MEMFUNC //    0x8000          // Try to guess member function types
 		;
+
+	unsigned int size = qlsize(li); // size of rom
+
+	qlseek(li, 0, SEEK_SET);
+	if (qlread(li, &_vect, sizeof(_vect)) != sizeof(_vect)) loader_failure(); // trying to read rom vectors
+	if (qlread(li, &_hdr, sizeof(_hdr)) != sizeof(_hdr)) loader_failure(); // trying to read rom's header
+
+	file2base(li, 0, 0x0000000, size, FILEREG_NOTPATCHABLE); // load rom to database
+
+	make_segments(); // create ROM, RAM, Z80 RAM and etc. segments
+	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
+	define_vectors_struct(); // add definition of vectors struct
+	define_header_struct(); // add definition of header struct
+    define_sprite_struct(); // add definition of sprite struct
+	set_spec_register_names(); // apply names for special addresses of registers
+	add_subroutines(&_vect, size); // mark vector subroutines as procedures
+
+    add_other_enum();
+    add_vdp_status_enum();
+    add_version_reg_enum();
+
+	inf.beginEA = get_name_ea(BADADDR, VECTOR_NAMES[1]); // Reset
 
 	print_version();
 }

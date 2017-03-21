@@ -76,9 +76,6 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
     {
     case processor_t::idp_notify::custom_ana:
     {
-        if (!isCode(getFlags(cmd.ea)))
-            break;
-
         (*ph.u_ana)();
 
 #ifdef _DEBUG
