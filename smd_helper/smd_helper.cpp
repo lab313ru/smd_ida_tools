@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.3"
+#define VERSION "1.4"
 /*
 *      SEGA MEGA DRIVE/GENESIS helper plugin
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
