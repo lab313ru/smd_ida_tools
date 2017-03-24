@@ -16,6 +16,7 @@
 #include <bytes.hpp>
 #include <loader.hpp>
 #include <kernwin.hpp>
+#include <offset.hpp>
 
 #include <cstdarg>
 
@@ -77,6 +78,9 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
     case processor_t::idp_notify::custom_ana:
     {
         (*ph.u_ana)();
+
+		if (!isCode(getFlags(cmd.ea)))
+			break;
 
 #ifdef _DEBUG
         if (my_dbg)
@@ -158,6 +162,16 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                     (op.addr >= 0xC00020 && op.addr <= 0xC0003F)) // VDP mirrors
                     op.addr &= 0xC000FF;
             } break;
+			case o_imm:
+			{
+				if (cmd.itype != 0x7F || op.n != 0) // movea
+					break;
+
+				if (op.value & 0xFF0000 && op.dtyp == dt_word)
+					op_offset(cmd.ea, op.n, REF_OFF32, BADADDR, 0xFF0000);
+				else
+					op_offset(cmd.ea, op.n, REF_OFF32);
+			} break;
             }
         }
 
