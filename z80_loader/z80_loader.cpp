@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.3"
+#define VERSION "1.4"
 /*
 *      SEGA MEGA DRIVE/GENESIS Z80 Drivers Loader
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -208,21 +208,8 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		set_processor_type(Z80, SETPROC_ALL | SETPROC_FATAL); // Z80
 	}
 
-	unsigned int size = qlsize(li); // size of driver
-
-	qlseek(li, 0, SEEK_SET);
-	if (size > 0x2000) loader_failure();
-	file2base(li, 0, 0x0000, size, FILEREG_NOTPATCHABLE); // load driver to database
-
-	make_segments(); // create segments
-	set_spec_register_names(); // apply names for special addresses of registers
-
-    add_sub(0x0000, "start");
-
-	inf.beginEA = 0;
-
 	inf.af = 0
-		| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
+		//| AF_FIXUP //        0x0001          // Create offsets and segments using fixup info
 		//| AF_MARKCODE  //     0x0002          // Mark typical code sequences as code
 		| AF_UNK //          0x0004          // Delete instructions with no xrefs
 		| AF_CODE //         0x0008          // Trace execution flow
@@ -235,7 +222,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF_LVAR //         0x0400          // Create stack variables
 		//| AF_TRACE //        0x0800          // Trace stack pointer
 		//| AF_ASCII //        0x1000          // Create ascii string if data xref exists
-		//| AF_IMMOFF //       0x2000          // Convert 32bit instruction operand to offset
+		| AF_IMMOFF //       0x2000          // Convert 32bit instruction operand to offset
 		//AF_DREFOFF //      0x4000          // Create offset if data xref to seg32 exists
 		//| AF_FINAL //       0x8000          // Final pass of analysis
 		;
@@ -254,9 +241,22 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF2_VERSP  //      0x0800          // Perform full SP-analysis (ph.verify_sp)
 		//| AF2_DOCODE  //     0x1000          // Coagulate code segs at the final pass
 		| AF2_TRFUNC  //     0x2000          // Truncate functions upon code deletion
-		//| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
+		| AF2_PURDAT  //     0x4000          // Control flow to data segment is ignored
 		//| AF2_MEMFUNC //    0x8000          // Try to guess member function types
 		;
+
+	unsigned int size = qlsize(li); // size of driver
+
+	qlseek(li, 0, SEEK_SET);
+	if (size > 0x2000) loader_failure();
+	file2base(li, 0, 0x0000, size, FILEREG_NOTPATCHABLE); // load driver to database
+
+	make_segments(); // create segments
+	set_spec_register_names(); // apply names for special addresses of registers
+
+    add_sub(0x0000, "start");
+
+	inf.beginEA = 0;
 
 	print_version();
 }
