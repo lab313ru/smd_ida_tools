@@ -1,0 +1,676 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="asm">
+      <UniqueIdentifier>{2098e8b2-5155-40a1-9b9d-c3f69e0ff8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{faad4208-2ba6-4a76-9472-a20920c5aebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{095ab321-73c1-48a3-ac37-e3a389e411e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{5f1885b6-6942-42d1-9d56-ddd45a8f047d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\mp3_dec">
+      <UniqueIdentifier>{41360031-fc33-4e97-a66e-240a977f28fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{42724d95-981d-47c5-829f-5faadb4f0fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ida">
+      <UniqueIdentifier>{d2e72e27-9dac-4ead-a237-f40edbfdc6c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{a4aee00d-8ab6-4022-a7ba-ad30d43f5f2f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="asm\vdp_32x.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\vdp_io.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\vdp_rend.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\z80.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\main68k.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\sub68k.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\pwm_asm.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\blit.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\gfx_cd.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\io.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\mem_m68k.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\mem_s68k.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\mem_sh2.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\mem_z80.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\misc.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+    <CustomBuild Include="asm\sh2a.asm">
+      <Filter>asm</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lua\src\lapi.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lauxlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lbaselib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lcode.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ldblib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ldebug.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ldo.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ldump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lfunc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lgc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\linit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\liolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\llex.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lmathlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lmem.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\loadlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lobject.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lopcodes.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\loslib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lparser.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lstate.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lstring.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lstrlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ltable.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ltablib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\ltm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lundump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lvm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\src\lzio.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\common.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\dct64_i386.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\decode_i386.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\interface.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\layer3.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3_dec\tabinit.c">
+      <Filter>src\mp3_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cblit.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cd_aspi.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cdda_mp3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\corehooks.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debugwindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\drawutil.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\g_ddraw.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\g_dinput.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\g_dsound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\g_main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gens.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ggenie.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gm2_structs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\guidraw.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hexeditor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\luascript.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\luascript_window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\m68k_debugwindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\movie.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parsecmdline.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plane_explorer_kmod.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ram_search.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ramwatch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rom.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\save.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tracer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tracer_cd.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vdp_ram.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vdp_sprites.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="ida\ida_debug.cpp">
+      <Filter>ida</Filter>
+    </ClCompile>
+    <ClCompile Include="ida\ida_plugin.cpp">
+      <Filter>ida</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ym2612.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wave.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sh2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pwm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\psg.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pcm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lc89510.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cpu_z80.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cpu_sh2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cpu_68k.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cd_sys.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cd_file.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\compress.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzclose.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzlib.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzread.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzwrite.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\infback.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\uncompr.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="ida\PaintForm.cpp">
+      <Filter>ida</Filter>
+    </ClCompile>
+    <ClCompile Include="ida\moc_PaintForm_68.cpp">
+      <Filter>ida</Filter>
+    </ClCompile>
+    <ClCompile Include="ida\moc_PaintForm_695.cpp">
+      <Filter>ida</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lua\src\lapi.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lauxlib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lcode.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\ldebug.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\ldo.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lfunc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lgc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\llex.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\llimits.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lmem.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lobject.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lopcodes.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lparser.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lstate.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lstring.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\ltable.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\ltm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lua.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\luaconf.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lualib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lundump.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lvm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lzio.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\blit.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cd_aspi.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cd_file.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cd_sys.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cdda_lp7.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cdda_mp3.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\corehooks.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cpu_68k.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cpu_sh2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cpu_z80.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\debugwindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\drawutil.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\g_ddraw.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\g_dsound.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\g_input.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\g_main.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gens.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gfx_cd.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ggenie.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gm2_structs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\guidraw.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hexeditor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\keycode.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lc89510.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\luascript.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\m68k_debugwindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mem_m68k.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mem_s68k.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mem_sh2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mem_z80.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\movie.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moviegfx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\parsecmdline.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pcm.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\plane_explorer_kmod.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pngasmrd.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pngconf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\psg.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pwm.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ram_dump.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ram_search.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ramwatch.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rom.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\save.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sh2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\star_68k.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tracer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unzip.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vdp_32x.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vdp_io.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vdp_ram.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vdp_rend.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vdp_sprites.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wave.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ym2612.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\z80.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\zconf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\zlib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="ida\ida_debmod.h">
+      <Filter>ida</Filter>
+    </ClInclude>
+    <ClInclude Include="ida\ida_debug.h">
+      <Filter>ida</Filter>
+    </ClInclude>
+    <ClInclude Include="ida\ida_plugin.h">
+      <Filter>ida</Filter>
+    </ClInclude>
+    <ClInclude Include="ida\ida_registers.h">
+      <Filter>ida</Filter>
+    </ClInclude>
+    <ClInclude Include="include\joypads.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\deflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\gzguts.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\trees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="ida\PaintForm.h">
+      <Filter>ida</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource\gens.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
