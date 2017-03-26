@@ -177,7 +177,7 @@ static void add_segment(ea_t start, ea_t end, const char *name, const char *clas
 //------------------------------------------------------------------------
 static void add_subroutines(gen_vect *table, unsigned int rom_size)
 {
-	for (int i = 1; i < 64; i++) // except SPP pointer
+	for (int i = 1; i < _countof(VECTOR_NAMES); i++) // except SPP pointer
 	{
 		add_sub(table->vectors[i], VECTOR_NAMES[i], rom_size);
 	}
@@ -186,7 +186,7 @@ static void add_subroutines(gen_vect *table, unsigned int rom_size)
 //------------------------------------------------------------------------
 static void convert_vector_addrs(gen_vect *table)
 {
-	for (int i = 0; i < 64; i++)
+	for (int i = 0; i < _countof(table->vectors); i++)
 	{
 		table->vectors[i] = SWAP_BYTES_32(table->vectors[i]);
 	}
@@ -199,7 +199,7 @@ static void define_vectors_struct()
 	tid_t vec_id = add_struc(BADADDR, VECTORS_STRUCT);
 	struc_t *vectors = get_struc(vec_id);
 
-	for (int i = 0; i < 64; i++)
+	for (int i = 0; i < _countof(VECTOR_NAMES); i++)
 	{
 		add_offset_field(vectors, code_segm, VECTOR_NAMES[i]);
 	}
@@ -218,7 +218,7 @@ static void add_enum_member_with_mask(enum_t id, const char *name, unsigned int 
 //------------------------------------------------------------------------
 static void set_spec_register_names()
 {
-	for (int i = 0; i <= 31; i++)
+	for (int i = 0; i < _countof(spec_regs); i++)
 	{
 		if (spec_regs[i].size == 2)
 		{
