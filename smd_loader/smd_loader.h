@@ -1,5 +1,4 @@
-#ifndef __GEN_H__
-#define __GEN_H__
+#pragma once
 
 struct gen_hdr {
 	unsigned char CopyRights[32];
@@ -91,5 +90,3 @@ struct gen_vect {
 };
 
 idaman loader_t ida_module_data LDSC;
-
-#endif
