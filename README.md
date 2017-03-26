@@ -1,7 +1,7 @@
 # smd_ida_tools
 The IDA Pro tools for the Sega Genesis/MegaDrive romhackers.
 
-##Contains
+## Contains
 1. ROM files loader;
 2. Z80 sound drivers loader;
 3. IDA Pro debugger.
