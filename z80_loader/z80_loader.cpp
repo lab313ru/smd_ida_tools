@@ -45,7 +45,7 @@ static const reg spec_regs[] = {
 };
 
 static const char Z80[] = "Z80";
-static const char RAM[] = "RAM";
+static const char ROM[] = "ROM";
 static const char YM2612_REGS[] = "YM2612_REGS";
 static const char BANK_REG[] = "BANK_REG";
 static const char PSG_REG[] = "PSG_REG";
@@ -133,16 +133,31 @@ static void add_dword_array(struc_t *st, const char *name, asize_t length)
 //------------------------------------------------------------------------
 static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
 {
-	if (!add_segm(0, start, end, name, class_name)) loader_failure();
+	segment_t s;
+	s.sel = 0;
+	s.startEA = start;
+	s.endEA = end;
+	s.align = saRelByte;
+	s.comb = scPub;
+	s.bitness = 0; // 32-bit
+
+	int flags = ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET;
+
+#if (IDA_SDK_VERSION == 695)
+	//flags |= ADDSEG_NOAA;
+#endif
+
+	if (!add_segm_ex(&s, name, class_name, flags)) loader_failure();
 	segment_t *segm = getseg(start);
 	set_segment_cmt(segm, cmnt, false);
-	//doByte(start, 1);
+	doByte(start, 1);
+	segm->update();
 }
 
 //------------------------------------------------------------------------
 static void set_spec_register_names()
 {
-	for (int i = 0; i <= (sizeof(spec_regs) / sizeof(spec_regs[0])); i++)
+	for (int i = 0; i < _countof(spec_regs); i++)
 	{
 		if (spec_regs[i].size == 2)
 		{
@@ -163,7 +178,7 @@ static void set_spec_register_names()
 //------------------------------------------------------------------------
 static void make_segments()
 {
-    add_segment(0x0000, 0x001FFF + 1, RAM, CODE, "Main segment");
+    add_segment(0x0000, 0x001FFF + 1, ROM, CODE, "Main segment");
     add_segment(0x2000, 0x003FFF + 1, RESV1, DATA, "Reserved");
 
     add_segment(0x4000, 0x004003 + 1, YM2612_REGS, XTRN, "YM2612 Regs");
@@ -254,6 +269,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 	make_segments(); // create segments
 	set_spec_register_names(); // apply names for special addresses of registers
 
+	do_unknown(0x0000, DOUNK_SIMPLE);
     add_sub(0x0000, "start");
 
 	inf.beginEA = 0;
