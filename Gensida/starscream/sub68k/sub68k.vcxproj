@@ -51,7 +51,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Generating $(TargetName) Starscream Assembly</Message>
-      <Command>$(TargetPath) $(SolutionDir)asm\$(TargetName).asm -quiet -hog -name $(TargetName)_</Command>
+      <Command>$(TargetPath) $(SolutionDir)\Gensida\asm\$(TargetName).asm -quiet -hog -name $(TargetName)_</Command>
     </PostBuildEvent>
     <PreBuildEvent />
     <CustomBuildStep />
