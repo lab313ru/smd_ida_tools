@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.4"
+#define VERSION "1.7"
 /*
 *      SEGA MEGA DRIVE/GENESIS Z80 Drivers Loader
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
