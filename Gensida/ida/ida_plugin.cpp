@@ -193,7 +193,38 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 				msg("specflag1=%x, ", op.specflag1);
 				msg("specflag2=%x, ", op.specflag2);
 				msg("specflag3=%x, ", op.specflag3);
-				msg("specflag4=%x\n", op.specflag4);
+				msg("specflag4=%x, ", op.specflag4);
+
+                msg("refinfo[");
+
+                flags_t _uFlag = uFlag;
+                flags_t flags = get_optype_flags1(_uFlag);
+                opinfo_t buf;
+
+                if (get_opinfo(cmd.ea, op.n, flags, &buf))
+                {
+                    msg("target=%x, ", buf.ri.target);
+                    msg("base=%x, ", buf.ri.base);
+                    msg("tdelta=%x, ", buf.ri.tdelta);
+
+                    msg("flags[");
+                    if (buf.ri.flags & REFINFO_TYPE)
+                        msg("REFINFO_TYPE|");
+                    if (buf.ri.flags & REFINFO_RVAOFF)
+                        msg("REFINFO_RVAOFF|");
+                    if (buf.ri.flags & REFINFO_PASTEND)
+                        msg("REFINFO_PASTEND|");
+                    if (buf.ri.flags & REFINFO_CUSTOM)
+                        msg("REFINFO_CUSTOM|");
+                    if (buf.ri.flags & REFINFO_NOBASE)
+                        msg("REFINFO_NOBASE|");
+                    if (buf.ri.flags & REFINFO_SUBTRACT)
+                        msg("REFINFO_SUBTRACT|");
+                    if (buf.ri.flags & REFINFO_SIGNEDOP)
+                        msg("REFINFO_SIGNEDOP");
+                    msg("]");
+                }
+                msg("]\n");
 			}
 #endif
 
@@ -218,8 +249,6 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
 				if (op.value & 0xFF0000 && op.dtyp == dt_word)
 					op_offset(cmd.ea, op.n, REF_OFF32, BADADDR, 0xFF0000);
-				else
-					op_offset(cmd.ea, op.n, REF_OFF32);
 			} break;
 			}
 		}
@@ -299,7 +328,38 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                 msg("specflag1=%x, ", op.specflag1);
                 msg("specflag2=%x, ", op.specflag2);
                 msg("specflag3=%x, ", op.specflag3);
-                msg("specflag4=%x\n", op.specflag4);
+                msg("specflag4=%x, ", op.specflag4);
+
+                msg("refinfo[");
+
+                flags_t _uFlag = uFlag;
+                flags_t flags = get_optype_flags1(_uFlag);
+                opinfo_t buf;
+
+                if (get_opinfo(cmd.ea, op.n, flags, &buf))
+                {
+                    msg("target=%x, ", buf.ri.target);
+                    msg("base=%x, ", buf.ri.base);
+                    msg("tdelta=%x, ", buf.ri.tdelta);
+
+                    msg("flags[");
+                    if (buf.ri.flags & REFINFO_TYPE)
+                        msg("REFINFO_TYPE|");
+                    if (buf.ri.flags & REFINFO_RVAOFF)
+                        msg("REFINFO_RVAOFF|");
+                    if (buf.ri.flags & REFINFO_PASTEND)
+                        msg("REFINFO_PASTEND|");
+                    if (buf.ri.flags & REFINFO_CUSTOM)
+                        msg("REFINFO_CUSTOM|");
+                    if (buf.ri.flags & REFINFO_NOBASE)
+                        msg("REFINFO_NOBASE|");
+                    if (buf.ri.flags & REFINFO_SUBTRACT)
+                        msg("REFINFO_SUBTRACT|");
+                    if (buf.ri.flags & REFINFO_SIGNEDOP)
+                        msg("REFINFO_SIGNEDOP");
+                    msg("]");
+                }
+                msg("]\n");
             }
 #endif
 
