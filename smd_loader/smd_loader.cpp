@@ -151,7 +151,7 @@ static void add_dword_array(struc_t *st, const char *name, asize_t length)
 }
 
 //------------------------------------------------------------------------
-static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
+static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt, uchar perm)
 {
 	segment_t s;
 	s.sel = 0;
@@ -160,12 +160,9 @@ static void add_segment(ea_t start, ea_t end, const char *name, const char *clas
 	s.align = saRelByte;
 	s.comb = scPub;
 	s.bitness = 1; // 32-bit
+    s.perm = perm;
 
     int flags = ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET;
-
-#if (IDA_SDK_VERSION == 695)
-    //flags |= ADDSEG_NOAA;
-#endif
 
 	if (!add_segm_ex(&s, name, class_name, flags)) loader_failure();
 	segment_t *segm = getseg(start);
@@ -278,17 +275,17 @@ static void define_sprite_struct()
 //------------------------------------------------------------------------
 static void make_segments()
 {
-	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment");
-	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)");
-	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)");
-	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory");
-	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, XTRN, "System registers");
-	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, XTRN, "Z80 control (/BUSREQ and /RESET lines)");
-	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, XTRN, "Assorted registers");
-	add_segment(0x00B00000, 0x00BFFFFF + 1, UNLK, DATA, "Unallocated");
+	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment", SEGPERM_EXEC | SEGPERM_READ);
+	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)", SEGPERM_READ | SEGPERM_WRITE);
+	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)", SEGPERM_READ | SEGPERM_WRITE);
+	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory", SEGPERM_READ | SEGPERM_WRITE);
+	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, XTRN, "System registers", SEGPERM_WRITE);
+	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, XTRN, "Z80 control (/BUSREQ and /RESET lines)", SEGPERM_WRITE);
+	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, XTRN, "Assorted registers", SEGPERM_WRITE);
+	add_segment(0x00B00000, 0x00BFFFFF + 1, UNLK, DATA, "Unallocated", SEGPERM_READ | SEGPERM_WRITE);
 
-    add_segment(0x00C00000, 0x00C0001F + 1, VDP, XTRN, "VDP Registers");
-    add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, CODE, "RAM segment");
+    add_segment(0x00C00000, 0x00C0001F + 1, VDP, XTRN, "VDP Registers", SEGPERM_WRITE);
+    add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, CODE, "RAM segment", SEGPERM_MAXVAL);
 
 	set_name(0x00A00000, Z80_RAM);
 	set_name(0x00FF0000, M68K_RAM);
@@ -301,7 +298,7 @@ static void make_segments()
 
 		if ((sram_s >= 0x400000) && (sram_e <= 0x9FFFFF) && (sram_s < sram_e))
 		{
-			add_segment(sram_s, sram_e, SRAM, DATA, "SRAM memory");
+			add_segment(sram_s, sram_e, SRAM, DATA, "SRAM memory", SEGPERM_READ | SEGPERM_WRITE);
 		}
 	}
 }

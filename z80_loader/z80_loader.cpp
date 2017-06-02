@@ -131,27 +131,24 @@ static void add_dword_array(struc_t *st, const char *name, asize_t length)
 }
 
 //------------------------------------------------------------------------
-static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt)
+static void add_segment(ea_t start, ea_t end, const char *name, const char *class_name, const char *cmnt, uchar perm)
 {
-	segment_t s;
-	s.sel = 0;
-	s.startEA = start;
-	s.endEA = end;
-	s.align = saRelByte;
-	s.comb = scPub;
-	s.bitness = 0; // 32-bit
+    segment_t s;
+    s.sel = 0;
+    s.startEA = start;
+    s.endEA = end;
+    s.align = saRelByte;
+    s.comb = scPub;
+    s.bitness = 1; // 32-bit
+    s.perm = perm;
 
-	int flags = ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET;
+    int flags = ADDSEG_NOSREG | ADDSEG_NOTRUNC | ADDSEG_QUIET;
 
-#if (IDA_SDK_VERSION == 695)
-	//flags |= ADDSEG_NOAA;
-#endif
-
-	if (!add_segm_ex(&s, name, class_name, flags)) loader_failure();
-	segment_t *segm = getseg(start);
-	set_segment_cmt(segm, cmnt, false);
-	doByte(start, 1);
-	segm->update();
+    if (!add_segm_ex(&s, name, class_name, flags)) loader_failure();
+    segment_t *segm = getseg(start);
+    set_segment_cmt(segm, cmnt, false);
+    doByte(start, 1);
+    segm->update();
 }
 
 //------------------------------------------------------------------------
@@ -178,21 +175,21 @@ static void set_spec_register_names()
 //------------------------------------------------------------------------
 static void make_segments()
 {
-    add_segment(0x0000, 0x001FFF + 1, ROM, CODE, "Main segment");
-    add_segment(0x2000, 0x003FFF + 1, RESV1, DATA, "Reserved");
+    add_segment(0x0000, 0x001FFF + 1, ROM, CODE, "Main segment", SEGPERM_EXEC | SEGPERM_READ);
+    add_segment(0x2000, 0x003FFF + 1, RESV1, DATA, "Reserved", SEGPERM_READ | SEGPERM_WRITE);
 
-    add_segment(0x4000, 0x004003 + 1, YM2612_REGS, XTRN, "YM2612 Regs");
+    add_segment(0x4000, 0x004003 + 1, YM2612_REGS, XTRN, "YM2612 Regs", SEGPERM_WRITE);
 
-    add_segment(0x4004, 0x005FFF + 1, RESV2, DATA, "Reserved");
+    add_segment(0x4004, 0x005FFF + 1, RESV2, DATA, "Reserved", SEGPERM_READ | SEGPERM_WRITE);
 
-    add_segment(0x6000, 0x006000 + 1, BANK_REG, XTRN, "Z80 Bank Reg");
+    add_segment(0x6000, 0x006000 + 1, BANK_REG, XTRN, "Z80 Bank Reg", SEGPERM_WRITE);
 
-    add_segment(0x6001, 0x007F10 + 1, RESV3, DATA, "Reserved");
+    add_segment(0x6001, 0x007F10 + 1, RESV3, DATA, "Reserved", SEGPERM_READ | SEGPERM_WRITE);
 
-    add_segment(0x7F11, 0x007F11 + 1, PSG_REG, XTRN, "SN76489 PSG");
+    add_segment(0x7F11, 0x007F11 + 1, PSG_REG, XTRN, "SN76489 PSG", SEGPERM_WRITE);
 
-    add_segment(0x7F12, 0x007FFF + 1, RESV4, DATA, "Reserved");
-    add_segment(0x8000, 0x00FFFF + 1, BANK, DATA, "Reserved");
+    add_segment(0x7F12, 0x007FFF + 1, RESV4, DATA, "Reserved", SEGPERM_READ | SEGPERM_WRITE);
+    add_segment(0x8000, 0x00FFFF + 1, BANK, DATA, "Reserved", SEGPERM_READ | SEGPERM_WRITE);
 }
 
 //--------------------------------------------------------------------------
