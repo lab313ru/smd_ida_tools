@@ -106,3 +106,9 @@ enum register_t
     R_DR22,
     R_DR23,
 };
+
+enum m68k_insn_type_t
+{
+    M68K_linea = CUSTOM_CMD_ITYPE,
+    M68K_linef,
+};

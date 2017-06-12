@@ -126,10 +126,44 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
     {
 	case processor_t::idp_notify::custom_ana:
 	{
-		(*ph.u_ana)();
+        (*ph.u_ana)();
 
-		if (!isCode(getFlags(cmd.ea)))
-			break;
+        uint16 itype = 0;
+        ea_t value = cmd.ea;
+        switch (get_byte(cmd.ea))
+        {
+        case 0xA0:
+            itype = M68K_linea;
+            value = get_long(0x09 * sizeof(uint32));
+            break;
+        case 0xF0:
+            itype = M68K_linef;
+            value = get_long(0x0A * sizeof(uint32));
+            break;
+        }
+
+        if (isCode(getFlags(prev_not_tail(cmd.ea))) && (itype == M68K_linea || itype == M68K_linef))
+        {
+            cmd.itype = itype;
+            cmd.size = 2;
+
+            cmd.Op1.type = o_near;
+            cmd.Op1.offb = 1;
+            cmd.Op1.dtyp = dt_dword;
+            cmd.Op1.addr = value;
+            cmd.Op1.phrase = 0x0A;
+            cmd.Op1.specflag1 = 2;
+
+            cmd.Op2.type = o_imm;
+            cmd.Op2.offb = 1;
+            cmd.Op2.dtyp = dt_byte;
+            cmd.Op2.value = get_byte(cmd.ea + 1);
+        }
+        else
+        {
+            if (!isCode(getFlags(cmd.ea)))
+                break;
+        }
 
 #ifdef _DEBUG
 		if (my_dbg)
@@ -253,8 +287,32 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 			}
 		}
 
-		return cmd.size + 1;
+        return cmd.size + 1;
 	} break;
+    case processor_t::idp_notify::custom_emu:
+    {
+        if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
+            break;
+
+        add_cref(prev_not_tail(cmd.ea), cmd.ea, fl_F);
+        ua_add_cref(0, cmd.Op1.addr, fl_CN);
+        ua_add_cref(1, cmd.ea + cmd.size, fl_F);
+
+        return 2;
+    } break;
+    case processor_t::idp_notify::custom_mnem:
+    {
+        if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
+            break;
+
+        char *outbuffer = va_arg(va, char *);
+        size_t bufsize = va_arg(va, size_t);
+
+        const char *mnem = (cmd.itype == M68K_linef) ? "line_f" : "line_a";
+        
+        ::qstrncpy(outbuffer, mnem, bufsize);
+        return 2;
+    } break;
     case processor_t::idp_notify::get_operand_info:
     {
         ea_t ea = va_arg(va, ea_t);
