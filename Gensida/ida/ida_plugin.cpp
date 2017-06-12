@@ -292,12 +292,23 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 	} break;
     case processor_t::idp_notify::custom_emu:
     {
+        if (cmd.itype == 0xB6) // trap #X
+        {
+            (*ph.u_emu)();
+
+            qstring name;
+            ea_t trap_addr = get_long((0x20 + (cmd.Op1.value & 0xF)) * sizeof(uint32));
+            get_func_name2(&name, trap_addr);
+            set_cmt(cmd.ea, name.c_str(), false);
+            ua_add_cref(cmd.Op1.offb, trap_addr, fl_CN);
+            return 2;
+        }
+
         if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
             break;
 
-        //add_cref(prev_not_tail(cmd.ea), cmd.ea, fl_F);
         ua_add_cref(0, cmd.Op1.addr, fl_CN);
-        ua_add_cref(1, cmd.ea + cmd.size, fl_F);
+        ua_add_cref(cmd.Op1.offb, cmd.ea + cmd.size, fl_F);
 
         return 2;
     } break;
