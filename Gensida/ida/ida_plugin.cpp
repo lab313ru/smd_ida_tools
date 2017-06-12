@@ -142,8 +142,9 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             break;
         }
 
-        ea_t ea = get_first_cref_to(cmd.ea);
-        if (ea!= BADADDR && isCode(getFlags(ea)) && (itype == M68K_linea || itype == M68K_linef))
+        ea_t ea_c = get_first_cref_to(cmd.ea);
+        ea_t ea_d = get_first_dref_to(cmd.ea);
+        if (((ea_c != BADADDR && isCode(getFlags(ea_c))) || (ea_d != BADADDR)) && (itype == M68K_linea || itype == M68K_linef))
         {
             cmd.itype = itype;
             cmd.size = 2;
