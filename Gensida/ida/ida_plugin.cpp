@@ -134,15 +134,16 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
         {
         case 0xA0:
             itype = M68K_linea;
-            value = get_long(0x09 * sizeof(uint32));
+            value = get_long(0x0A * sizeof(uint32));
             break;
         case 0xF0:
             itype = M68K_linef;
-            value = get_long(0x0A * sizeof(uint32));
+            value = get_long(0x0B * sizeof(uint32));
             break;
         }
 
-        if (isCode(getFlags(prev_not_tail(cmd.ea))) && (itype == M68K_linea || itype == M68K_linef))
+        ea_t ea = get_first_cref_to(cmd.ea);
+        if (ea!= BADADDR && isCode(getFlags(ea)) && (itype == M68K_linea || itype == M68K_linef))
         {
             cmd.itype = itype;
             cmd.size = 2;
@@ -294,7 +295,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
         if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
             break;
 
-        add_cref(prev_not_tail(cmd.ea), cmd.ea, fl_F);
+        //add_cref(prev_not_tail(cmd.ea), cmd.ea, fl_F);
         ua_add_cref(0, cmd.Op1.addr, fl_CN);
         ua_add_cref(1, cmd.ea + cmd.size, fl_F);
 
