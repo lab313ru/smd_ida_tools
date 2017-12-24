@@ -22,6 +22,8 @@ MMCKINFO CkOut;
 MMCKINFO CkRIFF;
 MMIOINFO MMIOInfoOut;
 
+static HMODULE hDDraw = NULL;
+
 void End_Sound(void);
 
 int Seg_L[882] = { 0 }, Seg_R[882] = { 0 };
@@ -46,6 +48,8 @@ unsigned int Sound_Extrapol[312][2];
 
 char Dump_Dir[1024] = "";
 char Dump_GYM_Dir[1024] = "";
+
+typedef HRESULT(WINAPI *DirectSoundCreate_)(LPGUID, LPDIRECTSOUND*, LPUNKNOWN);
 
 int Init_Sound(HWND hWnd)
 {
@@ -108,6 +112,15 @@ int Init_Sound(HWND hWnd)
 
     WP = 0;
     RP = 0;
+
+	hDDraw = LoadLibraryA("ddraw.dll");
+	if (!hDDraw)
+	{
+		MessageBox(hWnd, "Error loading ddraw.dll!", "Error", MB_OK);
+		return 0;
+	}
+
+	DirectSoundCreate_ DirectSoundCreate = (DirectSoundCreate_)GetProcAddress(hDDraw, "DirectSoundCreate");
 
     rval = DirectSoundCreate(NULL, &lpDS, NULL);
 
@@ -212,6 +225,12 @@ void End_Sound()
             lpDS = NULL;
         }
     }
+
+	if (hDDraw)
+	{
+		FreeLibrary(hDDraw);
+		hDDraw = NULL;
+	}
 }
 
 int Get_Current_Seg(void)

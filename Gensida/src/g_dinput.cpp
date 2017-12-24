@@ -12,9 +12,11 @@
 #define KEYDOWN(key) (Keys[key] & 0x80)
 #define MAX_JOYS 8
 
-LPDIRECTINPUT lpDI;
+LPDIRECTINPUTA lpDI;
 LPDIRECTINPUTDEVICE lpDIDKeyboard;
 LPDIRECTINPUTDEVICE lpDIDMouse;
+static HMODULE hDDraw = NULL;
+
 char Phrase[1024];
 int Nb_Joys = 0;
 static IDirectInputDevice2 *Joy_ID[MAX_JOYS] = { NULL };
@@ -1122,6 +1124,12 @@ void End_Input()
         lpDI->Release();
         lpDI = NULL;
     }
+
+	if (hDDraw)
+	{
+		FreeLibrary(hDDraw);
+		hDDraw = NULL;
+	}
 }
 
 BOOL CALLBACK InitJoystick(LPCDIDEVICEINSTANCE lpDIIJoy, LPVOID pvRef)
@@ -1204,6 +1212,8 @@ BOOL CALLBACK InitJoystick(LPCDIDEVICEINSTANCE lpDIIJoy, LPVOID pvRef)
     return(DIENUM_CONTINUE);
 }
 
+typedef HRESULT(WINAPI *DirectInputCreateA_)(HINSTANCE hinst, DWORD dwVersion, LPDIRECTINPUTA *ppDI, LPUNKNOWN punkOuter);
+
 int Init_Input(HINSTANCE hInst, HWND hWnd)
 {
     int i;
@@ -1213,7 +1223,16 @@ int Init_Input(HINSTANCE hInst, HWND hWnd)
 
     StoreDefaultInputButtons();
 
-    rval = DirectInputCreate(hInst, DIRECTINPUT_VERSION, &lpDI, NULL);
+	hDDraw = LoadLibraryA("ddraw.dll");
+	if (!hDDraw)
+	{
+		MessageBox(hWnd, "Error loading ddraw.dll!", "Error", MB_OK);
+		return 0;
+	}
+
+	DirectInputCreateA_ DirectInputCreateA = (DirectInputCreateA_)GetProcAddress(hDDraw, "DirectInputCreateA");
+
+    rval = DirectInputCreateA(hInst, DIRECTINPUT_VERSION, &lpDI, NULL);
     if (rval != DI_OK)
     {
         MessageBox(hWnd, "DirectInput failed ...You must have DirectX 5", "Error", MB_OK);

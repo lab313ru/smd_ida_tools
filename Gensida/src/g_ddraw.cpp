@@ -30,6 +30,8 @@ LPDIRECTDRAWSURFACE4 lpDDS_Back;
 LPDIRECTDRAWSURFACE4 lpDDS_Blit;
 LPDIRECTDRAWCLIPPER lpDDC_Clipper;
 
+static HMODULE hDDraw = NULL;
+
 clock_t Last_Time = 0, New_Time = 0;
 clock_t Used_Time = 0;
 
@@ -179,6 +181,8 @@ int Init_Fail(HWND hwnd, char *err)
     return 0;
 }
 
+typedef HRESULT (WINAPI *DirectDrawCreate_)(GUID FAR *lpGUID, struct IDirectDraw* FAR *lplpDD, IUnknown FAR *pUnkOuter);
+
 int Init_DDraw(HWND hWnd)
 {
     int Rend;
@@ -192,8 +196,14 @@ int Init_DDraw(HWND hWnd)
     if (Full_Screen) Rend = Render_FS;
     else Rend = Render_W;
 
+	hDDraw = LoadLibraryA("ddraw.dll");
+	if (!hDDraw)
+		return Init_Fail(hWnd, "Error loading ddraw.dll!");
+
+	DirectDrawCreate_ DirectDrawCreate = (DirectDrawCreate_)GetProcAddress(hDDraw, "DirectDrawCreate");
+
     if (FAILED(DirectDrawCreate(NULL, &lpDD_Init, NULL)))
-        return Init_Fail(hWnd, "Error with DirectDrawCreate !");
+        return Init_Fail(hWnd, "Error with DirectDrawCreate!");
 
     if (FAILED(lpDD_Init->QueryInterface(IID_IDirectDraw4, (LPVOID *)&lpDD)))
         return Init_Fail(hWnd, "Error with QueryInterface !\nUpgrade your DirectX version.");
@@ -392,6 +402,12 @@ void End_DDraw()
     }
 
     lpDDS_Blit = NULL;
+
+	if (hDDraw)
+	{
+		FreeLibrary(hDDraw);
+		hDDraw = NULL;
+	}
 }
 
 HRESULT RestoreGraphics(HWND hWnd)

@@ -65,9 +65,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x64_win_vc_32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ida.lib;winmm.lib;ddraw.lib;comctl32.lib;libs\lua51.lib;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x64\dxguid.lib;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x64\dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <BaseAddress>0x10000000</BaseAddress>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <LargeAddressAware>false</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

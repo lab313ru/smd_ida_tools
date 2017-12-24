@@ -79,7 +79,7 @@
 
 
 section .bss align=64
-bits 32
+bits 64
 
 
 %define Z80_SAFE   0
@@ -213,7 +213,7 @@ bits 32
 
 
 section .text align=64
-bits 32
+bits 64
 
 
 ;******************************************************
@@ -5431,7 +5431,7 @@ DECLF z80_Set_AF2, 8
 
 
 section .data align=64
-bits 32
+bits 64
 
 	OP_Table
 		dd Z80I_NOP, Z80I_LD_BC_NN, Z80I_LD_mBC_A, Z80I_INC_BC			; 00-03

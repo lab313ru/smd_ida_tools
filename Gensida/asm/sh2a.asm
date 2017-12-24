@@ -156,12 +156,12 @@
 %ifdef __GCC
 
 section .bss		; sthief: coff format doesn't support section alignment specification, must align manually
-bits 32
+bits 64
 
 %else
 
 section .bss align=64
-bits 32
+bits 64
 
 %endif
 

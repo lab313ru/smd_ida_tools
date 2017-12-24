@@ -231,7 +231,7 @@ static void gen_banner(void) {
 	emit("; Options:\n");
 	optiondump(codefile, "; *  ");
 	emit(";\n");
-	emit("bits 32\n");
+	emit("bits 64\n");
 }
 
 static void align(int n) {
@@ -245,40 +245,38 @@ static void maskaddress(char *reg) {
 }
 
 static void begin_source_proc(char *fname) {
-	emit("global _%s%s\n", sourcename, fname);
-	emit("global %s%s_\n", sourcename, fname);
-	emit("_%s%s:\n", sourcename, fname);
-	emit("%s%s_:\n", sourcename, fname);
+	emit("global %s%s\n", sourcename, fname);
+	emit("%s%s:\n", sourcename, fname);
 }
 
 /* Generate variables */
 static void gen_variables(void) {
 	emit("section .data\n");
-	emit("bits 32\n");
+	emit("bits 64\n");
 
 	emit("\n");
 	emit("\textern Ram_68k\n");
 #ifdef HOOKS_ENABLED
-	emit("\textern _hook_exec_cd\n");
+	emit("\textern hook_exec_cd\n");
 
-	emit("\textern _hook_read_byte_cd\n");
-	emit("\textern _hook_read_word_cd\n");
-	emit("\textern _hook_read_dword_cd\n");
-	emit("\textern _hook_write_byte_cd\n");
-	emit("\textern _hook_write_word_cd\n");
-	emit("\textern _hook_write_dword_cd\n");
-	emit("\textern _hook_pc_cd\n");
-	emit("\textern _hook_address_cd\n");
-	emit("\textern _hook_value_cd\n");	
+	emit("\textern hook_read_byte_cd\n");
+	emit("\textern hook_read_word_cd\n");
+	emit("\textern hook_read_dword_cd\n");
+	emit("\textern hook_write_byte_cd\n");
+	emit("\textern hook_write_word_cd\n");
+	emit("\textern hook_write_dword_cd\n");
+	emit("\textern hook_pc_cd\n");
+	emit("\textern hook_address_cd\n");
+	emit("\textern hook_value_cd\n");	
 #endif
 
 	emit("\textern Rom_Data\n");
 	emit("\textern Rom_Size\n");
 	emit("\n");
 
-	emit("global _%scontext\n", sourcename);
+	emit("global %scontext\n", sourcename);
 	align(8);
-	emit("_%scontext:\n", sourcename);
+	emit("%scontext:\n", sourcename);
 	emit("contextbegin:\n");
 	/*
 	** CONTEXTINFO_MEM16
@@ -540,7 +538,7 @@ static void copy_memory_map(char *map, char *reg) {
 
 static void gen_interface(void) {
 	emit("section .text\n");
-	emit("bits 32\n");
+	emit("bits 64\n");
 
 	emit("\n");
 	emit("\textern S68K_RB\n");
@@ -726,8 +724,8 @@ emit("js near execquit\n");
 emit("pushad\n");
 emit("sub esi,ebp\n");
 emit("sub esi,byte 2\n");
-emit("mov [_hook_pc_cd],esi\n");
-emit("call _hook_exec_cd\n");
+emit("mov [hook_pc_cd],esi\n");
+emit("call hook_exec_cd\n");
 emit("popad\n");
 #endif
 
@@ -1199,8 +1197,8 @@ emit("popad\n");
 	begin_source_proc("controlOdometer");
 	if(use_stack) emit("mov eax,[esp+4]\n");
 	emit("or eax,eax\n");
-	emit("jnz short _%stripOdometer\n", sourcename);
-	emit("jmp short _%sreadOdometer\n", sourcename);
+	emit("jnz short %stripOdometer\n", sourcename);
+	emit("jmp short %sreadOdometer\n", sourcename);
 
 /***************************************************************************/
 /*
@@ -1332,7 +1330,7 @@ static void ret_timing(int n) {
 emit("pushad\n");
 emit("sub esi,ebp\n");
 emit("sub esi,byte 2\n");
-emit("mov [_hook_pc_cd],esi\n");
+emit("mov [hook_pc_cd],esi\n");
 
 emit("shr ah,1\n");
 emit("adc ax,ax\n");
@@ -1342,7 +1340,7 @@ emit("ror ah,4\n");
 emit("or al,ah\n");
 emit("mov [__sr],al\n");
 
-emit("call _hook_exec_cd\n");
+emit("call hook_exec_cd\n");
 emit("popad\n");
 #endif
 
@@ -1597,9 +1595,9 @@ static void emit_hook(const char* hookFuncName){
 	emit("sub esi,ebp\n");
 	emit("and edx,0xFFFFFF\n");
 	emit("sub esi,byte 2\n");
-	emit("mov [_hook_address_cd],edx\n");
-	emit("mov [_hook_pc_cd],esi\n");
-	emit("mov [_hook_value_cd],ecx\n");
+	emit("mov [hook_address_cd],edx\n");
+	emit("mov [hook_pc_cd],esi\n");
+	emit("mov [hook_value_cd],ecx\n");
 	emit("call %s\n", hookFuncName);
 	emit("popad\n");
 #endif
@@ -1632,7 +1630,7 @@ static void gen_readbw(int size)
 		emit("\tmov edx, [__access_address]\n");
 		emit("\tpop eax\n");
 
-		emit_hook("_hook_read_byte_cd");
+		emit_hook("hook_read_byte_cd");
 		emit("\tret\n");
 	}
 
@@ -1656,7 +1654,7 @@ static void gen_readbw(int size)
 		emit("\tmov edx, [__access_address]\n");
 		emit("\tpop eax\n");
 
-		emit_hook("_hook_read_word_cd");
+		emit_hook("hook_read_word_cd");
 		emit("\tret\n");
 	}
 }
@@ -1687,7 +1685,7 @@ static void gen_readl(void)
 	emit("\tmov edx, [__access_address]\n");
 	emit("\tpop eax\n");
 
-	emit_hook("_hook_read_dword_cd");
+	emit_hook("hook_read_dword_cd");
 	emit("\tret\n");
 }
 
@@ -1715,7 +1713,7 @@ static void gen_writebw(int size)
 		emit("\tmov edx, [__access_address]\n");
 		emit("\tpop eax\n");
 
-		emit_hook("_hook_write_byte_cd");
+		emit_hook("hook_write_byte_cd");
 		emit("\tret\n");
 	}
 
@@ -1738,7 +1736,7 @@ static void gen_writebw(int size)
 		emit("\tmov edx, [__access_address]\n");
 		emit("\tpop eax\n");
 
-		emit_hook("_hook_write_word_cd");
+		emit_hook("hook_write_word_cd");
 		emit("\tret\n");
 	}
 }
@@ -1770,7 +1768,7 @@ static void gen_writel(void)
 	emit("\tmov edx, [__access_address]\n");
 	emit("\tpop eax\n");
 
-	emit_hook("_hook_write_dword_cd");
+	emit_hook("hook_write_dword_cd");
 	emit("\tret\n");
 }
 
@@ -5133,12 +5131,12 @@ int main(int argc, char **argv) {
 	if(!quiet)
 		fprintf(stderr, "Building table: ");
 	emit("section .bss\n");
-	emit("bits 32\n");
+	emit("bits 64\n");
 	align(4);
 	emit("__jmptbl resb 262144\n");
 	if(cputype == 68010) emit("__looptbl resb 65536\n");
 	emit("section .data\n");
-	emit("bits 32\n");
+	emit("bits 64\n");
 	align(4);
 	emit("__jmptblcomp:\n");
 	last = -2;
