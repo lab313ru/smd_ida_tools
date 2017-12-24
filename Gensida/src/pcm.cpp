@@ -252,7 +252,7 @@ int Update_PCM(int **buf, int Length)
     int *bufL, *bufR;
     //int *volL, *volR;
     unsigned int Addr, k;
-    struct pcm_chan_ *CH;
+    struct pcm_chip_::pcm_chan_ *CH;
 
     // if PCM disable, no sound
     if (!PCM_Chip.Enable) return 1;

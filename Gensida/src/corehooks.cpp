@@ -3,14 +3,18 @@
 #include "corehooks.h"
 #include "tracer.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
     uint32 hook_address;
     uint32 hook_address_cd;
     uint32 hook_value;
     uint32 hook_value_cd;
     uint32 hook_pc;
     uint32 hook_pc_cd;
+#ifdef __cplusplus
 }
+#endif
 
 #define defhook(name)\
 void hook_##name##()\

@@ -1,7 +1,7 @@
 %include "nasmhead.inc"
 
-	extern _Write_To_68K_Space
-	extern _Read_To_68K_Space
+	extern Write_To_68K_Space
+	extern Read_To_68K_Space
 
 section .bss align=64
 
@@ -17,24 +17,24 @@ section .bss align=64
 	extern Rot_Comp.Reg_64
 	extern Rot_Comp.Reg_66
 
-	extern _PCM_Chip
-	extern _Ram_PCM
+	extern PCM_Chip
+	extern Ram_PCM
 
-	%define PCM_Chip_Enable		_PCM_Chip + (1 * 4)
-	%define PCM_Cur_Chan		_PCM_Chip + (2 * 4)
-	%define PCM_Chip_Bank		_PCM_Chip + (3 * 4)
+	%define PCM_Chip_Enable		PCM_Chip + (1 * 4)
+	%define PCM_Cur_Chan		PCM_Chip + (2 * 4)
+	%define PCM_Chip_Bank		PCM_Chip + (3 * 4)
 
-	%define PCM_Chan_ENV		_PCM_Chip + (4 * 4)
-	%define PCM_Chan_PAN		_PCM_Chip + (5 * 4)
-	%define PCM_Chan_MUL_L		_PCM_Chip + (6 * 4)
-	%define PCM_Chan_MUL_R		_PCM_Chip + (7 * 4)
-	%define PCM_Chan_St_Addr	_PCM_Chip + (8 * 4)
-	%define PCM_Chan_Loop_Addr	_PCM_Chip + (9 * 4)
-	%define PCM_Chan_Addr		_PCM_Chip + (10 * 4)
-	%define PCM_Chan_Step		_PCM_Chip + (11 * 4)
-	%define PCM_Chan_Step_B		_PCM_Chip + (12 * 4)
-	%define PCM_Chan_Enable		_PCM_Chip + (13 * 4)
-	%define PCM_Chan_Data		_PCM_Chip + (14 * 4)
+	%define PCM_Chan_ENV		PCM_Chip + (4 * 4)
+	%define PCM_Chan_PAN		PCM_Chip + (5 * 4)
+	%define PCM_Chan_MUL_L		PCM_Chip + (6 * 4)
+	%define PCM_Chan_MUL_R		PCM_Chip + (7 * 4)
+	%define PCM_Chan_St_Addr	PCM_Chip + (8 * 4)
+	%define PCM_Chan_Loop_Addr	PCM_Chip + (9 * 4)
+	%define PCM_Chan_Addr		PCM_Chip + (10 * 4)
+	%define PCM_Chan_Step		PCM_Chip + (11 * 4)
+	%define PCM_Chan_Step_B		PCM_Chip + (12 * 4)
+	%define PCM_Chan_Enable		PCM_Chip + (13 * 4)
+	%define PCM_Chan_Data		PCM_Chip + (14 * 4)
 
 	%define PCM_Channel			(11 * 4)
 	%define PCM_STEP_SHIFT		11
@@ -147,8 +147,8 @@ section .bss align=64
 	
 section .data align=64
 
-	extern _CD_Timer_Counter
-	extern _CDD_Complete
+	extern CD_Timer_Counter
+	extern CDD_Complete
 
 	DECL Memory_Control_Status
 	db 1, 2, 4 + 0, 5 + 0
@@ -229,19 +229,19 @@ section .data align=64
 
 section .text align=64
 
-	extern _sub68k_interrupt
-	extern _Write_PCM_Reg
-	extern _Calcul_Rot_Comp
-	extern _Update_Rot
-	extern _CDC_Read_Reg
-	extern _CDC_Write_Reg
-	extern _CDD_Processing
-	extern _CDD_Import_Command
-	extern _SCD_Read_Byte
-	extern _SCD_Read_Word
-	extern _Check_CD_Command
-	extern _Read_CDC_Host_SUB
-	extern _MS68K_Set_Word_Ram
+	extern sub68k_interrupt
+	extern Write_PCM_Reg
+	extern Calcul_Rot_Comp
+	extern Update_Rot
+	extern CDC_Read_Reg
+	extern CDC_Write_Reg
+	extern CDD_Processing
+	extern CDD_Import_Command
+	extern SCD_Read_Byte
+	extern SCD_Read_Word
+	extern Check_CD_Command
+	extern Read_CDC_Host_SUB
+	extern MS68K_Set_Word_Ram
 
 
 ;***************** Read Byte *****************
@@ -251,7 +251,7 @@ section .text align=64
 	;unsigned char S68K_RB(unsigned int Adr)
 	DECL S68K_RB
 
-		push ebx
+		push rbx
 		mov ebx, [esp + 8]
 
 		cmp ebx, 0xFDFFFF
@@ -263,7 +263,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Prg + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -288,7 +288,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Word_2M + ebx - 0x080000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -301,7 +301,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x0C0000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -312,7 +312,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000]
-		pop ebx
+		pop rbx
 		and al, 0xF
 		ret
 
@@ -320,7 +320,7 @@ section .text align=64
 
 	.bad
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -328,7 +328,7 @@ section .text align=64
 	.Even_Pix_0
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000]
-		pop ebx
+		pop rbx
 		shr al, 4
 		ret
 
@@ -342,7 +342,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x0C0000 + 0x20000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -353,7 +353,7 @@ section .text align=64
 
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000 + 0x20000]
-		pop ebx
+		pop rbx
 		and al, 0xF
 		ret
 
@@ -362,7 +362,7 @@ section .text align=64
 	.Even_Pix_1
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000 + 0x20000]
-		pop ebx
+		pop rbx
 		shr al, 4
 		ret
 
@@ -378,7 +378,7 @@ section .text align=64
 		and ebx, 0x3FFF
 		shr ebx, 1
 		mov al, [Ram_Backup + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -454,21 +454,21 @@ section .text align=64
 
 	.Reg_Reset_H
 		mov al, [LED_Status]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Reset_L
 		mov al, 1
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Memory_Mode_H
 		mov al, [S68K_Mem_WP]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -478,91 +478,91 @@ section .text align=64
 		mov al, [S68K_Mem_PM]
 		and ebx, 0x3
 		or al, [Memory_Control_Status + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Mode_H
 		mov al, [CDC.RS0 + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Mode_L
 		mov al, [CDC.RS0]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1_H
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1_L
-		call _CDC_Read_Reg
-		pop ebx
+		call CDC_Read_Reg
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Host_Data_H
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Host_Data_L
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr_H
 		mov al, [CDC.DMA_Adr + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr_L
 		mov al, [CDC.DMA_Adr]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch_H
 		mov al, [CDC.Stop_Watch + 3]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch_L
 		mov al, [CDC.Stop_Watch + 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag_H
 		mov al, [COMM.Flag + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag_L
 		mov al, [COMM.Flag]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -585,7 +585,7 @@ section .text align=64
 	.Reg_Com_Data7_L
 		xor ebx, 1
 		mov al, [COMM.Command + ebx - 0x10]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -608,35 +608,35 @@ section .text align=64
 	.Reg_Com_Stat7_L
 		xor ebx, 1
 		mov al, [COMM.Status + ebx - 0x20]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer_H
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer_L
 		mov al, [Timer_INT3 + 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Int_Mask_H
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Int_Mask_L
 		mov al, [Int_Mask_S68K]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -644,28 +644,28 @@ section .text align=64
 	.Reg_CD_Fader_H
 		mov al, [CDD.Fader + 1]
 		and al, 0x80
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CD_Fader_L
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDD_Ctrl_H
 		mov al, [CDD.Control + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDD_Ctrl_L
 		mov al, [CDD.Control]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -682,7 +682,7 @@ section .text align=64
 	.Reg_CDD_Com4_L
 		xor ebx, 1
 		mov al, [CDD.Rcv_Status + ebx - 0x38]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -699,7 +699,7 @@ section .text align=64
 	.Reg_CDD_Com9_L
 	.Reg_Font_Color_H
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -708,7 +708,7 @@ section .text align=64
 		mov ah, [Font_COLOR + 2]
 		mov al, [Font_COLOR]
 		shl ah, 4
-		pop ebx
+		pop rbx
 		or al, ah
 		ret
 
@@ -716,14 +716,14 @@ section .text align=64
 
 	.Reg_Font_Bit_H
 		mov al, [Font_BITS + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Font_Bit_L
 		mov al, [Font_BITS]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN 4
@@ -736,7 +736,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -750,7 +750,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -764,7 +764,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -778,7 +778,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -792,7 +792,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -806,7 +806,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -820,7 +820,7 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -834,105 +834,105 @@ section .text align=64
 		setnz bl
 		shl al, 4
 		or al, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Size_H
 		mov al, [Rot_Comp.Reg_58 + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Size_L
 		mov al, [Rot_Comp.Reg_58]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Adr_H
 		mov al, [Rot_Comp.Reg_5A + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Adr_L
 		mov al, [Rot_Comp.Reg_5A]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_VCell_Size_H
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_VCell_Size_L
 		mov al, [Rot_Comp.Reg_5C]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Adr_H
 		mov al, [Rot_Comp.Reg_5E + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Adr_L
 		mov al, [Rot_Comp.Reg_5E]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Offset_H
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Offset_L
 		mov al, [Rot_Comp.Reg_60]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_HDot_Size_H
 		mov al, [Rot_Comp.Reg_62 + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_HDot_Size_L
 		mov al, [Rot_Comp.Reg_62]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_VDot_Size_H
 		mov al, [Rot_Comp.Reg_64 + 1]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_VDot_Size_L
 		mov al, [Rot_Comp.Reg_64]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -941,18 +941,18 @@ section .text align=64
 	.Reg_Vector_Adr_L
 	.Reg_Subcode_Adr_H
 		xor al, al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Subcode_Adr_L
-push ebx
-call _SCD_Read_Byte
+push rbx
+call SCD_Read_Byte
 add esp, 4
 
 		mov al, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -961,14 +961,14 @@ add esp, 4
 		cmp ebx, 0xFF81FF
 		ja near .bad
 
-push ebx
-call _SCD_Read_Byte
+push rbx
+call SCD_Read_Byte
 add esp, 4
 
 		;and ebx, 0x7F
 		;mov al, 0
 
-		pop ebx
+		pop rbx
 		ret
 
 
@@ -998,7 +998,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 0]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1007,7 +1007,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 0]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1016,7 +1016,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 1]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1025,7 +1025,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 1]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1034,7 +1034,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 2]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1043,7 +1043,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 2]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1052,7 +1052,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 3]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1061,7 +1061,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 3]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1070,7 +1070,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 4]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1079,7 +1079,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 4]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1088,7 +1088,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 5]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1097,7 +1097,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 5]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1106,7 +1106,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 6]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1115,7 +1115,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 6]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1124,7 +1124,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 7]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1133,7 +1133,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 7]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1142,8 +1142,8 @@ add esp, 4
 		shr ebx, 1
 		and ebx, 0xFFF
 		add ebx, [PCM_Chip_Bank]
-		mov al, [_Ram_PCM + ebx]
-		pop ebx
+		mov al, [Ram_PCM + ebx]
+		pop rbx
 ;		and al, [PCM_Chip_Enable]
 		ret
 
@@ -1155,7 +1155,7 @@ add esp, 4
 	;unsigned short S68K_RW(unsigned int Adr)
 	DECL S68K_RW
 
-		push ebx
+		push rbx
 		mov ebx, [esp + 8]
 
 		cmp ebx, 0xFDFFFF
@@ -1166,7 +1166,7 @@ add esp, 4
 		ja short .Word_RAM
 
 		mov ax, [Ram_Prg + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1190,7 +1190,7 @@ add esp, 4
 		ja short .bad
 
 		mov ax, [Ram_Word_2M + ebx - 0x080000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1202,7 +1202,7 @@ add esp, 4
 		ja short .bad
 
 		mov ax, [Ram_Word_1M + ebx - 0x0C0000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1211,7 +1211,7 @@ add esp, 4
 		shr ebx, 1
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000]
-		pop ebx
+		pop rbx
 		mov ah, al
 		and al, 0xF
 		shr ah, 4
@@ -1221,7 +1221,7 @@ add esp, 4
 
 	.bad
 		mov ax, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1233,7 +1233,7 @@ add esp, 4
 		ja short .bad
 
 		mov ax, [Ram_Word_1M + ebx - 0x0C0000 + 0x20000]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1242,7 +1242,7 @@ add esp, 4
 		shr ebx, 1
 		xor ebx, 1
 		mov al, [Ram_Word_1M + ebx - 0x040000 + 0x20000]
-		pop ebx
+		pop rbx
 		mov ah, al
 		and al, 0xF
 		shr ah, 4
@@ -1259,7 +1259,7 @@ add esp, 4
 		and ebx, 0x3FFF
 		shr ebx, 1
 		mov ax, [Ram_Backup + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1309,7 +1309,7 @@ add esp, 4
 	.Reg_Reset
 		mov ah, [LED_Status]
 		mov al, 1
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1320,50 +1320,50 @@ add esp, 4
 		and ebx, 0x3
 		mov ah, [S68K_Mem_WP]
 		or al, [Memory_Control_Status + ebx]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Mode
 		mov ax, [CDC.RS0]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1
-		call _CDC_Read_Reg
+		call CDC_Read_Reg
 		mov ah, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Host_Data
-		call _Read_CDC_Host_SUB
-		pop ebx
+		call Read_CDC_Host_SUB
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr
 		mov ax, [CDC.DMA_Adr]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch
 		mov ax, [CDC.Stop_Watch + 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag
 		mov ax, [COMM.Flag]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1377,7 +1377,7 @@ add esp, 4
 	.Reg_Com_Data6
 	.Reg_Com_Data7
 		mov ax, [COMM.Command + ebx - 0x10]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1391,21 +1391,21 @@ add esp, 4
 	.Reg_Com_Stat6
 	.Reg_Com_Stat7
 		mov ax, [COMM.Status + ebx - 0x20]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer
 		mov ax, [Timer_INT3 + 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Int_Mask
 		mov ax, [Int_Mask_S68K]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1413,14 +1413,14 @@ add esp, 4
 	.Reg_CD_Fader
 		mov ax, [CDD.Fader]
 		and ax, 0X8000
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDD_Ctrl
 		mov ax, [CDD.Control]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1431,7 +1431,7 @@ add esp, 4
 	.Reg_CDD_Com3
 	.Reg_CDD_Com4
 		mov ax, [CDD.Rcv_Status + ebx - 0x38]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1442,7 +1442,7 @@ add esp, 4
 	.Reg_CDD_Com8
 	.Reg_CDD_Com9
 		mov ax, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1451,7 +1451,7 @@ add esp, 4
 		mov ah, [Font_COLOR + 2]
 		mov al, [Font_COLOR]
 		shl ah, 4
-		pop ebx
+		pop rbx
 		or al, ah
 		mov ah, 0
 		ret
@@ -1460,7 +1460,7 @@ add esp, 4
 		
 	.Reg_Font_Bit
 		mov ax, [Font_BITS]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1482,7 +1482,7 @@ add esp, 4
 		setnz bl
 		shl ax, 4
 		or ax, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1504,7 +1504,7 @@ add esp, 4
 		setnz bl
 		shl ax, 4
 		or ax, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1526,7 +1526,7 @@ add esp, 4
 		setnz bl
 		shl ax, 4
 		or ax, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1548,75 +1548,71 @@ add esp, 4
 		setnz bl
 		shl ax, 4
 		or ax, [Font_COLOR + ebx * 2]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Size
 		mov ax, [Rot_Comp.Reg_58]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stamp_Adr
 		mov ax, [Rot_Comp.Reg_5A]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 	
 	.Reg_IM_VCell_Size
 		mov ax, [Rot_Comp.Reg_5C]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Adr
 		mov ax, [Rot_Comp.Reg_5E]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 	
 	.Reg_IM_Offset
 		mov ax, [Rot_Comp.Reg_60]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 	
 	.Reg_IM_HDot_Size
 		mov ax, [Rot_Comp.Reg_62]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 	
 	.Reg_IM_VDot_Size
 		mov ax, [Rot_Comp.Reg_64]
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Vector_Adr
 		xor ax, ax
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Subcode_Adr
 
-;push ebx
-;call _SCD_Read_Word
-;add esp, 4
-
 		mov ax, 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1625,14 +1621,14 @@ add esp, 4
 		cmp ebx, 0xFF81FF
 		ja near .bad
 
-push ebx
-call _SCD_Read_Word
+push rbx
+call SCD_Read_Word
 add esp, 4
 		
 		;and ebx, 0x7F
 		;mov ax, 0
 
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1664,7 +1660,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 0]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1673,7 +1669,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 0]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1682,7 +1678,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 1]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1691,7 +1687,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 1]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1700,7 +1696,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 2]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1709,7 +1705,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 2]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1718,7 +1714,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 3]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1727,7 +1723,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 3]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1736,7 +1732,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 4]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1745,7 +1741,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 4]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1754,7 +1750,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 5]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1763,7 +1759,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 5]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1772,7 +1768,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 6]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1781,7 +1777,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 6]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1790,7 +1786,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 7]
 		shr eax, PCM_STEP_SHIFT
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1799,7 +1795,7 @@ add esp, 4
 		mov eax, [PCM_Chan_Addr + PCM_Channel * 7]
 		shr eax, PCM_STEP_SHIFT + 8
 		and eax, 0xFF
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1808,8 +1804,8 @@ add esp, 4
 		shr ebx, 1
 		and ebx, 0xFFF
 		add ebx, [PCM_Chip_Bank]
-		mov al, [_Ram_PCM + ebx]
-		pop ebx
+		mov al, [Ram_PCM + ebx]
+		pop rbx
 		xor ah, ah
 ;		and al, [PCM_Chip_Enable]
 		ret
@@ -1822,8 +1818,8 @@ add esp, 4
 	;void S68K_WB(unsigned int Adr, unsigned char Data)
 	DECL S68K_WB
 
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 		mov ebx, [esp + 12]
 		mov eax, [esp + 16]
 
@@ -1843,8 +1839,8 @@ add esp, 4
 		mov [Ram_Prg + ebx], al
 
 	.write_protected
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1871,8 +1867,8 @@ add esp, 4
 		mov [Ram_Word_2M + ebx - 0x080000], al
 
 	.bad3
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1885,8 +1881,8 @@ add esp, 4
 
 		xor ebx, 1
 		mov [Ram_Word_1M + ebx - 0x0C0000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1908,8 +1904,8 @@ add esp, 4
 		and cl, 0xF0
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1925,8 +1921,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000], al
 
 	.End_Dot_Odd_0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1939,8 +1935,8 @@ add esp, 4
 		and cl, 0xF0
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1959,8 +1955,8 @@ add esp, 4
 		and cl, 0x0F
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1976,8 +1972,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000], al
 
 	.End_Dot_Even_0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1990,15 +1986,15 @@ add esp, 4
 		and cl, 0x0F
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.bad
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2011,8 +2007,8 @@ add esp, 4
 
 		xor ebx, 1
 		mov [Ram_Word_1M + ebx - 0x0C0000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2034,8 +2030,8 @@ add esp, 4
 		and cl, 0xF0
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2051,8 +2047,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
 
 	.End_Dot_Odd_1
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2065,8 +2061,8 @@ add esp, 4
 		and cl, 0xF0
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2085,8 +2081,8 @@ add esp, 4
 		and cl, 0x0F
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2102,8 +2098,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
 
 	.End_Dot_Even_1
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2116,8 +2112,8 @@ add esp, 4
 		and cl, 0x0F
 		or al, cl
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2131,8 +2127,8 @@ add esp, 4
 		and ebx, 0x3FFF
 		shr ebx, 1
 		mov [Ram_Backup + ebx], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2145,16 +2141,16 @@ add esp, 4
 		ja short .bad2
 
 		shr ebx, 1
-		push eax
+		push rax
 		and ebx, 0x1F
-		push ebx
+		push rbx
 
-		call _Write_PCM_Reg
+		call Write_PCM_Reg
 		add esp, 8
 
 	.bad2
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2167,10 +2163,10 @@ add esp, 4
 		shr ebx, 1
 		mov ecx, [PCM_Chip_Bank]
 		and ebx, 0xFFF
-		mov [_Ram_PCM + ebx + ecx], al
+		mov [Ram_PCM + ebx + ecx], al
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2245,35 +2241,27 @@ add esp, 4
 
 	.Reg_Reset_H
 		mov [LED_Status], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Reset_L
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Memory_Mode_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Memory_Mode_L
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		mov bl, al
 		test al, 4
@@ -2293,9 +2281,9 @@ add esp, 4
 		call Swap_1M_To_2M
 
 	.Already_In_2M_0
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2312,9 +2300,9 @@ add esp, 4
 		call Swap_1M_To_2M
 
 	.Already_in_2M
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2333,9 +2321,9 @@ add esp, 4
 
 		and word [Memory_Control_Status + 2], 0xFDFD	; DMNA bit = 0
 		call Swap_2M_To_1M
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2347,9 +2335,9 @@ add esp, 4
 		and word [Memory_Control_Status + 2], 0xFDFD	; DMNA bit = 0
 
 	.No_Bank_Change
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2361,8 +2349,8 @@ add esp, 4
 		mov dword [CDC.DMA_Adr], 0
 		or al, cl
 		mov [CDC.RS0 + 1], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2370,100 +2358,84 @@ add esp, 4
 	.Reg_CDC_Mode_L
 		and al, 0xF
 		mov [CDC.RS0], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1_L
-		push eax
-		call _CDC_Write_Reg
+		push rax
+		call CDC_Write_Reg
 		add esp, 4
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Host_Data_H
 	.Reg_CDC_Host_Data_L
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr_H
 		mov [CDC.DMA_Adr + 1], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr_L
 		mov [CDC.DMA_Adr], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch_H
 		mov dword [CDC.Stop_Watch], 0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch_L
 		mov dword [CDC.Stop_Watch], 0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag_H
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		ror al, 1							; Dragons lair
 		mov byte [COMM.Flag], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag_L
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		mov [COMM.Flag], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2484,8 +2456,8 @@ add esp, 4
 	.Reg_Com_Data6_L
 	.Reg_Com_Data7_H
 	.Reg_Com_Data7_L
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret 
 
 	ALIGN4
@@ -2506,35 +2478,27 @@ add esp, 4
 	.Reg_Com_Stat6_L
 	.Reg_Com_Stat7_H
 	.Reg_Com_Stat7_L
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		xor ebx, 1
 		mov [COMM.Status + ebx - 0x20], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer_L
 		and eax, 0xFF
-		pop ecx
+		pop rcx
 		shl eax, 16
-		pop ebx
+		pop rbx
 		mov [Init_Timer_INT3], eax
 		mov [Timer_INT3], eax
 		ret
@@ -2542,8 +2506,8 @@ add esp, 4
 	ALIGN4
 
 	.Reg_Int_Mask_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2557,17 +2521,17 @@ add esp, 4
 		jnz short .CDD_Halted_0
 
 		mov [Int_Mask_S68K], al
-		call _CDD_Processing
-		pop ecx
-		pop ebx
+		call CDD_Processing
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.CDD_Halted_0
 		mov [Int_Mask_S68K], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2575,8 +2539,8 @@ add esp, 4
 	.Reg_CD_Fader_H
 	.Reg_CD_Fader_L
 	.Reg_CDD_Ctrl_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2589,12 +2553,12 @@ add esp, 4
 		test byte [Int_Mask_S68K], 0x10
 		jz short .CDD_Halted_1
 
-		call _CDD_Processing
+		call CDD_Processing
 
 	.CDD_Halted_1
 		or [CDD.Control], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2609,8 +2573,8 @@ add esp, 4
 	.Reg_CDD_Com3_L
 	.Reg_CDD_Com4_H
 	.Reg_CDD_Com4_L
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2626,26 +2590,42 @@ add esp, 4
 	.Reg_CDD_Com9_H
 		xor ebx, 1
 		mov [CDD.Trans_Comm + ebx - 0x42], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDD_Com9_L
 		mov [CDD.Trans_Comm + 0x8], al
-		pushad
-		call _CDD_Import_Command
-		popad
-		pop ecx
-		pop ebx
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
+		call CDD_Import_Command
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
+
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Font_Color_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2656,24 +2636,24 @@ add esp, 4
 		shr ah, 4
 		mov [Font_COLOR], al
 		mov [Font_COLOR + 2], ah
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Font_Bit_H
 		mov [Font_BITS + 1], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Font_Bit_L
 		mov [Font_BITS], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2687,8 +2667,8 @@ add esp, 4
 	.Reg_Font_Data3_H
 	.Reg_Font_Data3_L
 	.Reg_Stamp_Size_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2696,8 +2676,8 @@ add esp, 4
 	.Reg_Stamp_Size_L
 		and al, 0x7
 		mov [Rot_Comp.Reg_58], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2707,15 +2687,15 @@ add esp, 4
 		mov ah, al
 		and ax, 0xFFE0
 		mov [Rot_Comp.Reg_5A], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_VCell_Size_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2723,8 +2703,8 @@ add esp, 4
 	.Reg_IM_VCell_Size_L
 		and al, 0x1F
 		mov [Rot_Comp.Reg_5C], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2734,15 +2714,15 @@ add esp, 4
 		mov ah, al
 		and ax, 0xFFF8
 		mov [Rot_Comp.Reg_5E], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_IM_Offset_H
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2750,8 +2730,8 @@ add esp, 4
 	.Reg_IM_Offset_L
 		and al, 0x3F
 		mov [Rot_Comp.Reg_60], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2761,8 +2741,8 @@ add esp, 4
 		mov ah, al
 		and ax, 0x01FF
 		mov [Rot_Comp.Reg_62], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2772,8 +2752,8 @@ add esp, 4
 		mov ah, al
 		and eax, 0x00FF
 		mov [Rot_Comp.Reg_64], eax		; Need eax for timing
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2783,9 +2763,9 @@ add esp, 4
 		mov ah, al
 		and ax, 0xFFFE
 		mov [Rot_Comp.Reg_66], ax
-		call _Calcul_Rot_Comp
-		pop ecx
-		pop ebx
+		call Calcul_Rot_Comp
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2796,8 +2776,8 @@ add esp, 4
 
 		and ebx, 0x7F
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -2808,8 +2788,8 @@ add esp, 4
 	;void S68K_WW(unsigned int Adr, unsigned short Data)
 	DECL S68K_WW
 
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 		mov ebx, [esp + 12]
 		mov eax, [esp + 16]
 
@@ -2828,8 +2808,8 @@ add esp, 4
 		mov [Ram_Prg + ebx], ax
 
 	.write_protected
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2855,8 +2835,8 @@ add esp, 4
 		mov [Ram_Word_2M + ebx - 0x080000], ax
 
 	.bad3
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2868,8 +2848,8 @@ add esp, 4
 		ja short .bad3
 
 		mov [Ram_Word_1M + ebx - 0x0C0000], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2888,8 +2868,8 @@ add esp, 4
 		xor ebx, 1
 		or al, ah
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2905,8 +2885,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000], al
 
 	.End_Dot_0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2921,8 +2901,8 @@ add esp, 4
 		xor ebx, 1
 		or al, ah
 		mov [Ram_Word_1M + ebx - 0x040000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2934,8 +2914,8 @@ add esp, 4
 		ja short .bad
 
 		mov [Ram_Word_1M + ebx - 0x0C0000 + 0x20000], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2954,8 +2934,8 @@ add esp, 4
 		xor ebx, 1
 		or al, ah
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2971,8 +2951,8 @@ add esp, 4
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
 
 	.End_Dot_1
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -2987,15 +2967,15 @@ add esp, 4
 		xor ebx, 1
 		or al, ah
 		mov [Ram_Word_1M + ebx - 0x040000 + 0x20000], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.bad
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3010,8 +2990,8 @@ add esp, 4
 		and ebx, 0x3FFF
 		shr ebx, 1
 		mov [Ram_Backup + ebx], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3024,15 +3004,15 @@ add esp, 4
 		ja short .bad
 
 		shr ebx, 1
-		push eax
+		push rax
 		and ebx, 0x1F
-		push ebx
+		push rbx
 
-		call _Write_PCM_Reg
+		call Write_PCM_Reg
 		add esp, 8
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3045,10 +3025,10 @@ add esp, 4
 		shr ebx, 1
 		mov ecx, [PCM_Chip_Bank]
 		and ebx, 0xFFF
-		mov [_Ram_PCM + ebx + ecx], al
+		mov [Ram_PCM + ebx + ecx], al
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3098,21 +3078,13 @@ add esp, 4
 	.Reg_Reset
 		and ah, 3
 		mov [LED_Status], ah
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Memory_Mode
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		mov bl, al
 		test al, 4
@@ -3132,9 +3104,9 @@ add esp, 4
 		call Swap_1M_To_2M
 
 	.Already_In_2M_0
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3151,9 +3123,9 @@ add esp, 4
 		call Swap_1M_To_2M
 
 	.Already_in_2M
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3172,9 +3144,9 @@ add esp, 4
 
 		and word [Memory_Control_Status + 2], 0xFDFD	; DMNA bit = 0
 		call Swap_2M_To_1M
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3186,9 +3158,9 @@ add esp, 4
 		and word [Memory_Control_Status + 2], 0xFDFD	; DMNA bit = 0
 
 	.No_Bank_Change
-		call _MS68K_Set_Word_Ram
-		pop ecx
-		pop ebx
+		call MS68K_Set_Word_Ram
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3200,58 +3172,50 @@ add esp, 4
 		mov dword [CDC.DMA_Adr], 0
 		or ax, cx
 		mov [CDC.RS0], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_RS1
-		push eax
-		call _CDC_Write_Reg
+		push rax
+		call CDC_Write_Reg
 		add esp, 4
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_Host_Data
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDC_DMA_Adr
 		mov [CDC.DMA_Adr], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Stopwatch
 		mov dword [CDC.Stop_Watch], 0
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Com_Flag
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		mov [COMM.Flag], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3264,8 +3228,8 @@ add esp, 4
 	.Reg_Com_Data5
 	.Reg_Com_Data6
 	.Reg_Com_Data7
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3278,27 +3242,19 @@ add esp, 4
 	.Reg_Com_Stat5
 	.Reg_Com_Stat6
 	.Reg_Com_Stat7
-;pushad
-;push eax
-;push ebx
-;add dword [esp], 0xFF8000
-;call _Write_To_68K_Space
-;pop ebx
-;pop eax
-;popad
 
 		mov [COMM.Status + ebx - 0x20], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Timer
 		and eax, 0xFF
-		pop ecx
+		pop rcx
 		shl eax, 16
-		pop ebx
+		pop rbx
 		mov [Init_Timer_INT3], eax
 		mov [Timer_INT3], eax
 		ret
@@ -3314,17 +3270,17 @@ add esp, 4
 		jnz short .CDD_Halted_0
 
 		mov [Int_Mask_S68K], al
-		call _CDD_Processing
-		pop ecx
-		pop ebx
+		call CDD_Processing
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.CDD_Halted_0
 		mov [Int_Mask_S68K], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3332,8 +3288,8 @@ add esp, 4
 	.Reg_CD_Fader
 		and ax, 0x7FFE
 		mov [CDD.Fader], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3346,12 +3302,12 @@ add esp, 4
 		test byte [Int_Mask_S68K], 0x10
 		jz short .CDD_Halted_1
 
-		call _CDD_Processing
+		call CDD_Processing
 
 	.CDD_Halted_1
 		or [CDD.Control], al
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3361,8 +3317,8 @@ add esp, 4
 	.Reg_CDD_Com2
 	.Reg_CDD_Com3
 	.Reg_CDD_Com4
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3372,19 +3328,35 @@ add esp, 4
 	.Reg_CDD_Com7
 	.Reg_CDD_Com8
 		mov [CDD.Trans_Comm + ebx - 0x42], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_CDD_Com9
 		mov [CDD.Trans_Comm + 0x8], ax
-		pushad
-		call _CDD_Import_Command
-		popad
-		pop ecx
-		pop ebx
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
+		call CDD_Import_Command
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
+
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3395,16 +3367,16 @@ add esp, 4
 		shr ah, 4
 		mov [Font_COLOR], al
 		mov [Font_COLOR + 2], ah
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
 
 	.Reg_Font_Bit
 		mov [Font_BITS], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3413,8 +3385,8 @@ add esp, 4
 	.Reg_Font_Data1
 	.Reg_Font_Data2
 	.Reg_Font_Data3
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3422,8 +3394,8 @@ add esp, 4
 	.Reg_Stamp_Size
 		and ax, 0x7
 		mov [Rot_Comp.Reg_58], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3431,8 +3403,8 @@ add esp, 4
 	.Reg_Stamp_Adr
 		and ax, 0xFFE0
 		mov [Rot_Comp.Reg_5A], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3440,8 +3412,8 @@ add esp, 4
 	.Reg_IM_VCell_Size
 		and ax, 0x1F
 		mov [Rot_Comp.Reg_5C], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3449,8 +3421,8 @@ add esp, 4
 	.Reg_IM_Adr
 		and ax, 0xFFF8
 		mov [Rot_Comp.Reg_5E], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3458,8 +3430,8 @@ add esp, 4
 	.Reg_IM_Offset
 		and ax, 0x003F
 		mov [Rot_Comp.Reg_60], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3467,8 +3439,8 @@ add esp, 4
 	.Reg_IM_HDot_Size
 		and ax, 0x01FF
 		mov [Rot_Comp.Reg_62], ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3476,8 +3448,8 @@ add esp, 4
 	.Reg_IM_VDot_Size
 		and eax, 0x00FF
 		mov [Rot_Comp.Reg_64], eax		; Need eax for timing
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3485,9 +3457,9 @@ add esp, 4
 	.Reg_Vector_Adr
 		and ax, 0xFFFE
 		mov [Rot_Comp.Reg_66], ax
-		call _Calcul_Rot_Comp
-		pop ecx
-		pop ebx
+		call Calcul_Rot_Comp
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -3498,8 +3470,8 @@ add esp, 4
 
 		and ebx, 0x7F
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -3509,13 +3481,13 @@ add esp, 4
 	ALIGN32
 
 	DECL Update_SegaCD_Timer
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 
 		mov eax, [CDC.Stop_Watch]
 		mov ebx, [Timer_INT3]
 		add eax, [Timer_Step]
-		mov cx, [_CD_Timer_Counter]
+		mov cx, [CD_Timer_Counter]
 		and eax, 0xFFFFFFF
 		add cx, 10
 		mov [CDC.Stop_Watch], eax
@@ -3532,7 +3504,7 @@ add esp, 4
 				push dword -1
 				push dword 3
 				add ebx, eax
-				call _sub68k_interrupt
+				call sub68k_interrupt
 				add esp, 8
 	
 	.No_INT3
@@ -3542,22 +3514,22 @@ add esp, 4
 		jb short .No_CD_Check
 
 			sub cx, [CD_Access_Timer]
-			push ecx
-			call _Check_CD_Command
-			pop ecx
+			push rcx
+			call Check_CD_Command
+			pop rcx
 
 	.No_CD_Check
-		mov [_CD_Timer_Counter], cx
+		mov [CD_Timer_Counter], cx
 		test dword [Rot_Comp.Reg_58], 0x8000
 		jz short .GFX_Terminated
 
-		call _Update_Rot
+		call Update_Rot
 
 	.GFX_Terminated
 		mov eax, [Memory_Control_Status]
-		pop ecx
+		pop rcx
 		or eax, 0x00000201					; RET & DMNA bit mode 2M = 1
-		pop ebx
+		pop rbx
 		mov [Memory_Control_Status], eax
 		ret
 
@@ -3565,9 +3537,9 @@ add esp, 4
 	ALIGN32
 
 	DECL Swap_2M_To_1M
-		push ecx
-		push edi
-		push esi
+		push rcx
+		push rdi
+		push rsi
 
 		mov esi, Ram_Word_2M
 		mov edi, Ram_Word_1M
@@ -3586,18 +3558,18 @@ add esp, 4
 		mov [edi - 2 + 0x20000], ax
 		jnz short .Loop
 
-		pop esi
-		pop edi
-		pop ecx
+		pop rsi
+		pop rdi
+		pop rcx
 		ret
 
 
 	ALIGN32
 
 	DECL Swap_1M_To_2M
-		push ecx
-		push edi
-		push esi
+		push rcx
+		push rdi
+		push rsi
 
 		mov esi, Ram_Word_1M
 		mov edi, Ram_Word_2M
@@ -3616,9 +3588,9 @@ add esp, 4
 		mov [edi - 4], eax
 		jnz short .Loop
 
-		pop esi
-		pop edi
-		pop ecx
+		pop rsi
+		pop rdi
+		pop rcx
 		ret
 
 

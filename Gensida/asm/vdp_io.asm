@@ -8,25 +8,25 @@ WR_Mode		equ 1
 
 section .data align=64
 
-	extern _hook_read_byte
-	extern _hook_read_word
-	extern _hook_read_dword
-	extern _hook_write_byte
-	extern _hook_write_word
-	extern _hook_write_dword
+	extern hook_read_byte
+	extern hook_read_word
+	extern hook_read_dword
+	extern hook_write_byte
+	extern hook_write_word
+	extern hook_write_dword
 
-	extern _hook_write_vram_byte
-	extern _hook_write_vram_word
-	extern _hook_read_vram_byte
-	extern _hook_read_vram_word
+	extern hook_write_vram_byte
+	extern hook_write_vram_word
+	extern hook_read_vram_byte
+	extern hook_read_vram_word
 
-	extern _hook_pc
-	extern _hook_address
-	extern _hook_value
+	extern hook_pc
+	extern hook_address
+	extern hook_value
 
-	extern _hook_dma
-	extern _dma_src
-	extern _dma_len
+	extern hook_dma
+	extern dma_src
+	extern dma_len
 
 	extern Rom_Data
 	extern Rom_Size
@@ -39,7 +39,7 @@ section .data align=64
 	extern Sprite_Visible
 	extern CPL_M68K
 	extern Cycles_M68K
-	extern _main68k_context		; Starscream context (for interrupts)
+	extern main68k_context		; Starscream context (for interrupts)
 	extern Ram_Word_State
 	extern PalLock
 
@@ -225,11 +225,11 @@ section .bss align=64
 
 section .text align=64
 
-	extern _main68k_readOdometer
-	extern _main68k_releaseCycles
-	extern _main68k_interrupt
+	extern main68k_readOdometer
+	extern main68k_releaseCycles
+	extern main68k_interrupt
 
-	extern _Write_To_68K_Space
+	extern Write_To_68K_Space
 
 ; ******************************************
 
@@ -344,9 +344,9 @@ section .text align=64
 	;void Reset_VDP(void)
 	DECL Reset_VDP
 
-		push ebx
-		push ecx
-		push edx
+		push rbx
+		push rcx
+		push rdx
 
 		xor eax, eax
 
@@ -425,7 +425,7 @@ section .text align=64
 		dec ecx
 		jnz .loop_Sprite_Visible
 
-		push eax
+		push rax
 		push dword 0
 		mov ecx, 23
 
@@ -508,15 +508,15 @@ section .text align=64
 
 		mov dword [VSRam_Over + 28], 0
 		
-		pop edx
-		pop ecx
-		pop ebx
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	error:
 		xor ax, ax
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 	
 	ALIGN32
@@ -524,9 +524,9 @@ section .text align=64
 	;void Update_DMA(void)
 	DECL Update_DMA
 
-		push ebx
-		push ecx
-		push edx
+		push rbx
+		push rcx
+		push rdx
 
 		mov ebx, [VDP_Reg + 12 * 4]	; 32 / 40 Cell ?
 		mov edx, [DMAT_Type]
@@ -560,9 +560,9 @@ section .text align=64
 			test byte [DMAT_Type], 2
 			jnz short .DMA_68k_CRam_VSRam
 
-			pop edx
-			pop ecx
-			pop ebx
+			pop rdx
+			pop rcx
+			pop rbx
 			ret
 
 	.DMA_Not_Finished
@@ -574,9 +574,9 @@ section .text align=64
 		xor eax, eax
 			
 	.DMA_68k_VRam
-		pop edx
-		pop ecx
-		pop ebx
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -584,9 +584,9 @@ section .text align=64
 
 	;unsigned short Read_VDP_Data(void)
 	DECL Read_VDP_Data
-		push ebx
+		push rbx
 		mov byte [Ctrl.Flag], 0			; on en a finit avec Address Set
-		push ecx
+		push rcx
 	 	mov ebx, [Ctrl.Address]
 		mov eax, [Ctrl.Access]
 		mov ecx, ebx
@@ -608,16 +608,32 @@ section .text align=64
 		mov [Ctrl.Address], cx
 		mov ax, [VRam + ebx]
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		sub esi,ebp
 		sub esi,byte 2
-		mov [_hook_pc],esi
-		mov [_hook_value],eax
-		call _hook_read_vram_byte
-		popad
+		mov [hook_pc],esi
+		mov [hook_value],eax
+		call hook_read_vram_byte
+		
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -629,8 +645,8 @@ section .text align=64
 		mov ax, [CRam + ebx]
 
 	.End
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -640,8 +656,8 @@ section .text align=64
 		and ebx, byte 0x7E
 		mov [Ctrl.Address], cx
 		mov ax, [VSRam + ebx]
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -673,9 +689,9 @@ section .text align=64
 	
 	;unsigned char Read_VDP_H_Counter(void)
 	DECL Read_VDP_H_Counter
-		push ebx
+		push rbx
 			
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		mov ebx, [Cycles_M68K]
 		sub ebx, [CPL_M68K]
 		sub eax, ebx						; Nb cycles effectués sur cette ligne.
@@ -686,16 +702,16 @@ section .text align=64
 		mov al, [H_Counter_Table + eax * 2 + ebx]
 		xor ah, ah
 
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	;unsigned char Read_VDP_V_Counter(void)
 	DECL Read_VDP_V_Counter
-		push ebx
+		push rbx
 
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		mov ebx, [Cycles_M68K]
 		sub ebx, [CPL_M68K]
 		sub eax, ebx						; Nb cycles effectués sur cette ligne.
@@ -751,7 +767,7 @@ section .text align=64
 
 	.No_Interlace
 		xor ah, ah
-		pop ebx
+		pop rbx
 		ret
 
 
@@ -767,13 +783,29 @@ section .text align=64
 		mov ah, al
 		jnz near DMA_Fill
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		sub esi,ebp
 		sub esi,byte 2
-		mov [_hook_pc],esi
-		mov [_hook_value],eax
-		call _hook_write_vram_byte
-		popad
+		mov [hook_pc],esi
+		mov [hook_value],eax
+		call hook_write_vram_byte
+		
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 
 		jmp short Write_VDP_Data
 
@@ -786,17 +818,33 @@ section .text align=64
 		mov ax, [esp + 4]
 		jnz near DMA_Fill
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		sub esi,ebp
 		sub esi,byte 2
-		mov [_hook_pc],esi
-		mov [_hook_value],eax
-		call _hook_write_vram_word
-		popad
+		mov [hook_pc],esi
+		mov [hook_value],eax
+		call hook_write_vram_word
+		
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 
 	Write_VDP_Data:
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 		mov ecx, [Ctrl.Access]
 		mov ebx, [Ctrl.Address]
 		jmp [.Table_Write_W + ecx * 4]
@@ -821,8 +869,8 @@ section .text align=64
 		add ecx, [VDP_Reg.Auto_Inc]
 		mov [VRam + ebx * 2], ax
 		mov [Ctrl.Address], cx
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -837,8 +885,8 @@ section .text align=64
 		mov [CRam + ebx], ax
 
 	.End
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -849,16 +897,16 @@ section .text align=64
 		add ecx, [VDP_Reg.Auto_Inc]
 		mov [VSRam + ebx], ax
 		mov [Ctrl.Address], cx
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	DMA_Fill:
-		push ebx
-		push ecx
-		push edx
+		push rbx
+		push rcx
+		push rdx
 
 		mov ebx, [Ctrl.Address]					; bx = Address Dest
 		mov ecx, [VDP_Reg.DMA_Length]			; DMA Length
@@ -889,9 +937,9 @@ section .text align=64
 			jns short .Loop							; s'il en reste alors on continue
 
 		mov [Ctrl.Address], bx					; on stocke la nouvelle valeur de Data_Address
-		pop edx
-		pop ecx
-		pop ebx
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -899,7 +947,7 @@ section .text align=64
 	;void Write_VDP_Ctrl(unsigned short Data)
 	DECL Write_VDP_Ctrl
 
-;		push ebx
+;		push rbx
 ;		mov eax, [esp + 8]
 ;
 ;		mov ebx, eax
@@ -926,7 +974,7 @@ section .text align=64
 
 		mov eax, [esp + 4]
 		test byte [Ctrl.Flag], 1		; est-on à la 2eme ecriture ??
-		push ebx
+		push rbx
 		jnz near .Second_Word			; sinon
 
 		mov ebx, eax
@@ -946,8 +994,8 @@ section .text align=64
 	ALIGN32
 	
 	.First_Word							; 1st Write
-		push ecx
-		push edx
+		push rcx
+		push rdx
 		mov ax, [Ctrl.Data + 2]			; ax = 2nd word (AS)
 		mov ecx, ebx					; cx = bx = 1st word (AS)
 		mov [Ctrl.Data], bx				; et on sauvegarde les premiers 16 bits (AS)
@@ -964,16 +1012,16 @@ section .text align=64
 		mov eax, [CD_Table + edx]		; eax = Location & Read/Write
 		mov [Ctrl.Access], al			; on stocke l'accés
 
-		pop edx
-		pop ecx
-		pop ebx
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	.Second_Word
-		push ecx
-		push edx
+		push rcx
+		push rdx
 		mov cx, [Ctrl.Data]					; cx = 1st word (AS)
 		mov edx, eax						; dx = ax = 2nd word (AS)
 		mov [Ctrl.Data + 2], ax				; on stocke le controle complet
@@ -993,24 +1041,40 @@ section .text align=64
 		mov al, ah
 		jnz short DO_DMA					; si oui on y va
 
-		pop edx
-		pop ecx
-		pop ebx
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	DO_DMA:
-		push edi
-		push esi
+		push rdi
+		push rsi
 
-	pushad
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rsp
+	push rbp
+	push rsi
+	push rdi
+
 	sub esi,ebp
 	sub esi,byte 2
-	mov [_hook_pc],esi
-	mov [_hook_value],eax
-	call _hook_dma
-	popad
+	mov [hook_pc],esi
+	mov [hook_value],eax
+	call hook_dma
+	
+	pop rdi
+	pop rsi
+	pop rbp
+	pop rsp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
 
 		test dword [VDP_Reg.Set_2], 0x10		; DMA enable ?
 		jz near NO_DMA
@@ -1019,11 +1083,11 @@ section .text align=64
 			cmp byte [Ctrl.DMA_Mode], 0x80
 			jne short .No_Fill
 			mov [Ctrl.DMA], al						; on stocke le type de DMA
-			pop esi
-			pop edi
-			pop edx
-			pop ecx
-			pop ebx
+			pop rsi
+			pop rdi
+			pop rdx
+			pop rcx
+			pop rbx
 			ret
 
 	ALIGN32
@@ -1232,23 +1296,23 @@ section .text align=64
 		mov [DMAT_Length], eax
 		mov [VDP_Reg.DMA_Address], esi
 		call Update_DMA
-		call _main68k_releaseCycles
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		call main68k_releaseCycles
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	.Nothing_To_Do
 		and word [VDP_Status], 0xFFFD
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1274,22 +1338,22 @@ section .text align=64
 
 		mov [VDP_Reg.DMA_Address], esi
 		mov [Ctrl.Address], di					; on stocke la nouvelle Data_Address
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	NO_DMA:
 		mov dword [Ctrl.DMA], 0
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 	
 	ALIGN32
@@ -1309,7 +1373,7 @@ section .text align=64
 	;void Set_VDP_Reg(int Num_Reg, unsigned char val);
 	DECL Set_VDP_Reg
 
-		push ebx
+		push rbx
 
 		mov ebx, [esp + 8]
 		mov eax, [esp + 12]
@@ -1325,7 +1389,7 @@ section .text align=64
 	; ne pas oublier de depiler ebx a la fin
 
 		mov [VDP_Reg + ebx * 4], al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1333,7 +1397,7 @@ section .text align=64
 	.Set1
 		mov [VDP_Reg.Set_1], al
 		call Update_IRQ_Line
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1341,7 +1405,7 @@ section .text align=64
 	.Set2
 		mov [VDP_Reg.Set_2], al
 		call Update_IRQ_Line
-		pop ebx
+		pop rbx
 		ret
  	
 	ALIGN32
@@ -1352,7 +1416,7 @@ section .text align=64
 		jnz short .VScroll_Cell
 
 		and eax, 3
-		pop ebx
+		pop rbx
 		mov eax, [H_Scroll_Mask_Table + eax * 4]
 		mov byte [V_Scroll_MMask], 0
 		mov [H_Scroll_Mask], eax
@@ -1362,7 +1426,7 @@ section .text align=64
 	
 	.VScroll_Cell
 		and eax, 3
-		pop ebx
+		pop rbx
 		mov eax, [H_Scroll_Mask_Table + eax * 4]
 		mov byte [V_Scroll_MMask], 0x7E
 		mov [H_Scroll_Mask], eax
@@ -1374,8 +1438,8 @@ section .text align=64
 		mov [VDP_Reg.Set_4], al
 		mov byte [CRam_Flag], 1
 		test al, 0x81
-		pop ebx
-		jz short .HCell_32
+		pop rbx
+		jz .HCell_32
 
 		mov dword [H_Cell], 40
 		mov dword [H_Win_Mul], 6
@@ -1442,7 +1506,7 @@ section .text align=64
 		mov [VDP_Reg.Pat_ScrA_Adr], al
 		and eax, 0x38
 		shl eax, 10
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [ScrA_Addr], eax
 		ret
@@ -1456,7 +1520,7 @@ section .text align=64
 
 		and eax, 0x3E
 		shl eax, 10
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [Win_Addr], eax
 		ret
@@ -1466,7 +1530,7 @@ section .text align=64
 	.w2
 		and eax, 0x3C
 		shl eax, 10
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [Win_Addr], eax
 		ret
@@ -1477,7 +1541,7 @@ section .text align=64
 		mov [VDP_Reg.Pat_ScrB_Adr], al
 		and eax, 0x7
 		shl eax, 13
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [ScrB_Addr], eax
 		ret
@@ -1492,7 +1556,7 @@ section .text align=64
 		and eax, 0x7F
 		or byte [VRam_Flag], 2
 		shl eax, 9
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [Spr_Addr], eax
 		ret
@@ -1503,7 +1567,7 @@ section .text align=64
 		and eax, 0x7E
 		or byte [VRam_Flag], 2
 		shl eax, 9
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [Spr_Addr], eax
 		ret
@@ -1512,7 +1576,7 @@ section .text align=64
 	
 	.BGCol
 		and eax, 0x3F
-		pop ebx
+		pop rbx
 		mov byte [CRam_Flag], 1
 		mov [VDP_Reg.BG_Color], eax
 		ret
@@ -1521,7 +1585,7 @@ section .text align=64
 	
 	.HInt
 		mov	[VDP_Reg.H_Int_Reg], al
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1530,7 +1594,7 @@ section .text align=64
 		mov [VDP_Reg.H_Scr_Adr], al
 		and eax, 0x3F
 		shl eax, 10
-		pop ebx
+		pop rbx
 		add eax, VRam
 		mov [H_Scroll_Addr], eax
 		ret
@@ -1560,7 +1624,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 5
 		mov dword [H_Scroll_CMask], 31
 		mov dword [V_Scroll_CMask], 31
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1569,7 +1633,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 5
 		mov dword [H_Scroll_CMask], 31
 		mov dword [V_Scroll_CMask], 63
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1578,7 +1642,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 5
 		mov dword [H_Scroll_CMask], 31
 		mov dword [V_Scroll_CMask], 127
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1588,7 +1652,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 6
 		mov dword [H_Scroll_CMask], 63
 		mov dword [V_Scroll_CMask], 31
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1598,7 +1662,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 6
 		mov dword [H_Scroll_CMask], 63
 		mov dword [V_Scroll_CMask], 63
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1610,7 +1674,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 6
 		mov dword [H_Scroll_CMask], 63
 		mov dword [V_Scroll_CMask], 0
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -1622,7 +1686,7 @@ section .text align=64
 		mov dword [H_Scroll_CMul], 7
 		mov dword [H_Scroll_CMask], 127
 		mov dword [V_Scroll_CMask], 31
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1630,7 +1694,7 @@ section .text align=64
 	.WinH
 		mov [VDP_Reg.Win_H_Pos], al
 		and	eax, 0x1F
-		pop ebx
+		pop rbx
 		add eax, eax
 		cmp eax, [H_Cell]
 		jbe short .WinH_ok
@@ -1646,7 +1710,7 @@ section .text align=64
 	.WinV
 		mov [VDP_Reg.Win_V_Pos], al
 		and eax, 0x1F
-		pop ebx
+		pop rbx
 		mov [Win_Y_Pos], eax
 		ret
 
@@ -1654,7 +1718,7 @@ section .text align=64
 	
 	.DMALL
 		mov [VDP_Reg.DMA_Length_L], al
-		pop ebx
+		pop rbx
 		mov [VDP_Reg.DMA_Length], al
 		ret
 
@@ -1662,20 +1726,36 @@ section .text align=64
 	
 	.DMALH
 		mov [VDP_Reg.DMA_Length_H], al
-		pop ebx
+		pop rbx
 		mov [VDP_Reg.DMA_Length + 1], al
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		sub esi,ebp
 		sub esi,byte 2
-		mov [_dma_len],esi
-		popad
+		mov [dma_len],esi
+		
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 		ret
 
 	ALIGN32
 	
 	.DMAAL
 		mov [VDP_Reg.DMA_Src_Adr_L], al
-		pop ebx
+		pop rbx
 		mov [VDP_Reg.DMA_Address], al
 		ret
 
@@ -1683,7 +1763,7 @@ section .text align=64
 	
 	.DMAAM
 		mov [VDP_Reg.DMA_Src_Adr_M], al
-		pop ebx
+		pop rbx
 		mov [VDP_Reg.DMA_Address + 1], al
 		ret
 
@@ -1697,19 +1777,35 @@ section .text align=64
 		mov [VDP_Reg.DMA_Address + 2], al
 		mov [Ctrl.DMA_Mode], ebx				; DMA Mode
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		sub esi,ebp
 		sub esi,byte 2
-		mov [_dma_src],esi
-		popad
+		mov [dma_src],esi
+		
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 
-		pop ebx
+		pop rbx
 		ret
 
 	ALIGN32
 	
 	.Wrong
-		pop ebx
+		pop rbx
 		ret
 
 
@@ -1756,7 +1852,7 @@ section .text align=64
 
 		push dword -1
 		push dword 6
-		call _main68k_interrupt
+		call main68k_interrupt
 		add esp, 8
 		ret
 
@@ -1770,12 +1866,12 @@ section .text align=64
 
 		push dword -1
 		push dword 4
-		call _main68k_interrupt
+		call main68k_interrupt
 		add esp, 8
 		ret
 
 	ALIGN4
 
 	.No_H_Int
-		and byte [_main68k_context + 35 * 4], 0xF0
+		and byte [main68k_context + 35 * 4], 0xF0
 		ret

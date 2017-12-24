@@ -16,6 +16,12 @@ extern "C" {
     FILE* GetMP3TrackFile(int trackIndex, int* pDontLeaveFileOpen, int* pWhere_read);
     void MP3_CancelAllPreloading(void);
 
+	void Delete_Preloaded_MP3s(void);
+	void Preload_Used_MP3s(void);
+
+	extern char preloaded_tracks[100];
+	extern int fatal_mp3_error;
+
 #ifdef __cplusplus
 }
 #endif /* #ifdef __cplusplus */

@@ -29,15 +29,13 @@
 #include "ida_debmod.h"
 #include "ida_registers.h"
 
-#include "PaintForm.h"
-
 extern debugger_t debugger;
 
 static bool plugin_inited;
 static bool dbg_started;
 static bool my_dbg;
 
-static int idaapi hook_dbg(void *user_data, int notification_code, va_list va)
+static ssize_t idaapi hook_dbg(void *user_data, int notification_code, va_list va)
 {
     switch (notification_code)
     {
@@ -120,70 +118,73 @@ static const char* const dtyp_names[] =
 
 typedef const regval_t &(idaapi *getreg_func_t)(const char *name, const regval_t *regvalues);
 
-static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
+static ssize_t idaapi hook_idp(void *user_data, int notification_code, va_list va)
 {
     switch (notification_code)
     {
-	case processor_t::idp_notify::custom_ana:
+	case processor_t::event_t::ev_ana_insn:
 	{
-        (*ph.u_ana)();
+		insn_t *out = va_arg(va, insn_t *);
+
+		//ph.ana_insn(out);
+		decode_insn(out, out->ea);
 
         uint16 itype = 0;
-        ea_t value = cmd.ea;
-        switch (get_byte(cmd.ea))
+        ea_t value = out->ea;
+        switch (get_byte(out->ea))
         {
         case 0xA0:
             itype = M68K_linea;
-            value = get_long(0x0A * sizeof(uint32));
+            value = get_dword(0x0A * sizeof(uint32));
             break;
         case 0xF0:
             itype = M68K_linef;
-            value = get_long(0x0B * sizeof(uint32));
+            value = get_dword(0x0B * sizeof(uint32));
             break;
         }
 
-        ea_t ea_c = get_first_cref_to(cmd.ea);
-        ea_t ea_d = get_first_dref_to(cmd.ea);
-        if (((ea_c != BADADDR && isCode(getFlags(ea_c))) || (ea_d != BADADDR)) && (itype == M68K_linea || itype == M68K_linef))
+        ea_t ea_c = get_first_cref_to(out->ea);
+        ea_t ea_d = get_first_dref_to(out->ea);
+        if (((ea_c != BADADDR && is_code(get_full_flags(ea_c))) || (ea_d != BADADDR)) && (itype == M68K_linea || itype == M68K_linef))
         {
-            cmd.itype = itype;
-            cmd.size = 2;
+			out->itype = itype;
+			out->size = 2;
 
-            cmd.Op1.type = o_near;
-            cmd.Op1.offb = 1;
-            cmd.Op1.dtyp = dt_dword;
-            cmd.Op1.addr = value;
-            cmd.Op1.phrase = 0x0A;
-            cmd.Op1.specflag1 = 2;
+			out->Op1.type = o_near;
+			out->Op1.offb = 1;
+			out->Op1.dtype = dt_dword;
+			out->Op1.addr = value;
+			out->Op1.phrase = 0x0A;
+			out->Op1.specflag1 = 2;
 
-            cmd.Op2.type = o_imm;
-            cmd.Op2.offb = 1;
-            cmd.Op2.dtyp = dt_byte;
-            cmd.Op2.value = get_byte(cmd.ea + 1);
+			out->Op2.type = o_imm;
+			out->Op2.offb = 1;
+			out->Op2.dtype = dt_byte;
+			out->Op2.value = get_byte(out->ea + 1);
         }
         else
         {
-            if (!isCode(getFlags(cmd.ea)))
+            if (!is_code(get_full_flags(out->ea)))
                 break;
         }
 
 #ifdef _DEBUG
 		if (my_dbg)
 		{
-			msg("cs=%x, ", cmd.cs);
-			msg("ip=%x, ", cmd.ip);
-			msg("ea=%x, ", cmd.ea);
-			msg("itype=%x, ", cmd.itype);
-			msg("size=%x, ", cmd.size);
-			msg("auxpref=%x, ", cmd.auxpref);
-			msg("segpref=%x, ", cmd.segpref);
-			msg("insnpref=%x, ", cmd.insnpref);
-			msg("insnpref=%x, ", cmd.insnpref);
+			msg("cs=%x, ", out->cs);
+			msg("ip=%x, ", out->ip);
+			msg("ea=%x, ", out->ea);
+			msg("itype=%x, ", out->itype);
+			msg("size=%x, ", out->size);
+			msg("auxpref=%x, ", out->auxpref);
+			msg("segpref=%x, ", out->segpref);
+			msg("insnpref=%x, ", out->insnpref);
+			msg("insnpref=%x, ", out->insnpref);
 
 			msg("flags[");
-			if (cmd.flags & INSN_MACRO)
+			if (out->flags & INSN_MACRO)
 				msg("INSN_MACRO|");
-			if (cmd.flags & INSN_MODMAC)
+			if (out->flags & INSN_MODMAC)
 				msg("OF_OUTER_DISP");
 			msg("]\n");
 		}
@@ -191,7 +192,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
 		for (int i = 0; i < UA_MAXOP; ++i)
 		{
-			op_t &op = cmd.Operands[i];
+			op_t &op = out->ops[i];
 
 #ifdef _DEBUG
 			if (my_dbg)
@@ -211,7 +212,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 					msg("OF_SHOW");
 				msg("], ");
 
-				msg("dtyp[%s], ", dtyp_names[op.dtyp]);
+				msg("dtyp[%s], ", dtyp_names[op.dtype]);
 
 				if (op.type == o_reg)
 					msg("reg=%x, ", op.reg);
@@ -233,11 +234,11 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
                 msg("refinfo[");
 
-                flags_t _uFlag = uFlag;
+                flags_t _uFlag = get_full_flags(out->ea);
                 flags_t flags = get_optype_flags1(_uFlag);
                 opinfo_t buf;
 
-                if (get_opinfo(cmd.ea, op.n, flags, &buf))
+                if (get_opinfo(&buf, out->ea, op.n, flags))
                 {
                     msg("target=%x, ", buf.ri.target);
                     msg("base=%x, ", buf.ri.base);
@@ -280,60 +281,71 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 			} break;
 			case o_imm:
 			{
-				if (cmd.itype != 0x7F || op.n != 0) // movea
+				if (out->itype != 0x7F || op.n != 0) // movea
 					break;
 
-				if (op.value & 0xFF0000 && op.dtyp == dt_word)
-					op_offset(cmd.ea, op.n, REF_OFF32, BADADDR, 0xFF0000);
+				if (op.value & 0xFF0000 && op.dtype == dt_word)
+					op_offset(out->ea, op.n, REF_OFF32, BADADDR, 0xFF0000);
 			} break;
 			}
 		}
 
-        return cmd.size + 1;
+        return out->size + 1;
 	} break;
-    case processor_t::idp_notify::custom_emu:
+    case processor_t::event_t::ev_emu_insn:
     {
-        if (cmd.itype == 0xB6) // trap #X
+		const insn_t *insn = va_arg(va, const insn_t *);
+
+        if (insn->itype == 0xB6) // trap #X
         {
-            (*ph.u_emu)();
+            ph.emu_insn(*insn);
 
             qstring name;
-            ea_t trap_addr = get_long((0x20 + (cmd.Op1.value & 0xF)) * sizeof(uint32));
-            get_func_name2(&name, trap_addr);
-            set_cmt(cmd.ea, name.c_str(), false);
-            ua_add_cref(cmd.Op1.offb, trap_addr, fl_CN);
-            return 2;
+            ea_t trap_addr = get_dword((0x20 + (insn->Op1.value & 0xF)) * sizeof(uint32));
+			get_func_name(&name, trap_addr);
+            set_cmt(insn->ea, name.c_str(), false);
+			insn->add_cref(insn->Op1.offb, trap_addr, fl_CN);
+            return 1;
         }
 
-        if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
+        if (insn->itype != M68K_linea && insn->itype != M68K_linef)
             break;
 
-        ua_add_cref(0, cmd.Op1.addr, fl_CN);
-        ua_add_cref(cmd.Op1.offb, cmd.ea + cmd.size, fl_F);
+		insn->add_cref(0, insn->Op1.addr, fl_CN);
+		insn->add_cref(insn->Op1.offb, insn->ea + insn->size, fl_F);
 
-        return 2;
+        return 1;
     } break;
-    case processor_t::idp_notify::custom_mnem:
+    case processor_t::event_t::ev_out_mnem:
     {
-        if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
+		outctx_t *insn = va_arg(va, outctx_t *);
+
+        if (insn->insn.itype != M68K_linea && insn->insn.itype != M68K_linef)
             break;
 
         char *outbuffer = va_arg(va, char *);
         size_t bufsize = va_arg(va, size_t);
 
-        const char *mnem = (cmd.itype == M68K_linef) ? "line_f" : "line_a";
+        const char *mnem = (insn->insn.itype == M68K_linef) ? "line_f" : "line_a";
         
         ::qstrncpy(outbuffer, mnem, bufsize);
         return 2;
     } break;
-    case processor_t::idp_notify::get_operand_info:
+    case processor_t::event_t::ev_get_idd_opinfo:
     {
+		///< \param opinf      (::idd_opinfo_t *) the output buffer
+		///< \param ea         (::ea_t) instruction address
+		///< \param n          (int) operand number
+		///< \param thread_id  (int) current thread id
+		///< \param getreg     (::processor_t::regval_getter_t *) function to get register values
+		///< \param regvalues  (const ::regval_t *) register values array
+
+		idd_opinfo_t * opinf = va_arg(va, idd_opinfo_t *);
         ea_t ea = va_arg(va, ea_t);
         int n = va_arg(va, int);
         int thread_id = va_arg(va, int);
         getreg_func_t getreg = va_arg(va, getreg_func_t);
         const regval_t *regvalues = va_arg(va, const regval_t *);
-        idd_opinfo_t * opinf = va_arg(va, idd_opinfo_t *);
 
         opinf->ea = BADADDR;
         opinf->debregidx = 0;
@@ -341,10 +353,11 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
         opinf->value.ival = 0;
         opinf->value_size = 4;
 
-        if (decode_insn(ea))
+		insn_t out;
+        if (decode_insn(&out, ea))
         {
-            insn_t _cmd = cmd;
-            op_t op = _cmd.Operands[n];
+            insn_t _cmd = out;
+            op_t op = _cmd.ops[n];
 
 #ifdef _DEBUG
             if (my_dbg)
@@ -381,7 +394,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                     msg("OF_SHOW");
                 msg("], ");
 
-                msg("dtyp[%s], ", dtyp_names[op.dtyp]);
+                msg("dtyp[%s], ", dtyp_names[op.dtype]);
 
                 if (op.type == o_reg)
                     msg("reg=%x, ", op.reg);
@@ -403,11 +416,11 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
                 msg("refinfo[");
 
-                flags_t _uFlag = uFlag;
+                flags_t _uFlag = get_full_flags(out.ea);
                 flags_t flags = get_optype_flags1(_uFlag);
                 opinfo_t buf;
 
-                if (get_opinfo(cmd.ea, op.n, flags, &buf))
+                if (get_opinfo(&buf, out.ea, op.n, flags))
                 {
                     msg("target=%x, ", buf.ri.target);
                     msg("base=%x, ", buf.ri.base);
@@ -435,7 +448,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 #endif
 
             int size = 0;
-            switch (op.dtyp)
+            switch (op.dtype)
             {
             case dt_byte:
                 size = 1;
@@ -456,7 +469,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             case o_near:
             case o_imm:
             {
-                uFlag = get_flags_novalue(ea);
+                flags_t uFlag = get_flags(ea);
                 flags_t flags;
 
                 switch (n)
@@ -474,7 +487,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                 }
                 
                 opinfo_t info;
-                if (get_opinfo(ea, n, flags, &info) != NULL)
+                if (get_opinfo(&info, ea, n, flags) != NULL)
                 {
                     opinf->ea += info.ri.base;
                 }
@@ -1080,60 +1093,38 @@ static bool init_plugin(void)
     return true;
 }
 
-static void idaapi update_form(bool create);
-
-static int idaapi hook_view(void * /*ud*/, int notification_code, va_list va)
-{
-	switch (notification_code)
-	{
-	case view_curpos: update_form(false); break;
-	}
-	return 0;
-}
-
-struct data_as_tiles_action_t : public action_handler_t
-{
-	virtual int idaapi activate(action_activation_ctx_t * ctx)
-	{
-		update_form(true);
-		return 1;
-	}
-
-	virtual action_state_t idaapi update(action_update_ctx_t *ctx)
-	{
-		return AST_ENABLE_ALWAYS;
-	}
-};
 
 struct smd_constant_action_t : public action_handler_t
 {
 	virtual int idaapi activate(action_activation_ctx_t * ctx)
 	{
-		char name[250];
 		ea_t ea = get_screen_ea();
-		if (isEnabled(ea)) // address belongs to disassembly
+		if (is_mapped(ea)) // address belongs to disassembly
 		{
-			if (get_cmt(ea, false, name, sizeof(name)) != -1) // remove previous comment and exit
+			qstring name;
+			if (get_cmt(&name, ea, false) != -1) // remove previous comment and exit
 			{
 				set_cmt(ea, "", false);
 				return 1;
 			}
 
-			decode_insn(ea);
-			ua_outop2(ea, name, sizeof(name), 1);
-			tag_remove(name, name, sizeof(name));
+			insn_t out;
+			decode_insn(&out, ea);
+			print_operand(&name, ea, 1);
+			tag_remove(&name);
 
 			uval_t val = 0;
-			get_operand_immvals(ea, 0, &val);
+			flags_t flags = get_flags(ea);
+			get_immvals(&val, ea, 0, flags);
 			uint32 value = (uint32)val;
-			if (cmd.Op1.type == o_imm && cmd.Op2.type == o_reg && !::qstrcmp(name, "sr"))
+			if (out.Op1.type == o_imm && out.Op2.type == o_reg && !::qstrcmp(name.c_str(), "sr"))
 			{
 				do_cmt_sr_ccr_reg_const(ea, value);
 			}
-			else if (cmd.Op1.type == o_imm && cmd.Op2.type == o_mem &&
-				(cmd.Op2.addr == 0xA11200 || cmd.Op2.addr == 0xA11100))
+			else if (out.Op1.type == o_imm && out.Op2.type == o_mem &&
+				(out.Op2.addr == 0xA11200 || out.Op2.addr == 0xA11100))
 			{
-				do_cmt_z80_bus_command(ea, cmd.Op2.addr, value);
+				do_cmt_z80_bus_command(ea, out.Op2.addr, value);
 			}
 			else if (is_vdp_rw_cmd(value))
 			{
@@ -1154,79 +1145,24 @@ struct smd_constant_action_t : public action_handler_t
 	}
 };
 
-static const char data_as_tiles_title[] = "Tile data preview";
-static const char data_as_tiles_name[] = "gensida:data_as_tiles";
-static data_as_tiles_action_t data_as_tiles;
-static action_desc_t data_as_tiles_action = ACTION_DESC_LITERAL(data_as_tiles_name, "Paint data as tiles", &data_as_tiles, "Shift+D", NULL, -1);
-
 static const char smd_constant_name[] = "gensida:smd_constant";
 static smd_constant_action_t smd_constant;
 static action_desc_t smd_constant_action = ACTION_DESC_LITERAL(smd_constant_name, "Identify SMD constant", &smd_constant, "J", NULL, -1);
 
 //--------------------------------------------------------------------------
-static int idaapi hook_ui(void *user_data, int notification_code, va_list va)
+static ssize_t idaapi hook_ui(void *user_data, int notification_code, va_list va)
 {
-	if (notification_code == ui_populating_tform_popup)
+	if (notification_code == ui_notification_t::ui_populating_widget_popup)
 	{
-		TForm *f = va_arg(va, TForm *);
-		if (get_tform_type(f) == BWN_DISASM)
+		TWidget *f = va_arg(va, TWidget *);
+		if (get_widget_type(f) == BWN_DISASM)
 		{
 			TPopupMenu *p = va_arg(va, TPopupMenu *);
-			TCustomControl *view = get_tform_idaview(f);
-			if (view != NULL)
-			{
-				attach_action_to_popup(f, p, data_as_tiles_name);
-				attach_action_to_popup(f, p, smd_constant_name);
-			}
-		}
-	}
-	else if (notification_code == ui_tform_visible)
-	{
-		TForm *form = va_arg(va, TForm *);
-		if (form == user_data)
-		{
-			QHBoxLayout *mainLayout = new QHBoxLayout();
-			mainLayout->setMargin(0);
-			mainLayout->addWidget(new PaintForm());
-			((QWidget *)form)->setLayout(mainLayout);
+			attach_action_to_popup(f, p, smd_constant_name);
 		}
 	}
 
 	return 0;
-}
-
-//--------------------------------------------------------------------------
-static void idaapi update_form(bool create)
-{
-	TForm *form = find_tform(data_as_tiles_title);
-	if (form != NULL)
-	{
-		((QWidget *)form)->update();
-	}
-	else if (create)
-	{
-		TForm *form = find_tform(data_as_tiles_title);
-		if (form != NULL)
-		{
-			switchto_tform(form, true);
-			update_form(false);
-			return;
-		}
-
-		HWND hwnd = NULL;
-		form = create_tform(data_as_tiles_title, &hwnd);
-
-		if (hwnd != NULL)
-		{
-			hook_to_notification_point(HT_UI, hook_ui, form);
-			open_tform(form, FORM_TAB | FORM_MENU | FORM_RESTORE | FORM_QWIDGET);
-		}
-		else
-		{
-			close_tform(form, FORM_SAVE);
-			unhook_from_notification_point(HT_UI, hook_ui);
-		}
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -1240,10 +1176,8 @@ static int idaapi init(void)
         dbg_started = false;
         my_dbg = false;
 
-		bool res = register_action(data_as_tiles_action);
-		res = register_action(smd_constant_action);
+		bool res = register_action(smd_constant_action);
 
-		hook_to_notification_point(HT_VIEW, hook_view, NULL);
 		hook_to_notification_point(HT_UI, hook_ui, NULL);
         hook_to_notification_point(HT_IDP, hook_idp, NULL);
 		hook_to_notification_point(HT_DBG, hook_dbg, NULL);
@@ -1260,12 +1194,10 @@ static void idaapi term(void)
 {
     if (plugin_inited)
     {
-		unhook_from_notification_point(HT_VIEW, hook_view);
 		unhook_from_notification_point(HT_UI, hook_ui);
         unhook_from_notification_point(HT_IDP, hook_idp);
 		unhook_from_notification_point(HT_DBG, hook_dbg);
 
-		unregister_action(data_as_tiles_name);
 		unregister_action(smd_constant_name);
 
         plugin_inited = false;
@@ -1275,8 +1207,9 @@ static void idaapi term(void)
 
 //--------------------------------------------------------------------------
 // The plugin method - usually is not used for debugger plugins
-static void idaapi run(int /*arg*/)
+static bool idaapi run(size_t /*arg*/)
 {
+	return false;
 }
 
 //--------------------------------------------------------------------------

@@ -129,7 +129,7 @@ int en0, en1, en2, en3;						// current enveloppe calculation
 unsigned short YM2612Vol = 256;
 unsigned short DACVol = 256;
 
-const void(*UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int length) =		// Update Channel functions pointer table
+void(*UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int length) =		// Update Channel functions pointer table
 {
     Update_Chan_Algo0,
     Update_Chan_Algo1,
@@ -168,7 +168,7 @@ const void(*UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int length) =		// Updat
     Update_Chan_Algo7_LFO_Int
 };
 
-const void(*ENV_NEXT_EVENT[8])(slot_ *SL) =		// Next Enveloppe phase functions pointer table
+void(*ENV_NEXT_EVENT[8])(slot_ *SL) =		// Next Enveloppe phase functions pointer table
 {
     Env_Attack_Next,
     Env_Decay_Next,
@@ -228,12 +228,12 @@ FILE *debug_file = NULL;
 
 /* Gens */
 
-extern unsigned int Sound_Extrapol[312][2];
-extern int Seg_L[882], Seg_R[882];
-extern int VDP_Current_Line;
-extern int YM2612_Enable;
-extern int DAC_Enable;
-extern int disableSound2, Seg_Junk[882];
+extern "C" unsigned int Sound_Extrapol[312][2];
+extern "C" int Seg_L[882], Seg_R[882];
+extern "C" int VDP_Current_Line;
+extern "C" int YM2612_Enable;
+extern "C" int DAC_Enable;
+extern "C" int disableSound2, Seg_Junk[882];
 static int* LeftAudioBuffer() { return disableSound2 ? Seg_Junk : Seg_L; }
 static int* RightAudioBuffer() { return disableSound2 ? Seg_Junk : Seg_R; }
 
@@ -2314,11 +2314,11 @@ int YM2612_Restore_Full(const unsigned char SAVE[sizeof(ym2612_)])
     {
         for (slot = 0; slot < 4; slot++)
         {
-            YM2612.CHANNEL[channel].SLOT[slot].DT = (int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].DT + (int*)&DT_TAB);
-            YM2612.CHANNEL[channel].SLOT[slot].AR = (int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].AR + (int*)&AR_TAB);
-            YM2612.CHANNEL[channel].SLOT[slot].DR = (int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].DR + (int*)&DR_TAB);
-            YM2612.CHANNEL[channel].SLOT[slot].SR = (int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].SR + (int*)&DR_TAB);
-            YM2612.CHANNEL[channel].SLOT[slot].RR = (int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].RR + (int*)&DR_TAB);
+            YM2612.CHANNEL[channel].SLOT[slot].DT = (unsigned int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].DT + (unsigned int*)&DT_TAB);
+            YM2612.CHANNEL[channel].SLOT[slot].AR = (unsigned int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].AR + (unsigned int*)&AR_TAB);
+            YM2612.CHANNEL[channel].SLOT[slot].DR = (unsigned int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].DR + (unsigned int*)&DR_TAB);
+            YM2612.CHANNEL[channel].SLOT[slot].SR = (unsigned int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].SR + (unsigned int*)&DR_TAB);
+            YM2612.CHANNEL[channel].SLOT[slot].RR = (unsigned int*)((intptr_t)YM2612.CHANNEL[channel].SLOT[slot].RR + (unsigned int*)&DR_TAB);
         }
     }
 
@@ -2339,11 +2339,11 @@ int YM2612_Save_Full(unsigned char SAVE[sizeof(ym2612_)])
     {
         for (slot = 0; slot < 4; slot++)
         {
-            ymp->CHANNEL[channel].SLOT[slot].DT = (int*)((int*)ymp->CHANNEL[channel].SLOT[slot].DT - (int*)&DT_TAB);
-            ymp->CHANNEL[channel].SLOT[slot].AR = (int*)((int*)ymp->CHANNEL[channel].SLOT[slot].AR - (int*)&AR_TAB);
-            ymp->CHANNEL[channel].SLOT[slot].DR = (int*)((int*)ymp->CHANNEL[channel].SLOT[slot].DR - (int*)&DR_TAB);
-            ymp->CHANNEL[channel].SLOT[slot].SR = (int*)((int*)ymp->CHANNEL[channel].SLOT[slot].SR - (int*)&DR_TAB);
-            ymp->CHANNEL[channel].SLOT[slot].RR = (int*)((int*)ymp->CHANNEL[channel].SLOT[slot].RR - (int*)&DR_TAB);
+            ymp->CHANNEL[channel].SLOT[slot].DT = (unsigned int*)((unsigned int*)ymp->CHANNEL[channel].SLOT[slot].DT - (unsigned int*)&DT_TAB);
+            ymp->CHANNEL[channel].SLOT[slot].AR = (unsigned int*)((unsigned int*)ymp->CHANNEL[channel].SLOT[slot].AR - (unsigned int*)&AR_TAB);
+            ymp->CHANNEL[channel].SLOT[slot].DR = (unsigned int*)((unsigned int*)ymp->CHANNEL[channel].SLOT[slot].DR - (unsigned int*)&DR_TAB);
+            ymp->CHANNEL[channel].SLOT[slot].SR = (unsigned int*)((unsigned int*)ymp->CHANNEL[channel].SLOT[slot].SR - (unsigned int*)&DR_TAB);
+            ymp->CHANNEL[channel].SLOT[slot].RR = (unsigned int*)((unsigned int*)ymp->CHANNEL[channel].SLOT[slot].RR - (unsigned int*)&DR_TAB);
         }
     }
 

@@ -223,17 +223,8 @@ unsigned short Read_CDC_Host_SUB(void)
                 }
             }
 
-            __asm
-            {
-                mov esi, CDC.DAC.N
-                lea ebx, CDC.Buffer
-                //				and esi, 0x3FFF
-                mov ax, [ebx + esi]
-                add esi, 2
-                rol ax, 8
-                mov CDC.DAC.N, esi
-                mov val, ax
-            }
+			CDC.DAC.N += 2;
+			val = CDC.Buffer[CDC.DAC.N] << 8;
 
 #ifdef DEBUG_CD
             //	fprintf(debug_SCD_file, "Host READ on SUB CPU side : %.4X  DBA = %.4X  DBC = %.4X\n", val, CDC.DBC.N, CDC.DAC.N);
@@ -275,17 +266,8 @@ unsigned short Read_CDC_Host_MAIN(void)
                 }
             }
 
-            __asm
-            {
-                mov esi, CDC.DAC.N
-                lea ebx, CDC.Buffer
-                //				and esi, 0x3FFF
-                mov ax, [ebx + esi]
-                add esi, 2
-                rol ax, 8
-                mov CDC.DAC.N, esi
-                mov val, ax
-            }
+			CDC.DAC.N += 2;
+			val = CDC.Buffer[CDC.DAC.N] << 8;
 
 #ifdef DEBUG_CD
             //	fprintf(debug_SCD_file, "Host READ on SUB CPU side : %.4X  DBA = %.4X  DBC = %.4X\n", val, CDC.DBC.N, CDC.DAC.N);

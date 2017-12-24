@@ -668,7 +668,7 @@ section .text align=64
 	ALIGN32
 
 	.Team_Player_2
-		push edx
+		push rdx
 		mov [Lag_Frame], byte 0
 		mov edx, [Controller_2_State]
 		test edx, 0x40
@@ -703,7 +703,7 @@ section .text align=64
 
 	.TP2_Spec
 		mov eax, 0x70
-		pop edx
+		pop rdx
 		ret
 
 	ALIGN32
@@ -722,7 +722,7 @@ section .text align=64
 		or eax, [edx + 8]
 		or ebx, [edx + 4]
 		lea eax, [eax * 2 + ebx + 0x40]
-		pop edx
+		pop rdx
 		ret
 
 	ALIGN32
@@ -736,7 +736,7 @@ section .text align=64
 		or eax, [edx + 8]
 		or ebx, [edx + 4]
 		lea eax, [eax * 2 + ebx]
-		pop edx
+		pop rdx
 		ret
 
 	ALIGN32
@@ -746,7 +746,7 @@ section .text align=64
 		mov ebx, [Controller_1_A]
 		lea eax, [eax * 2 + ebx]
 		shl eax, 4
-		pop edx
+		pop rdx
 		ret
 
 	ALIGN32
@@ -763,7 +763,7 @@ section .text align=64
 		or eax, [edx + 44]
 		or ebx, [edx + 48]
 		lea eax, [eax * 2 + ebx + 0x40]
-		pop edx
+		pop rdx
 		ret
 
 	ALIGN32
@@ -774,7 +774,7 @@ section .text align=64
 		lea eax, [eax * 2 + ebx]
 		shl eax, 4
 		or eax, 0xF
-		pop edx
+		pop rdx
 		ret
 
 
@@ -1236,10 +1236,10 @@ section .text align=64
 
 	;void Make_IO_Table(void)
 	DECL Make_IO_Table
-		push eax
-		push ebx
-		push ecx
-		push edx
+		push rax
+		push rbx
+		push rcx
+		push rdx
 
 	.P1A
 		mov ebx, 1
@@ -1436,8 +1436,8 @@ section .text align=64
 	ALIGN4
 
 	.End
-		pop edx
-		pop ecx
-		pop ebx
-		pop eax
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 		ret

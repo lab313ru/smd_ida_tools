@@ -251,7 +251,8 @@ int WaveWriteFile(
             }
         }
 
-        *((BYTE*)pmmioinfoOut->pchNext)++ = *((BYTE*)pbSrc + cT);
+        *pmmioinfoOut->pchNext = pbSrc[cT];
+		pmmioinfoOut->pchNext++;
         (*cbActualWrite)++;
     }
 

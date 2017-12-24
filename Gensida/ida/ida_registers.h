@@ -109,6 +109,6 @@ enum register_t
 
 enum m68k_insn_type_t
 {
-    M68K_linea = CUSTOM_CMD_ITYPE,
+    M68K_linea = CUSTOM_INSN_ITYPE,
     M68K_linef,
 };

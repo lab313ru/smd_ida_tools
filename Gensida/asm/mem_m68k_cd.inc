@@ -25,12 +25,12 @@
 		je near M68K_Read_Byte_Bad
 
 		xor ebx, 1
-		mov al, [Ram_Prg + ebx - 0x20000]		
+		mov al, [Ram_Prg + ebx - 0x20000]
 		pop ebx
 		ret
 
 	ALIGN32
-	
+
 	M68K_Read_Byte_WRam:
 		cmp ebx, 0x23FFFF
 		mov eax, [Ram_Word_State]
@@ -154,14 +154,14 @@
 
 
 	ALIGN32
-	
+
 	M68K_Read_Byte_Misc_CD:
 		cmp ebx, 0xA0FFFF
 		ja short .no_Z80_mem
 
 		test byte [Z80_State], 6
 		jnz near .bad
-		
+
 		push ecx
 		push edx
 		mov ecx, ebx
@@ -173,18 +173,18 @@
 		pop ecx
 		pop ebx
 		ret
-		
+
 	ALIGN4
 
 	.no_Z80_mem
 		cmp ebx, 0xA11100
 		jne short .no_busreq
-		
+
 		test byte [Z80_State], 2
 		jnz short .z80_on
 
 	.z80_off
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		sub eax, [Last_BUS_REQ_Cnt]
 		cmp eax, CYCLE_FOR_TAKE_Z80_BUS_SEGACD
 		ja short .bus_taken
@@ -224,7 +224,7 @@
 		dd .CT_Pad_1, .CT_Pad_2, .bad, .bad
 
 	ALIGN4
-	
+
 	.bad
 		mov al, 0
 		pop ebx
@@ -304,7 +304,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.S68K_Ctrl_H
 		mov al, [Int_Mask_S68K]
 		and al, 4
@@ -313,7 +313,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl_L
 		mov eax, [Bank_M68K]
 		mov ebx, [Ram_Word_State]
@@ -324,7 +324,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl_H
 		mov al, [S68K_Mem_WP]
 		pop ebx
@@ -364,7 +364,7 @@
 		xor al, al
 		pop ebx
 		ret
-		
+
 	ALIGN4
 
 	.CDC_Host_Data_L
@@ -482,7 +482,7 @@
 		ret
 
 	ALIGN32
-	
+
 	M68K_Read_Word_WRam:
 		cmp ebx, 0x23FFFF
 		mov eax, [Ram_Word_State]
@@ -599,11 +599,11 @@
 
 
 	ALIGN32
-	
+
 	M68K_Read_Word_Misc_CD:
 		cmp ebx, 0xA0FFFF
 		ja short .no_Z80_ram
-		
+
 		test byte [Z80_State], 6
 		jnz near .bad
 
@@ -620,16 +620,16 @@
 		ret
 
 	ALIGN4
-	
+
 	.no_Z80_ram
 		cmp ebx, 0xA11100
 		jne short .no_busreq
-		
+
 		test byte [Z80_State], 2
 		jnz short .z80_on
 
 	.z80_off
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		sub eax, [Last_BUS_REQ_Cnt]
 		cmp eax, CYCLE_FOR_TAKE_Z80_BUS_SEGACD
 		ja short .bus_taken
@@ -755,7 +755,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl
 		mov eax, [Bank_M68K]
 		mov ebx, [Ram_Word_State]
@@ -784,7 +784,7 @@
 	ALIGN4
 
 	.CDC_Host_Data
-		call _Read_CDC_Host_MAIN
+		call Read_CDC_Host_MAIN
 		pop ebx
 		ret
 
@@ -842,7 +842,7 @@
 	; *******************************************
 
 	ALIGN32
-	
+
 	M68K_Write_Byte_Bios_CD:
 		cmp ebx, 0x20000
 		jb short .bad
@@ -977,7 +977,7 @@
 
 
 	ALIGN32
-	
+
 	M68K_Write_Byte_Misc_CD:
 		cmp ebx, 0xA0FFFF
 		ja short .no_Z80_mem
@@ -996,7 +996,7 @@
 ;		pop ecx
 ;		pop ebx
 		ret
-		
+
 	ALIGN4
 
 	.bad
@@ -1026,7 +1026,7 @@
 		push edx
 		mov [Z80_State], ah
 		mov ebx, [Cycles_M68K]
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		sub ebx, eax
 		mov edx, [Cycles_Z80]
 		mov ebx, [Z80_M68K_Cycle_Tab + ebx * 4]
@@ -1043,7 +1043,7 @@
 	ALIGN4
 
 	.deactivated
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		mov cl, [Z80_State]
 		mov [Last_BUS_REQ_Cnt], eax
 		test cl, 2
@@ -1093,7 +1093,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.no_reset_z80
 		cmp ebx, 0xA1000D
 		ja short .no_ctrl_io
@@ -1144,7 +1144,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.no_ctrl_io
 		cmp ebx, 0xA12000
 		jb near M68K_Write_Bad
@@ -1179,9 +1179,9 @@
 		jnz short .S68K_Already_Running
 
 	.S68K_Restart
-	
+
 		push eax
-		call _sub68k_reset
+		call sub68k_reset
 		pop eax
 
 	.S68K_Reseting
@@ -1193,7 +1193,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.S68K_Ctrl_H
 		test al, 0x1
 		jz .No_Process_INT2
@@ -1202,7 +1202,7 @@
 
 		push dword -1
 		push dword 2
-		call _sub68k_interrupt
+		call sub68k_interrupt
 		add esp, 8
 
 	.No_Process_INT2
@@ -1211,7 +1211,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl_L
 ;pushad
 ;push eax
@@ -1242,7 +1242,7 @@
 ;		pop ecx
 ;		pop ebx
 		ret
-		
+
 	ALIGN4
 
 	.Mode_1M
@@ -1260,7 +1260,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl_H
 		mov [S68K_Mem_WP], al
 ;		pop ecx
@@ -1397,7 +1397,7 @@
 	; *******************************************
 
 	ALIGN32
-	
+
 	M68K_Write_Word_Bios_CD:
 		cmp ebx, 0x20000
 		jb short .bad
@@ -1416,7 +1416,7 @@
 		ret
 
 	ALIGN32
-	
+
 	M68K_Write_Word_WRam:
 		cmp ebx, 0x23FFFF
 		mov ecx, [Ram_Word_State]
@@ -1522,11 +1522,11 @@
 
 
 	ALIGN32
-	
+
 	M68K_Write_Word_Misc_CD:
 		cmp ebx, 0xA0FFFF
 		ja short .no_Z80_ram
-		
+
 		test byte [Z80_State], 6
 		jnz near .bad
 
@@ -1544,11 +1544,11 @@
 		ret
 
 	ALIGN4
-	
+
 	.no_Z80_ram
 		cmp ebx, 0xA11100
 		jne near .no_busreq
-		
+
 		xor ecx, ecx
 		mov al, [Z80_State]
 		mov dword [Controller_1_Counter], ecx
@@ -1565,7 +1565,7 @@
 		push edx
 		mov [Z80_State], al
 		mov ebx, [Cycles_M68K]
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		sub ebx, eax
 		mov edx, [Cycles_Z80]
 		mov ebx, [Z80_M68K_Cycle_Tab + ebx * 4]
@@ -1582,7 +1582,7 @@
 	ALIGN4
 
 	.deactivated
-		call _main68k_readOdometer
+		call main68k_readOdometer
 		mov cl, [Z80_State]
 		mov [Last_BUS_REQ_Cnt], eax
 		test cl, 2
@@ -1632,7 +1632,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.no_reset_z80
 		cmp ebx, 0xA1000D
 		ja short .no_ctrl_io
@@ -1683,14 +1683,14 @@
 		ret
 
 	ALIGN4
-	
+
 	.bad
 ;		pop ecx
 ;		pop ebx
 		ret
 
 	ALIGN4
-	
+
 	.no_ctrl_io
 		cmp ebx, 0xA12000
 		jb short .bad
@@ -1719,9 +1719,9 @@
 		jnz short .S68K_Already_Running
 
 	.S68K_Restart
-	
+
 		push eax
-		call _sub68k_reset
+		call sub68k_reset
 		pop eax
 
 	.S68K_Reseting
@@ -1735,7 +1735,7 @@
 
 		push dword -1
 		push dword 2
-		call _sub68k_interrupt
+		call sub68k_interrupt
 		add esp, 8
 
 	.No_Process_INT2
@@ -1744,7 +1744,7 @@
 		ret
 
 	ALIGN4
-	
+
 	.Memory_Ctrl
 ;pushad
 ;push eax
@@ -1776,9 +1776,9 @@
 ;		pop ecx
 ;		pop ebx
 		ret
-		
+
 	ALIGN4
-	
+
 	.Mode_1M
 		shl ebx, 11
 		test al, 1

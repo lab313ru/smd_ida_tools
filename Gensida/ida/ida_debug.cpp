@@ -181,7 +181,7 @@ register_info_t registers[] =
     { "V22", NULL, RC_BREAK, dt_byte, NULL, 0 },
     { "V23", NULL, RC_BREAK, dt_byte, NULL, 0 },
     { "ALLOW0", NULL, RC_BREAK, dt_word, ALLOW_FLAGS_DA, 0xFFFF },
-    { "ALLOW1", NULL, RC_BREAK, dt_3byte, ALLOW_FLAGS_V, 0xFFFFFF },
+    { "ALLOW1", NULL, RC_BREAK, dt_dword, ALLOW_FLAGS_V, 0xFFFFFF },
 
     // VDP Registers
     { "Set1", NULL, RC_VDP, dt_byte, NULL, 0 },
@@ -237,11 +237,11 @@ static void apply_codemap()
         if (g_codemap[i].second && g_codemap[i].first)
         {
             auto_make_code((ea_t)i);
-            noUsed((ea_t)i);
+			plan_ea((ea_t)i);
         }
-        showAddr((ea_t)i);
+		show_addr((ea_t)i);
     }
-    noUsed(0, MAX_ROM_SIZE);
+	plan_range(0, MAX_ROM_SIZE);
 
     for (size_t i = 0; i < MAX_ROM_SIZE; ++i)
     {
@@ -249,11 +249,11 @@ static void apply_codemap()
         {
             if (add_func(i, BADADDR))
                 add_cref(g_codemap[i].first, i, fl_CN);
-            noUsed((ea_t)i);
+			plan_ea((ea_t)i);
         }
-        showAddr((ea_t)i);
+		show_addr((ea_t)i);
     }
-    noUsed(0, MAX_ROM_SIZE);
+	plan_range(0, MAX_ROM_SIZE);
     msg("Codemap applied.\n");
 }
 
@@ -300,7 +300,7 @@ static bool idaapi init_debugger(const char *hostname,
     const char *password)
 {
     prepare_codemap();
-    set_processor_type(ph.psnames[0], SETPROC_COMPAT); // reset proc to "M68000"
+    set_processor_type(ph.psnames[0], SETPROC_LOADER); // reset proc to "M68000"
     return true;
 }
 
@@ -318,7 +318,7 @@ static bool idaapi term_debugger(void)
 // If n is 0, the processes list is reinitialized.
 // 1-ok, 0-failed, -1-network error
 // This function is called from the main thread
-static int idaapi process_get_info(int n, process_info_t *info)
+static int idaapi get_processes_info(procinfo_vec_t *procs)
 {
     return 0;
 }
@@ -667,17 +667,17 @@ static int idaapi get_memory_info(meminfo_vec_t &areas)
     // Don't remove this loop
     for (int i = 0; i < get_segm_qty(); ++i)
     {
-        char buf[MAX_PATH];
+		qstring buf;
 
         segment_t *segm = getnseg(i);
 
-        info.startEA = segm->startEA;
-        info.endEA = segm->endEA;
+        info.start_ea = segm->start_ea;
+        info.end_ea = segm->end_ea;
 
-        get_segm_name(segm, buf, sizeof(buf));
+        get_segm_name(&buf, segm);
         info.name = buf;
 
-        get_segm_class(segm, buf, sizeof(buf));
+        get_segm_class(&buf, segm);
         info.sclass = buf;
 
         info.sbase = 0;
@@ -688,20 +688,20 @@ static int idaapi get_memory_info(meminfo_vec_t &areas)
     // Don't remove this loop
 
     info.name = "DBG_VDP_VRAM";
-    info.startEA = BREAKPOINTS_BASE;
-    info.endEA = info.startEA + 0x10000;
+    info.start_ea = BREAKPOINTS_BASE;
+    info.end_ea = info.start_ea + 0x10000;
     info.bitness = 1;
     areas.push_back(info);
 
     info.name = "DBG_VDP_CRAM";
-    info.startEA = info.endEA;
-    info.endEA = info.startEA + 0x10000;
+    info.start_ea = info.end_ea;
+    info.end_ea = info.start_ea + 0x10000;
     info.bitness = 1;
     areas.push_back(info);
 
     info.name = "DBG_VDP_VSRAM";
-    info.startEA = info.endEA;
-    info.endEA = info.startEA + 0x10000;
+    info.start_ea = info.end_ea;
+    info.end_ea = info.start_ea + 0x10000;
     info.bitness = 1;
     areas.push_back(info);
 
@@ -1023,7 +1023,7 @@ debugger_t debugger =
     init_debugger,
     term_debugger,
 
-    process_get_info,
+	get_processes_info,
 
     start_process,
     NULL, // attach_process,

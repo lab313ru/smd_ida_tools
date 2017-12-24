@@ -66,6 +66,7 @@ extern "C" {
     int Do_SegaCD_Frame_No_VDP_Cycle_Accurate(void);
 
     BOOL IsAsyncAllowed(void);
+	extern int disableSound;
 
 #ifdef __cplusplus
 }

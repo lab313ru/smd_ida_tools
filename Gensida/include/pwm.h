@@ -24,6 +24,7 @@ extern "C" {
     extern unsigned int PWM_Out_L;
     extern int PWM_Out_L_Tmp;
     extern int PWM_Out_R_Tmp;
+	extern unsigned char PWM_FULL_TAB[16];
 
     extern unsigned short PWMVol;
 
@@ -33,6 +34,8 @@ extern "C" {
     void FASTCALL PWM_Clear_Timer(void);
     void FASTCALL PWM_Update_Timer(unsigned int cycle);
     void FASTCALL PWM_Update(int **buf, int length);
+
+	void FASTCALL ApplyPWMVol();
 
 #ifdef __cplusplus
 };

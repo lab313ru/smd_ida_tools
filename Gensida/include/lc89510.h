@@ -120,6 +120,8 @@ extern "C" {
     unsigned char SCD_Read_Byte(unsigned int Adr);
     unsigned short SCD_Read_Word(unsigned int Adr);
 
+	unsigned short Read_CDC_Host_MAIN(void);
+
 #ifdef __cplusplus
 };
 #endif

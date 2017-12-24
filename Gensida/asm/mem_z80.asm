@@ -13,34 +13,34 @@ section .text align=64
 
 	extern M68K_RB
 	extern M68K_WB
-	extern _YM2612_Write
-	extern _YM2612_Read
-	extern _PSG_Write
+	extern YM2612_Write
+	extern YM2612_Read
+	extern PSG_Write
 	extern Write_Byte_VDP_Data
 	extern Write_Word_VDP_Data
 	extern Read_VDP_Status
 	extern Read_VDP_V_Counter
 	extern Read_VDP_H_Counter
 
-	extern _Write_To_Bank
-	extern _Read_To_68K_Space
-	extern _Write_To_68K_Space
+	extern Write_To_Bank
+	extern Read_To_68K_Space
+	extern Write_To_68K_Space
 
 
 	;unsigned char Z80_ReadB(unsigned int Adr);
 	DECL Z80_ReadB
 
 		mov eax, [esp + 4]
-		push ecx
-		push edx
+		push rcx
+		push rdx
 
 		mov ecx, eax
 		and eax, 0xF000
 		and ecx, 0x7FFF
 		shr eax, 10
 		call [Z80_ReadB_Table + eax]
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		ret
 
 	ALIGN4
@@ -70,16 +70,16 @@ section .text align=64
 	DECL Z80_ReadW
 
 		mov eax, [esp + 4]
-		push ecx
-		push edx
+		push rcx
+		push rdx
 
 		mov ecx, eax
 		and eax, 0xF000
 		and ecx, 0x7FFF
 		shr eax, 10
 		call [Z80_ReadW_Table + eax]
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		ret
 
 	ALIGN4
@@ -108,8 +108,8 @@ section .text align=64
 	;void Z80_WriteB(unsigned int Adr, unsigned char Data);
 	DECL Z80_WriteB
 
-		push ecx
-		push edx
+		push rcx
+		push rdx
 
 		mov eax, [esp + 12]
 		mov edx, [esp + 16]
@@ -119,8 +119,8 @@ section .text align=64
 		shr eax, 10
 		and ecx, 0x7FFF
 		call [Z80_WriteB_Table + eax]
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		ret
 
 	ALIGN4
@@ -148,8 +148,8 @@ section .text align=64
 	;void Z80_WriteW(unsigned int Adr, unsigned short Data);
 	DECL Z80_WriteW
 
-		push ecx
-		push edx
+		push rcx
+		push rdx
 
 		mov eax, [esp + 12]
 		mov edx, [esp + 16]
@@ -159,8 +159,8 @@ section .text align=64
 		shr eax, 10
 		and ecx, 0x7FFF
 		call [Z80_WriteW_Table + eax]
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		ret
 
 	ALIGN4
@@ -209,9 +209,9 @@ section .text align=64
 
 	DECLF Z80_ReadB_YM2612, 4
 		and ecx, 0x3
-		push ecx
-		call _YM2612_Read
-		pop ecx
+		push rcx
+		call YM2612_Read
+		pop rcx
 		ret
 		
 	ALIGN4
@@ -261,10 +261,10 @@ section .text align=64
 		mov eax, [Bank_Z80]
 		and ecx, 0x7FFF
 		add ecx, eax
-		push ecx
-;		call _Read_To_68K_Space
+		push rcx
+;		call Read_To_68K_Space
 		call M68K_RB
-		pop ecx
+		pop rcx
 		ret
 
 	; Read Word
@@ -294,10 +294,10 @@ section .text align=64
 
 	DECLF Z80_ReadW_YM2612, 4
 		and ecx, 0x3
-		push ecx
-		call _YM2612_Read
+		push rcx
+		call YM2612_Read
 		xor ah, ah
-		pop ecx
+		pop rcx
 		ret
 		
 	ALIGN4
@@ -334,11 +334,11 @@ section .text align=64
 		mov eax, [Bank_Z80]
 		and ecx, 0x7FFF
 		add ecx, eax
-		push ecx
+		push rcx
 		call M68K_RB
 		inc ecx
 		mov dl, al
-		push ecx
+		push rcx
 		call M68K_RB
 		mov ah, al
 		add esp, 8
@@ -371,7 +371,7 @@ section .text align=64
 		mov ecx, [Bank_Z80]
 		and edx, 1
 
-;		push edx
+;		push rdx
 
 		and ecx, 0xFF0000
 		shl edx, 23
@@ -379,8 +379,8 @@ section .text align=64
 		add edx, ecx
 		mov [Bank_Z80], edx
 
-;		call _Write_To_Bank
-;		pop ecx
+;		call Write_To_Bank
+;		pop rcx
 
 	.bad
 		ret
@@ -389,9 +389,9 @@ section .text align=64
 
 	DECLF Z80_WriteB_YM2612, 8
 		and ecx, 0x3
-		push edx
-		push ecx
-		call _YM2612_Write
+		push rdx
+		push rcx
+		call YM2612_Write
 		add esp, 8
 		ret
 		
@@ -401,9 +401,9 @@ section .text align=64
 		cmp ecx, 0x7F11
 		jne short .other
 
-		push edx
-		call _PSG_Write
-		pop edx
+		push rdx
+		call PSG_Write
+		pop rdx
 		ret
 
 	ALIGN4
@@ -412,9 +412,9 @@ section .text align=64
 		cmp ecx, 0x7F03
 		ja short .bad
 
-		push edx
+		push rdx
 		call Write_Byte_VDP_Data
-		pop edx
+		pop rdx
 
 	.bad
 		ret
@@ -425,12 +425,12 @@ section .text align=64
 		mov eax, [Bank_Z80]
 		and ecx, 0x7FFF
 		add ecx, eax
-		push edx
-		push ecx
-;		call _Write_To_68K_Space
+		push rdx
+		push rcx
+;		call Write_To_68K_Space
 		call M68K_WB
-		pop ecx
-		pop edx
+		pop rcx
+		pop rdx
 		ret
 
 
@@ -449,13 +449,13 @@ section .text align=64
 
 	DECLF Z80_WriteW_YM2612, 8
 		and ecx, 0x3
-		push edx
-		push ecx
-		call _YM2612_Write
+		push rdx
+		push rcx
+		call YM2612_Write
 		inc ecx
-		push edx
-		push ecx
-		call _YM2612_Write
+		push rdx
+		push rcx
+		call YM2612_Write
 		add esp, 16
 		ret
 		
@@ -465,9 +465,9 @@ section .text align=64
 		cmp ecx, 0x7F11
 		jne short .other
 
-		push edx
-		call _PSG_Write
-		pop edx
+		push rdx
+		call PSG_Write
+		pop rdx
 		ret
 
 	ALIGN4
@@ -476,9 +476,9 @@ section .text align=64
 		cmp ecx, 0x7F03
 		ja short .bad
 
-		push edx
+		push rdx
 		call Write_Word_VDP_Data
-		pop edx
+		pop rdx
 
 	.bad
 		ret
@@ -489,14 +489,14 @@ section .text align=64
 		mov eax, [Bank_Z80]
 		and ecx, 0x7FFF
 		add ecx, eax
-		push edx
-		push ecx
-;		call _Write_To_68K_Space
+		push rdx
+		push rcx
+;		call Write_To_68K_Space
 		call M68K_WB
 		shr edx, 8
 		inc ecx
-		push edx
-		push ecx
+		push rdx
+		push rcx
 		call M68K_WB
 		add esp, 16
 		ret

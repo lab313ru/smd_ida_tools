@@ -37,6 +37,8 @@ extern "C" {
     void Set_Rate_PCM(int Rate);
     void Reset_PCM(void);
     int Update_PCM(int **buf, int Length);
+	extern void Write_PCM_Reg(unsigned int Reg, unsigned int Data);
+	extern unsigned short Read_CDC_Host_SUB(void);
 
 #ifdef __cplusplus
 };

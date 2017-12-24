@@ -140,6 +140,8 @@ extern "C" {
     //void Stop_CD_Timer(void);
     //void Update_CD_Timer(void);
 
+	extern char played_tracks_linear[105];
+
 #ifdef __cplusplus
 };
 #endif

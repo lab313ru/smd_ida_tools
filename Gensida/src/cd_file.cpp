@@ -20,7 +20,7 @@ char g_cuefile_TOC_filenames[100][1024] = { { 0 } };
 int g_cuefile_TOC_filetype[100] = { 0 };
 int g_dontResetAudioCache = 0;
 extern char preloaded_tracks[100], played_tracks_linear[105]; // added for synchronous MP3 code
-void Delete_Preloaded_MP3s(void);
+extern void Delete_Preloaded_MP3s(void);
 
 int FILE_Init(void)
 {

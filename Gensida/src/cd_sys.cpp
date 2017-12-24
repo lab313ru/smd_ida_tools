@@ -12,6 +12,8 @@
 #include "save.h"
 #include "misc.h"
 
+extern "C" HWND HWnd;
+
 int File_Add_Delay = 0;
 
 int CDDA_Enable;
@@ -844,7 +846,6 @@ int Close_Tray_CDD_cC(void)
         // Modif N. -- made the action cancellable
         //if(!IsMovieActive()) // TODO: enable this check since we don't support recording of disc switches
         {
-            extern HWND HWnd;
             if (Change_File_L(new_iso, Rom_Dir, "Load SegaCD image file", "SegaCD image file\0*.bin;*.cue;*.iso;*.raw\0All files\0*.*\0\0", "", HWnd))
             {
                 Reload_SegaCD(new_iso);
@@ -971,66 +972,29 @@ void Write_CD_Audio(short *Buf, int rate, int channel, int _length)
 
     if (channel == 2)
     {
-        __asm
-        {
-            mov edi, CD_Audio_Buffer_Write_Pos
-            mov ebx, Buf
-            xor esi, esi
-            mov ecx, _length_dst
-            xor eax, eax
-            mov edx, pas_src
-            dec ecx
-            jmp short loop_stereo
+		int esi = 0;
 
-            align 16
-
-            loop_stereo:
-            movsx eax, word ptr[ebx + esi * 4]
-                mov CD_Audio_Buffer_L[edi * 4], eax
-                movsx eax, word ptr[ebx + esi * 4 + 2]
-                mov CD_Audio_Buffer_R[edi * 4], eax
-                mov esi, dword ptr pos_src
-                inc edi
-                add esi, edx
-                and edi, 0xFFF
-                mov dword ptr pos_src, esi
-                shr esi, 16
-                dec ecx
-                jns short loop_stereo
-
-                mov CD_Audio_Buffer_Write_Pos, edi
-        }
+		for (int i = 0; i < _length_dst; ++i)
+		{
+			CD_Audio_Buffer_L[CD_Audio_Buffer_Write_Pos] = *(unsigned short *)(((char*)Buf)[esi * 4]);
+			CD_Audio_Buffer_R[CD_Audio_Buffer_Write_Pos] = *(unsigned short *)(((char*)Buf)[esi * 4 + 2]);
+			pos_src += pas_src;
+			esi = pos_src >> 16;
+			CD_Audio_Buffer_Write_Pos = (CD_Audio_Buffer_Write_Pos + 1) & 0xFFF;
+		}
     }
     else
     {
-        __asm
-        {
-            mov edi, CD_Audio_Buffer_Write_Pos
-            mov ebx, Buf
-            xor esi, esi
-            mov ecx, _length_dst
-            xor eax, eax
-            mov edx, pas_src
-            dec ecx
-            jmp short loop_mono
+		int esi = 0;
 
-            align 16
-
-            loop_mono:
-            movsx eax, word ptr[ebx + esi * 2]
-                mov CD_Audio_Buffer_L[edi * 4], eax
-                mov CD_Audio_Buffer_R[edi * 4], eax
-                mov esi, dword ptr pos_src
-                inc edi
-                add esi, edx
-                and edi, 0xFFF
-                mov dword ptr pos_src, esi
-                shr esi, 16
-                dec ecx
-                jns short loop_mono
-
-                mov CD_Audio_Buffer_Write_Pos, edi
-        }
+		for (int i = 0; i < _length_dst; ++i)
+		{
+			CD_Audio_Buffer_L[CD_Audio_Buffer_Write_Pos] = *(unsigned short *)(((char*)Buf)[esi * 4]);
+			CD_Audio_Buffer_R[CD_Audio_Buffer_Write_Pos] = *(unsigned short *)(((char*)Buf)[esi * 4]);
+			pos_src += pas_src;
+			esi = pos_src >> 16;
+			CD_Audio_Buffer_Write_Pos = (CD_Audio_Buffer_Write_Pos + 1) & 0xFFF;
+		}
     }
 
 #ifdef DEBUG_CD
@@ -1085,7 +1049,7 @@ void Update_CD_Audio(int **buf, int _length)
             CD_Audio_Buffer_L[readPos] = (CD_Audio_Buffer_L[readPos] * CDDAVol) >> 8;
             CD_Audio_Buffer_R[readPos] = (CD_Audio_Buffer_R[readPos] * CDDAVol) >> 8;
         }
-        __asm
+        /*__asm
         {
             mov ecx, _length
             mov esi, CD_Audio_Buffer_Read_Pos
@@ -1116,7 +1080,7 @@ void Update_CD_Audio(int **buf, int _length)
                 jns short loop_R
 
                 mov CD_Audio_Buffer_Read_Pos, esi
-        }
+        }*/
     }
     else
     {

@@ -14,7 +14,7 @@ section .data align=64
 	extern CDD.Seconde
 	extern CDD.Frame
 	extern CDD.Ext
-	extern _Bits32
+	extern Bits32
 
 
 	DECL Small_Font_Data
@@ -242,7 +242,7 @@ section .text align=64
 
 		mov eax, ebx							; eax = data pixels
 		shr eax, %2								; keep the first
-		push ebx
+		push rbx
 		mov ebx, ebp
 		shl bx, 1
 		and eax, 0xF
@@ -256,7 +256,7 @@ section .text align=64
 		and ax, 0xEEE
 		shl bh, 4
 		or  ah, bh ; 0000bbbbggggrrrr -> 00hsbbbbggggrrrr
-		pop ebx
+		pop rbx
 		mov ax, [Palette + eax * 2 + 0x4000 * 2]	; conversion 8->16 bits palette
 		jmp %%DRAW
 	%%BG:
@@ -271,7 +271,7 @@ section .text align=64
 
 		mov eax, ebx							; eax = data pixels
 		shr eax, %2								; keep the first
-		push ebx
+		push rbx
 		mov ebx, ebp
 		and eax, 0xF
 		jz %%BG
@@ -284,7 +284,7 @@ section .text align=64
 		and ax, 0xEEE
 		shl bh, 4
 		or  ah, bh ; 0000bbbbggggrrrr -> 00hsbbbbggggrrrr
-		pop ebx
+		pop rbx
 		mov eax, [Palette32 + eax * 4 + 0x4000 * 4]	; conversion 16->32 bits palette
 		jmp %%DRAW
 	%%BG:
@@ -830,18 +830,25 @@ section .text align=64
 	; void Identify_CPU(void)
 	DECL Identify_CPU
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
 
 		mov dword [Have_MMX], 0
 		mov dword [CPU_Model], 0
-		pushfd
-		pop eax
+		pushfq
+		pop rax
 		mov ebx, eax
 		xor eax, 0x200000
-		push eax
-		popfd
-		pushfd
-		pop eax
+		push rax
+		popfq
+		pushfq
+		pop rax
 		xor eax, ebx
 		and eax, 0x200000
 		jz .not_supported		; CPUID instruction not supported
@@ -861,7 +868,14 @@ section .text align=64
 		setnz [Have_MMX]		; Store it
 
 	.not_supported
-		popad
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 		ret
 
 	ALIGN32
@@ -869,11 +883,11 @@ section .text align=64
 	; int Half_Blur(void)
 	DECL Half_Blur
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 	
 		test byte [Have_MMX], 0xFF
 		jz near .No_MMX
@@ -919,11 +933,11 @@ section .text align=64
 			jnz short .MMX_Loop
 
 		emms
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -955,11 +969,11 @@ section .text align=64
 			mov dx, bx
 			jnz short .Loop_555
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -980,11 +994,11 @@ section .text align=64
 			mov dx, bx
 			jnz .Loop_565
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -993,9 +1007,9 @@ section .text align=64
 	; void Byte_Swap(void *Ptr, int NumByte)
 	DECL Byte_Swap
 
-		push eax
-		push ecx
-		push edi
+		push rax
+		push rcx
+		push rdi
 	
 		mov ecx, [esp + 20]
 		mov edi, [esp + 16]
@@ -1014,9 +1028,9 @@ section .text align=64
 
 	.end
 
-		pop edi
-		pop ecx
-		pop eax
+		pop rdi
+		pop rcx
+		pop rax
 		ret
 
 
@@ -1025,9 +1039,9 @@ section .text align=64
 	; void Word_Swap(void *Ptr, int NumByte)
 	DECL Word_Swap ;Important for 32X RAM getting searched correctly
 
-		push eax
-		push ecx
-		push edi
+		push rax
+		push rcx
+		push rdi
 	
 		mov ecx, [esp + 20]
 		mov edi, [esp + 16]
@@ -1046,9 +1060,9 @@ section .text align=64
 
 	.end
 
-		pop edi
-		pop ecx
-		pop eax
+		pop rdi
+		pop rcx
+		pop rax
 		ret
 
 
@@ -1058,15 +1072,15 @@ section .text align=64
 	DECL Print_Text
 
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov esi, [esp + 24]				; esi = *string
 		mov ebx, 336 * 2				; Pitch Dest
-		test [_Bits32], byte 1
+		test [Bits32], byte 1
 		mov eax, [esp + 36]				; eax = Pos Y
 		jnz Print_Text32
 		mul ebx
@@ -1261,11 +1275,11 @@ section .text align=64
 
 	.End
 		add esp, 4
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1459,11 +1473,11 @@ section .text align=64
 
 	.End
 		add esp, 4
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1472,18 +1486,18 @@ section .text align=64
 		;void Cell_8x8_Dump(unsigned char *Adr, int Palette)
 		DECL Cell_8x8_Dump
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
-		push ebp
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
+		push rbp
 
 		xor eax, eax					; eax = 0
 		mov ebp, [esp + 32]				; ebp = palette_number
 		mov edx, 24						; edx = Number of rows of the pattern to be copied
 		shl ebp, 5						; ebp = palette_number * 32
-		test [_Bits32], byte 1
+		test [Bits32], byte 1
 		mov esi, [esp + 28]				; esi = Address
 		jnz	.32BIT
 		lea edi, [MD_Screen	+ 6780]		; edi = MD_Screen + copy offset
@@ -1495,7 +1509,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL 0, 12
 		AFF_PIXEL 1, 8
@@ -1505,7 +1519,7 @@ section .text align=64
 		AFF_PIXEL 5, 24
 		AFF_PIXEL 6, 20
 		AFF_PIXEL 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 2				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1531,7 +1545,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX32
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL32 0, 12
 		AFF_PIXEL32 1, 8
@@ -1541,7 +1555,7 @@ section .text align=64
 		AFF_PIXEL32 5, 24
 		AFF_PIXEL32 6, 20
 		AFF_PIXEL32 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 4				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1555,12 +1569,12 @@ section .text align=64
 		dec edx
 		jnz near .Loop_EDX32
 	.END
-		pop ebp
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rbp
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1569,18 +1583,18 @@ section .text align=64
 		;void Cell_16x16_Dump(unsigned char *Adr, int Palette)
 		DECL Cell_16x16_Dump
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
-		push ebp
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
+		push rbp
 
 		xor eax, eax					; eax = 0
 		mov ebp, [esp + 32]				; ebp = palette_number
 		mov edx, 12						; edx = Number of rows of the pattern to be copied
 		shl ebp, 5						; ebp = palette_number * 32
-		test [_Bits32], byte 1
+		test [Bits32], byte 1
 		mov esi, [esp + 28]				; esi = Address
 		jnz	near .32BIT
 		lea edi, [MD_Screen	+ 6780]		; edi = MD_Screen + copy offset
@@ -1592,7 +1606,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL 0, 12
 		AFF_PIXEL 1, 8
@@ -1602,7 +1616,7 @@ section .text align=64
 		AFF_PIXEL 5, 24
 		AFF_PIXEL 6, 20
 		AFF_PIXEL 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 2				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1621,7 +1635,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX_2
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL 0, 12
 		AFF_PIXEL 1, 8
@@ -1631,7 +1645,7 @@ section .text align=64
 		AFF_PIXEL 5, 24
 		AFF_PIXEL 6, 20
 		AFF_PIXEL 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 2				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1658,7 +1672,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX32
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL32 0, 12
 		AFF_PIXEL32 1, 8
@@ -1668,7 +1682,7 @@ section .text align=64
 		AFF_PIXEL32 5, 24
 		AFF_PIXEL32 6, 20
 		AFF_PIXEL32 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 4				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1687,7 +1701,7 @@ section .text align=64
 		mov ebx, 8						; ebx = Number of rows in each pattern
 
 	.Loop_EBX_232
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL32 0, 12
 		AFF_PIXEL32 1, 8
@@ -1697,7 +1711,7 @@ section .text align=64
 		AFF_PIXEL32 5, 24
 		AFF_PIXEL32 6, 20
 		AFF_PIXEL32 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 4				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1714,12 +1728,12 @@ section .text align=64
 		jnz near .Loop_EDX32
 
 	.END
-		pop ebp
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rbp
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1727,18 +1741,18 @@ section .text align=64
 		;void Cell_32x32_Dump(unsigned char *Adr, int Palette)
 		DECL Cell_32x32_Dump
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
-		push ebp
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
+		push rbp
 
 		xor eax, eax					; eax = 0
 		mov ebp, [esp + 32]				; ebp = palette_number
 		mov edx, 6						; edx = Number of rows of the pattern to be copied
 		shl ebp, 5						; ebp = palette_number * 32
-		test [_Bits32], byte 1
+		test [Bits32], byte 1
 		mov esi, [esp + 28]				; esi = Address
 		jnz	.32BIT
 		lea edi, [MD_Screen	+ 6780]		; edi = MD_Screen + copy offset
@@ -1750,7 +1764,7 @@ section .text align=64
 		mov ebx, 32						; ebx = Number of rows in each pattern
 
 	.Loop_EBX
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL 0, 12
 		AFF_PIXEL 1, 8
@@ -1760,7 +1774,7 @@ section .text align=64
 		AFF_PIXEL 5, 24
 		AFF_PIXEL 6, 20
 		AFF_PIXEL 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 2				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1786,7 +1800,7 @@ section .text align=64
 		mov ebx, 32						; ebx = Number of rows in each pattern
 
 	.Loop_EBX32
-		push ebx
+		push rbx
 		mov ebx, [esi]
 		AFF_PIXEL32 0, 12
 		AFF_PIXEL32 1, 8
@@ -1796,7 +1810,7 @@ section .text align=64
 		AFF_PIXEL32 5, 24
 		AFF_PIXEL32 6, 20
 		AFF_PIXEL32 7, 16
-		pop ebx
+		pop rbx
 		add esi, 4						; advance Src by 4
 		add edi, 336 * 4				; go to the next Dest row
 		dec ebx							; if there are any more rows
@@ -1810,20 +1824,20 @@ section .text align=64
 		dec edx
 		jnz near .Loop_EDX32
 	.END
-		pop ebp
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rbp
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 		
 	ALIGN32
 
 	; void CDD_Export_Status(void)
 	DECL CDD_Export_Status
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 
 		mov ax, [CDD.Status]
 		mov bx, [CDD.Minute]
@@ -1847,8 +1861,8 @@ section .text align=64
 		and al, 0x0F
 		mov [CDD.Rcv_Status + 8], ax
 
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN32
@@ -1857,10 +1871,10 @@ section .text align=64
 	; void Write_Sound_Mono_MMX(int *Left, int *Right, short *Dest, int length)
 	DECL Write_Sound_Mono_MMX
 
-		push ebx
-		push ecx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdi
+		push rsi
 
 		mov edi, [esp + 20]			; Left
 		mov esi, [esp + 24]			; Right
@@ -1930,10 +1944,10 @@ section .text align=64
 		emms
 
 	.End
-		pop esi
-		pop edi
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1942,11 +1956,11 @@ section .text align=64
 	; void Write_Sound_Stereo_MMX(int *Left, int *Right, short *Dest, int length)
 	DECL Write_Sound_Stereo_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov edi, [esp + 24]			; Left
 		mov esi, [esp + 28]			; Right
@@ -2032,9 +2046,9 @@ section .text align=64
 		emms
 
 	.End
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret

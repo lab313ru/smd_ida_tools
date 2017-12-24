@@ -185,7 +185,7 @@ bool RamWatchClosed = false;
 
 unsigned char StateSelectCfg = 0;
 bool PaintsEnabled = true;
-extern "C" int g_dontResetAudioCache;
+extern int g_dontResetAudioCache;
 
 typeMovie SubMovie;
 unsigned long SpliceFrame = 0;
@@ -2258,7 +2258,7 @@ GensFileType GuessFileType(const char* filename, const char* extension)
     return rv;
 }
 
-long PASCAL WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT PASCAL WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     RECT r;
     static char Str_Tmp[1024]; // necessary to shadow this here, or things like ID_FILES_LOADSTATE will break in subtle ways...

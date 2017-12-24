@@ -1,6 +1,6 @@
 %include "nasmhead.inc"
 
-%define _PWM_BUF_SIZE 4
+%define PWM_BUF_SIZE 4
 
 ; For some convenience, EBP register is never modified because assumed "alive"
 ; so we can access the current SH2 context by using EBP. 
@@ -144,19 +144,19 @@ section .bss align=64
 	extern _32X_VDP_CRam_Ajusted32
 	extern _32X_VDP
 
-	extern _PWM_FIFO_R
-	extern _PWM_FIFO_L
-	extern _PWM_FULL_TAB
-	extern _PWM_RP_R
-	extern _PWM_WP_R
-	extern _PWM_RP_L
-	extern _PWM_WP_L
-	extern _PWM_Mode
+	extern PWM_FIFO_R
+	extern PWM_FIFO_L
+	extern PWM_FULL_TAB
+	extern PWM_RP_R
+	extern PWM_WP_R
+	extern PWM_RP_L
+	extern PWM_WP_L
+	extern PWM_Mode
 
-	extern _PWM_Cycle_Tmp
-	extern _PWM_Int_Tmp
-	extern _PWM_FIFO_L_Tmp
-	extern _PWM_FIFO_R_Tmp
+	extern PWM_Cycle_Tmp
+	extern PWM_Int_Tmp
+	extern PWM_FIFO_L_Tmp
+	extern PWM_FIFO_R_Tmp
 
 
 	struc vx
@@ -261,11 +261,11 @@ section .bss align=64
 
 section .text align=64
 
-	extern _Write_To_68K_Space
-	extern __32X_Set_FB
+	extern Write_To_68K_Space
+	extern _32X_Set_FB
 	extern SH2_DMA0_Request
-	extern @PWM_Set_Cycle@4
-	extern @PWM_Set_Int@4
+	extern PWM_Set_Cycle
+	extern PWM_Set_Int
 
 ;*********************
 ;
@@ -517,10 +517,10 @@ section .text align=64
 
 		; should replace that by a real LONG read function !
 
-		push ecx
+		push rcx
 		add ecx, byte 2
 		call MSH2_Read_Word_32X_Reg
-		pop ecx
+		pop rcx
 		push ax
 		call MSH2_Read_Word_32X_Reg
 		shl eax, 16
@@ -541,14 +541,14 @@ section .text align=64
 
 	SH2_Read_Long_VDP_Reg
 		test byte [_32X_FM], 0xFF
-		jz short SH2_RL_Bad
+		jz SH2_RL_Bad
 		test ecx, 0xFFBE00
 		jnz short SH2_Read_Long_VDP_Palette
 
-		push ecx
+		push rcx
 		add ecx, byte 2
 		call SH2_Read_Word_VDP_Reg
-		pop ecx
+		pop rcx
 		push ax
 		call SH2_Read_Word_VDP_Reg
 		shl eax, 16
@@ -575,10 +575,10 @@ section .text align=64
 		test ecx, 0xFFBF00
 		jnz short SH2_Read_Long_VDP_Reg
 
-		push ecx
+		push rcx
 		add ecx, byte 2
 		call SSH2_Read_Word_32X_Reg
-		pop ecx
+		pop rcx
 		push ax
 		call SSH2_Read_Word_32X_Reg
 		shl eax, 16
@@ -883,12 +883,12 @@ section .text align=64
 		test ecx, 0xFFBF00
 		jnz short SH2_Write_Long_VDP_Reg
 
-		push ecx
-		push edx
+		push rcx
+		push rdx
 		add ecx, byte 2
 		call MSH2_Write_Word_32X_Reg
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		shr edx, 16
 		jmp MSH2_Write_Word_32X_Reg
 
@@ -901,12 +901,12 @@ section .text align=64
 		test ecx, 0xFFBF00
 		jnz short SH2_Write_Long_VDP_Reg
 
-		push ecx
-		push edx
+		push rcx
+		push rdx
 		add ecx, byte 2
 		call SSH2_Write_Word_32X_Reg
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		shr edx, 16
 		jmp SSH2_Write_Word_32X_Reg
 
@@ -925,12 +925,12 @@ section .text align=64
 		test ecx, 0xFFBE00
 		jnz short SH2_Write_Long_VDP_Palette
 
-		push ecx
-		push edx
+		push rcx
+		push rdx
 		add ecx, byte 2
 		call SH2_Write_Word_VDP_Reg
-		pop edx
-		pop ecx
+		pop rdx
+		pop rcx
 		shr edx, 16
 		jmp SH2_Write_Word_VDP_Reg
 
@@ -1113,11 +1113,11 @@ section .text align=64
 		dd SH2_RB_Com, SH2_RB_Com, SH2_RB_Com, SH2_RB_Com
 		dd SH2_RB_Com, SH2_RB_Com, SH2_RB_Com, SH2_RB_Com
 
-		dd SH2_RB__PWM_Cont_H, SH2_RB__PWM_Cont_L
-		dd SH2_RB__PWM_Cycle_H, SH2_RB__PWM_Cycle_L
-		dd SH2_RB__PWM_Pulse_L, SH2_RB_Bad
-		dd SH2_RB__PWM_Pulse_R, SH2_RB_Bad
-		dd SH2_RB__PWM_Pulse_L, SH2_RB_Bad
+		dd SH2_RB_PWM_Cont_H, SH2_RB_PWM_Cont_L
+		dd SH2_RB_PWM_Cycle_H, SH2_RB_PWM_Cycle_L
+		dd SH2_RB_PWM_Pulse_L, SH2_RB_Bad
+		dd SH2_RB_PWM_Pulse_R, SH2_RB_Bad
+		dd SH2_RB_PWM_Pulse_L, SH2_RB_Bad
 		dd SH2_RB_Bad, SH2_RB_Bad
 		dd SH2_RB_Bad, SH2_RB_Bad, SH2_RB_Bad, SH2_RB_Bad
 
@@ -1165,50 +1165,50 @@ section .text align=64
 
 	ALIGN32
 	
-	SH2_RB__PWM_Cont_H
-		mov al, [_PWM_Mode + 1]
+	SH2_RB_PWM_Cont_H
+		mov al, [PWM_Mode + 1]
 		ret 
 
 	ALIGN4
 	
-	SH2_RB__PWM_Cont_L
-		mov al, [_PWM_Mode + 0]
+	SH2_RB_PWM_Cont_L
+		mov al, [PWM_Mode + 0]
 		ret 
 
 	ALIGN4
 	
-	SH2_RB__PWM_Cycle_H
-		mov al, [_PWM_Cycle_Tmp + 1]
+	SH2_RB_PWM_Cycle_H
+		mov al, [PWM_Cycle_Tmp + 1]
 		ret
 
 	ALIGN4
 	
-	SH2_RB__PWM_Cycle_L
-		mov al, [_PWM_Cycle_Tmp + 0]
+	SH2_RB_PWM_Cycle_L
+		mov al, [PWM_Cycle_Tmp + 0]
 		ret
 
 	ALIGN32
 
-	SH2_RB__PWM_Pulse_L
-		mov ecx, [_PWM_RP_L]
-		mov edx, [_PWM_WP_L]
-		mov al, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RB_PWM_Pulse_L
+		mov ecx, [PWM_RP_L]
+		mov edx, [PWM_WP_L]
+		mov al, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 	ALIGN4
 
-	SH2_RB__PWM_Pulse_R
-		mov ecx, [_PWM_RP_R]
-		mov edx, [_PWM_WP_R]
-		mov al, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RB_PWM_Pulse_R
+		mov ecx, [PWM_RP_R]
+		mov edx, [PWM_WP_R]
+		mov al, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 	ALIGN4
 
-	SH2_RB__PWM_Pulse_C
-		mov ecx, [_PWM_RP_L]
-		mov edx, [_PWM_WP_L]
-		mov al, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RB_PWM_Pulse_C
+		mov ecx, [PWM_RP_L]
+		mov edx, [PWM_WP_L]
+		mov al, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 
@@ -1240,11 +1240,11 @@ section .text align=64
 		dd SH2_RB_Com, SH2_RB_Com, SH2_RB_Com, SH2_RB_Com
 		dd SH2_RB_Com, SH2_RB_Com, SH2_RB_Com, SH2_RB_Com
 
-		dd SH2_RB__PWM_Cont_H, SH2_RB__PWM_Cont_L
-		dd SH2_RB__PWM_Cycle_H, SH2_RB__PWM_Cycle_L
-		dd SH2_RB__PWM_Pulse_L, SH2_RB_Bad
-		dd SH2_RB__PWM_Pulse_R, SH2_RB_Bad
-		dd SH2_RB__PWM_Pulse_L, SH2_RB_Bad
+		dd SH2_RB_PWM_Cont_H, SH2_RB_PWM_Cont_L
+		dd SH2_RB_PWM_Cycle_H, SH2_RB_PWM_Cycle_L
+		dd SH2_RB_PWM_Pulse_L, SH2_RB_Bad
+		dd SH2_RB_PWM_Pulse_R, SH2_RB_Bad
+		dd SH2_RB_PWM_Pulse_L, SH2_RB_Bad
 		dd SH2_RB_Bad, SH2_RB_Bad
 		dd SH2_RB_Bad, SH2_RB_Bad, SH2_RB_Bad, SH2_RB_Bad
 
@@ -1364,9 +1364,9 @@ section .text align=64
 		dd SH2_RW_Com, SH2_RW_Com, SH2_RW_Com, SH2_RW_Com
 		dd SH2_RW_Com, SH2_RW_Com, SH2_RW_Com, SH2_RW_Com
 
-		dd SH2_RW__PWM_Cont, SH2_RW__PWM_Cycle
-		dd SH2_RW__PWM_Pulse_L, SH2_RW__PWM_Pulse_R
-		dd SH2_RW__PWM_Pulse_C, SH2_RW_Bad
+		dd SH2_RW_PWM_Cont, SH2_RW_PWM_Cycle
+		dd SH2_RW_PWM_Pulse_L, SH2_RW_PWM_Pulse_R
+		dd SH2_RW_PWM_Pulse_C, SH2_RW_Bad
 		dd SH2_RW_Bad, SH2_RW_Bad
 
 	ALIGN32
@@ -1447,12 +1447,12 @@ section .text align=64
 		mov ax, [_32X_FIFO_A + ecx + edx * 2]
 
 ;pushad
-;push eax
+;push rax
 ;lea eax, [0x20004500 + ecx + edx * 2]
-;push eax
+;push rax
 ;call _Write_To_68K_Space
-;pop eax
-;pop eax
+;pop rax
+;pop rax
 ;popad
 
 		inc edx
@@ -1472,7 +1472,7 @@ section .text align=64
 	
 	.32X_FIFO_Empty_A
 		mov dx, [_32X_DREQ_LEN]
-		push eax
+		push rax
 		sub dx, byte 4
 		mov al, [_32X_DREQ_ST + 1]
 		mov [_32X_DREQ_LEN], dx
@@ -1486,7 +1486,7 @@ section .text align=64
 		mov [_32X_DREQ_ST + 1], dl
 		mov [_32X_FIFO_Write], dl
 		mov [_32X_FIFO_Read], dl
-		pop eax
+		pop rax
 		ret
 
 	ALIGN4
@@ -1496,7 +1496,7 @@ section .text align=64
 		xor edx, edx
 		mov ecx, M_SH2						; we use M_SH2 instead of EBP (like real 32X).
 		call SH2_DMA0_Request
-		pop eax
+		pop rax
 		ret
 
 	ALIGN32
@@ -1506,43 +1506,43 @@ section .text align=64
 		mov ecx, M_SH2						; we use M_SH2 instead of EBP (like real 32X).
 		mov [_32X_DREQ_ST], dx
 		call SH2_DMA0_Request
-		pop eax
+		pop rax
 		ret
 		
 	ALIGN32
 	
-	SH2_RW__PWM_Cont
-		mov ax, [_PWM_Mode]
+	SH2_RW_PWM_Cont
+		mov ax, [PWM_Mode]
 		ret 
 		
 	ALIGN32
 	
-	SH2_RW__PWM_Cycle
-		mov ax, [_PWM_Cycle_Tmp]
+	SH2_RW_PWM_Cycle
+		mov ax, [PWM_Cycle_Tmp]
 		ret
 
 	ALIGN32
 
-	SH2_RW__PWM_Pulse_L
-		mov ecx, [_PWM_RP_L]
-		mov edx, [_PWM_WP_L]
-		mov ah, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RW_PWM_Pulse_L
+		mov ecx, [PWM_RP_L]
+		mov edx, [PWM_WP_L]
+		mov ah, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 	ALIGN4
 
-	SH2_RW__PWM_Pulse_R
-		mov ecx, [_PWM_RP_R]
-		mov edx, [_PWM_WP_R]
-		mov ah, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RW_PWM_Pulse_R
+		mov ecx, [PWM_RP_R]
+		mov edx, [PWM_WP_R]
+		mov ah, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 	ALIGN4
 
-	SH2_RW__PWM_Pulse_C
-		mov ecx, [_PWM_RP_L]
-		mov edx, [_PWM_WP_L]
-		mov ah, [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + edx]
+	SH2_RW_PWM_Pulse_C
+		mov ecx, [PWM_RP_L]
+		mov edx, [PWM_WP_L]
+		mov ah, [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + edx]
 		ret
 
 
@@ -1568,9 +1568,9 @@ section .text align=64
 		dd SH2_RW_Com, SH2_RW_Com, SH2_RW_Com, SH2_RW_Com
 		dd SH2_RW_Com, SH2_RW_Com, SH2_RW_Com, SH2_RW_Com
 
-		dd SH2_RW__PWM_Cont, SH2_RW__PWM_Cycle
-		dd SH2_RW__PWM_Pulse_L, SH2_RW__PWM_Pulse_R
-		dd SH2_RW__PWM_Pulse_C, SH2_RW_Bad
+		dd SH2_RW_PWM_Cont, SH2_RW_PWM_Cycle
+		dd SH2_RW_PWM_Pulse_L, SH2_RW_PWM_Pulse_R
+		dd SH2_RW_PWM_Pulse_C, SH2_RW_Bad
 		dd SH2_RW_Bad, SH2_RW_Bad
 
 	ALIGN32
@@ -1649,11 +1649,11 @@ section .text align=64
 	MSH2_Write_Byte_32X_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -1681,11 +1681,11 @@ section .text align=64
 		dd SH2_WB_Com, SH2_WB_Com, SH2_WB_Com, SH2_WB_Com
 		dd SH2_WB_Com, SH2_WB_Com, SH2_WB_Com, SH2_WB_Com
 
-		dd SH2_WB__PWM_Cont_H, SH2_WB__PWM_Cont_L
-		dd SH2_WB__PWM_Cycle_H, SH2_WB__PWM_Cycle_L
-		dd SH2_WB__PWM_Pulse_L_H, SH2_WB__PWM_Pulse_L_L
-		dd SH2_WB__PWM_Pulse_R_H, SH2_WB__PWM_Pulse_R_L
-		dd SH2_WB__PWM_Pulse_C_H, SH2_WB__PWM_Pulse_C_L
+		dd SH2_WB_PWM_Cont_H, SH2_WB_PWM_Cont_L
+		dd SH2_WB_PWM_Cycle_H, SH2_WB_PWM_Cycle_L
+		dd SH2_WB_PWM_Pulse_L_H, SH2_WB_PWM_Pulse_L_L
+		dd SH2_WB_PWM_Pulse_R_H, SH2_WB_PWM_Pulse_R_L
+		dd SH2_WB_PWM_Pulse_C_H, SH2_WB_PWM_Pulse_C_L
 		dd SH2_WB_Bad, SH2_WB_Bad, SH2_WB_Bad, SH2_WB_Bad
 		dd SH2_WB_Bad, SH2_WB_Bad
 
@@ -1697,7 +1697,7 @@ section .text align=64
 		mov al, [_32X_FM]
 		xor al, dl
 		mov [_32X_FM], dl
-		jnz near __32X_Set_FB
+		jnz near _32X_Set_FB
 		ret
 
 	ALIGN32
@@ -1720,52 +1720,52 @@ section .text align=64
 
 	ALIGN32
 	
-	SH2_WB__PWM_Cont_H
-		mov [_PWM_Mode + 1], dl
+	SH2_WB_PWM_Cont_H
+		mov [PWM_Mode + 1], dl
 		mov cl, dl
-		jmp @PWM_Set_Int@4
+		jmp PWM_Set_Int
 	
 	ALIGN4
 	
-	SH2_WB__PWM_Cont_L
-		mov [_PWM_Mode], dl
+	SH2_WB_PWM_Cont_L
+		mov [PWM_Mode], dl
 		ret
 
 	ALIGN4
 
-	SH2_WB__PWM_Cycle_H
-		mov cl, [_PWM_Cycle_Tmp + 0]
-		mov [_PWM_Cycle_Tmp + 1], dl
+	SH2_WB_PWM_Cycle_H
+		mov cl, [PWM_Cycle_Tmp + 0]
+		mov [PWM_Cycle_Tmp + 1], dl
 		mov ch, dl
-		jmp @PWM_Set_Cycle@4
+		jmp PWM_Set_Cycle
 	
 	ALIGN4
 	
-	SH2_WB__PWM_Cycle_L
-		mov ch, [_PWM_Cycle_Tmp + 1]
-		mov [_PWM_Cycle_Tmp + 0], dl
+	SH2_WB_PWM_Cycle_L
+		mov ch, [PWM_Cycle_Tmp + 1]
+		mov [PWM_Cycle_Tmp + 0], dl
 		mov cl, dl
-		jmp @PWM_Set_Cycle@4
+		jmp PWM_Set_Cycle
 
 	ALIGN32
 
-	SH2_WB__PWM_Pulse_L_H
-		mov [_PWM_FIFO_L_Tmp + 1], dl
+	SH2_WB_PWM_Pulse_L_H
+		mov [PWM_FIFO_L_Tmp + 1], dl
 		ret
 	
 	ALIGN32
 	
-	SH2_WB__PWM_Pulse_L_L
-		mov ecx, [_PWM_RP_L]
-		mov eax, [_PWM_WP_L]
-		mov dh, [_PWM_FIFO_L_Tmp + 1]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WB_PWM_Pulse_L_L
+		mov ecx, [PWM_RP_L]
+		mov eax, [PWM_WP_L]
+		mov dh, [PWM_FIFO_L_Tmp + 1]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_L + eax * 2], dx
+		mov [PWM_FIFO_L + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_L], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_L], eax
 		ret
 
 	ALIGN4
@@ -1775,23 +1775,23 @@ section .text align=64
 
 	ALIGN32
 
-	SH2_WB__PWM_Pulse_R_H
-		mov [_PWM_FIFO_R_Tmp + 1], dl
+	SH2_WB_PWM_Pulse_R_H
+		mov [PWM_FIFO_R_Tmp + 1], dl
 		ret
 	
 	ALIGN32
 	
-	SH2_WB__PWM_Pulse_R_L
-		mov ecx, [_PWM_RP_R]
-		mov eax, [_PWM_WP_R]
-		mov dh, [_PWM_FIFO_R_Tmp + 1]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WB_PWM_Pulse_R_L
+		mov ecx, [PWM_RP_R]
+		mov eax, [PWM_WP_R]
+		mov dh, [PWM_FIFO_R_Tmp + 1]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_R + eax * 2], dx
+		mov [PWM_FIFO_R + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_R], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_R], eax
 		ret
 
 	ALIGN4
@@ -1801,25 +1801,25 @@ section .text align=64
 
 	ALIGN32
 
-	SH2_WB__PWM_Pulse_C_H
-		mov [_PWM_FIFO_L_Tmp + 1], dl
+	SH2_WB_PWM_Pulse_C_H
+		mov [PWM_FIFO_L_Tmp + 1], dl
 		ret
 	
 	ALIGN32
 	
-	SH2_WB__PWM_Pulse_C_L
-		mov ecx, [_PWM_RP_L]
-		mov eax, [_PWM_WP_L]
-		mov dh, [_PWM_FIFO_L_Tmp + 1]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WB_PWM_Pulse_C_L
+		mov ecx, [PWM_RP_L]
+		mov eax, [PWM_WP_L]
+		mov dh, [PWM_FIFO_L_Tmp + 1]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_L + eax * 2], dx
-		mov [_PWM_FIFO_R + eax * 2], dx
+		mov [PWM_FIFO_L + eax * 2], dx
+		mov [PWM_FIFO_R + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_L], eax
-		mov [_PWM_WP_R], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_L], eax
+		mov [PWM_WP_R], eax
 		ret
 
 	ALIGN4
@@ -1833,11 +1833,11 @@ section .text align=64
 	SSH2_Write_Byte_32X_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -1865,11 +1865,11 @@ section .text align=64
 		dd SH2_WB_Com, SH2_WB_Com, SH2_WB_Com, SH2_WB_Com
 		dd SH2_WB_Com, SH2_WB_Com, SH2_WB_Com, SH2_WB_Com
 
-		dd SH2_WB__PWM_Cont_H, SH2_WB__PWM_Cont_L
-		dd SH2_WB__PWM_Cycle_H, SH2_WB__PWM_Cycle_L
-		dd SH2_WB__PWM_Pulse_L_H, SH2_WB__PWM_Pulse_L_L
-		dd SH2_WB__PWM_Pulse_R_H, SH2_WB__PWM_Pulse_R_L
-		dd SH2_WB__PWM_Pulse_C_H, SH2_WB__PWM_Pulse_C_L
+		dd SH2_WB_PWM_Cont_H, SH2_WB_PWM_Cont_L
+		dd SH2_WB_PWM_Cycle_H, SH2_WB_PWM_Cycle_L
+		dd SH2_WB_PWM_Pulse_L_H, SH2_WB_PWM_Pulse_L_L
+		dd SH2_WB_PWM_Pulse_R_H, SH2_WB_PWM_Pulse_R_L
+		dd SH2_WB_PWM_Pulse_C_H, SH2_WB_PWM_Pulse_C_L
 		dd SH2_WB_Bad, SH2_WB_Bad, SH2_WB_Bad, SH2_WB_Bad
 		dd SH2_WB_Bad, SH2_WB_Bad
 
@@ -1886,11 +1886,11 @@ section .text align=64
 	SH2_Write_Byte_VDP_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -1940,7 +1940,7 @@ section .text align=64
 		
 	.blank
 		mov [_32X_VDP + vx.State + 0], dl
-		jmp __32X_Set_FB
+		jmp _32X_Set_FB
 
 	ALIGN4
 
@@ -1958,11 +1958,11 @@ section .text align=64
 	MSH2_Write_Word_32X_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -1985,9 +1985,9 @@ section .text align=64
 		dd SH2_WW_Com, SH2_WW_Com, SH2_WW_Com, SH2_WW_Com
 		dd SH2_WW_Com, SH2_WW_Com, SH2_WW_Com, SH2_WW_Com
 
-		dd SH2_WW__PWM_Cont, SH2_WW__PWM_Cycle
-		dd SH2_WW__PWM_Pulse_L, SH2_WW__PWM_Pulse_R
-		dd SH2_WW__PWM_Pulse_C, SH2_WW_Bad
+		dd SH2_WW_PWM_Cont, SH2_WW_PWM_Cycle
+		dd SH2_WW_PWM_Pulse_L, SH2_WW_PWM_Pulse_R
+		dd SH2_WW_PWM_Pulse_C, SH2_WW_Bad
 		dd SH2_WW_Bad, SH2_WW_Bad
 
 	ALIGN32
@@ -1998,7 +1998,7 @@ section .text align=64
 		mov [_32X_MINT], dl
 		xor al, dh
 		mov [_32X_FM], dh
-		jnz near __32X_Set_FB
+		jnz near _32X_Set_FB
 		ret
 
 	ALIGN32
@@ -2010,30 +2010,30 @@ section .text align=64
 
 	ALIGN32
 	
-	SH2_WW__PWM_Cont
-		mov [_PWM_Mode + 0], dl
+	SH2_WW_PWM_Cont
+		mov [PWM_Mode + 0], dl
 		mov cl, dh
-		mov [_PWM_Mode + 1], dh
-		jmp @PWM_Set_Int@4
+		mov [PWM_Mode + 1], dh
+		jmp PWM_Set_Int
 		
 	ALIGN32
 	
-	SH2_WW__PWM_Cycle
+	SH2_WW_PWM_Cycle
 		mov ecx, edx
-		jmp @PWM_Set_Cycle@4
+		jmp PWM_Set_Cycle
 
 	ALIGN32
 
-	SH2_WW__PWM_Pulse_L
-		mov ecx, [_PWM_RP_L]
-		mov eax, [_PWM_WP_L]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WW_PWM_Pulse_L
+		mov ecx, [PWM_RP_L]
+		mov eax, [PWM_WP_L]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_L + eax * 2], dx
+		mov [PWM_FIFO_L + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_L], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_L], eax
 		ret
 
 	ALIGN4
@@ -2043,16 +2043,16 @@ section .text align=64
 
 	ALIGN32
 
-	SH2_WW__PWM_Pulse_R
-		mov ecx, [_PWM_RP_R]
-		mov eax, [_PWM_WP_R]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WW_PWM_Pulse_R
+		mov ecx, [PWM_RP_R]
+		mov eax, [PWM_WP_R]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_R + eax * 2], dx
+		mov [PWM_FIFO_R + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_R], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_R], eax
 		ret
 
 	ALIGN4
@@ -2062,18 +2062,18 @@ section .text align=64
 
 	ALIGN32
 
-	SH2_WW__PWM_Pulse_C
-		mov ecx, [_PWM_RP_L]
-		mov eax, [_PWM_WP_L]
-		test byte [_PWM_FULL_TAB + ecx * _PWM_BUF_SIZE + eax], 0x80
+	SH2_WW_PWM_Pulse_C
+		mov ecx, [PWM_RP_L]
+		mov eax, [PWM_WP_L]
+		test byte [PWM_FULL_TAB + ecx * PWM_BUF_SIZE + eax], 0x80
 		jnz short .full
 
-		mov [_PWM_FIFO_L + eax * 2], dx
-		mov [_PWM_FIFO_R + eax * 2], dx
+		mov [PWM_FIFO_L + eax * 2], dx
+		mov [PWM_FIFO_R + eax * 2], dx
 		inc eax
-		and eax, byte (_PWM_BUF_SIZE - 1)
-		mov [_PWM_WP_L], eax
-		mov [_PWM_WP_R], eax
+		and eax, byte (PWM_BUF_SIZE - 1)
+		mov [PWM_WP_L], eax
+		mov [PWM_WP_R], eax
 		ret
 
 	ALIGN4
@@ -2087,11 +2087,11 @@ section .text align=64
 	SSH2_Write_Word_32X_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -2114,9 +2114,9 @@ section .text align=64
 		dd SH2_WW_Com, SH2_WW_Com, SH2_WW_Com, SH2_WW_Com
 		dd SH2_WW_Com, SH2_WW_Com, SH2_WW_Com, SH2_WW_Com
 
-		dd SH2_WW__PWM_Cont, SH2_WW__PWM_Cycle
-		dd SH2_WW__PWM_Pulse_L, SH2_WW__PWM_Pulse_R
-		dd SH2_WW__PWM_Pulse_C, SH2_WW_Bad
+		dd SH2_WW_PWM_Cont, SH2_WW_PWM_Cycle
+		dd SH2_WW_PWM_Pulse_L, SH2_WW_PWM_Pulse_R
+		dd SH2_WW_PWM_Pulse_C, SH2_WW_Bad
 		dd SH2_WW_Bad, SH2_WW_Bad
 
 	ALIGN32
@@ -2127,7 +2127,7 @@ section .text align=64
 		mov [_32X_SINT], dl
 		xor al, dh
 		mov [_32X_FM], dh
-		jnz near __32X_Set_FB
+		jnz near _32X_Set_FB
 		ret
 
 
@@ -2136,11 +2136,11 @@ section .text align=64
 	SH2_Write_Word_VDP_Reg
 
 ;pushad
-;push edx
-;push ecx
+;push rdx
+;push rcx
 ;call _Write_To_68K_Space
-;pop ecx
-;pop edx
+;pop rcx
+;pop rdx
 ;popad
 
 		mov eax, [ebp + SH2.Cycle_IO]
@@ -2169,7 +2169,7 @@ section .text align=64
 
 	SH2_WW_VDP_AF_Data
 		mov [_32X_VDP + vx.AF_Data], dx
-		push edi
+		push rdi
 		mov ax, dx
 		mov edi, [_32X_VDP + vx.State]
 		shl eax, 16
@@ -2197,7 +2197,7 @@ section .text align=64
 		dec ecx
 		jnz short .Loop
 
-		pop edi
+		pop rdi
 		mov [_32X_VDP + vx.AF_St], edx
 		ret
 
@@ -2206,6 +2206,6 @@ section .text align=64
 	.Spec
 		mov [edi + edx * 2], ax
 		inc dl
-		pop edi
+		pop rdi
 		mov [_32X_VDP + vx.AF_St], edx
 		ret

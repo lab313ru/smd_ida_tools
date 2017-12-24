@@ -1,37 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug64_695|Win32">
-      <Configuration>Debug64_695</Configuration>
-      <Platform>Win32</Platform>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug64_68|Win32">
-      <Configuration>Debug64_68</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug86_68|Win32">
-      <Configuration>Debug86_68</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug86_695|Win32">
-      <Configuration>Debug86_695</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release64_695|Win32">
-      <Configuration>Release64_695</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release64_68|Win32">
-      <Configuration>Release64_68</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release86_68|Win32">
-      <Configuration>Release86_68</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release86_695|Win32">
-      <Configuration>Release86_695</Configuration>
-      <Platform>Win32</Platform>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -41,144 +17,46 @@
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(IDA_DIR68)\plugins\</OutDir>
-    <TargetExt>.plw</TargetExt>
-    <TargetName>$(ProjectName)_68</TargetName>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
-    <TargetExt>.plw</TargetExt>
-    <TargetName>$(ProjectName)_695</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
-    <TargetExt>.plw</TargetExt>
-    <TargetName>$(ProjectName)64_695</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(IDA_DIR68)\plugins\</OutDir>
-    <TargetExt>.p64</TargetExt>
-    <TargetName>$(ProjectName)64_68</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(IDA_DIR68)\plugins\</OutDir>
-    <TargetExt>.plw</TargetExt>
-    <TargetName>$(ProjectName)_68</TargetName>
+    <OutDir>$(IDA_DIR)\plugins\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
-    <TargetExt>.plw</TargetExt>
-    <TargetName>$(ProjectName)_695</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(IDA_DIR68)\plugins\</OutDir>
-    <TargetExt>.p64</TargetExt>
-    <TargetName>$(ProjectName)64_68</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(IDA_DIR695)\plugins\</OutDir>
-    <TargetExt>.p64</TargetExt>
-    <TargetName>$(ProjectName)64_695</TargetName>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;_DEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR68)\include\;$(IDA_SDK68)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;__X64__;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -186,68 +64,13 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK68)\lib\x86_win_qt\;$(IDA_SDK68)\lib\x86_win_vc_32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x64_win_vc_32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <BaseAddress>0x10000000</BaseAddress>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>__QT5__;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;_DEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR695)\include\;$(IDA_SDK695)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK695)\lib\x86_win_qt\;$(IDA_SDK695)\lib\x86_win_vc_32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>__QT5__;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;_DEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR695)\include\;$(IDA_SDK695)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK695)\lib\x86_win_qt\;$(IDA_SDK695)\lib\x86_win_vc_32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;_DEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;__EA64__;PTR64;__X64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR68)\include\;$(IDA_SDK68)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK68)\lib\x86_win_qt\;$(IDA_SDK68)\lib\x86_win_vc_64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
@@ -255,8 +78,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;NDEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR68)\include\;$(IDA_SDK68)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;__X64__;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IDA_SDK)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -265,472 +88,143 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK68)\lib\x86_win_qt\;$(IDA_SDK68)\lib\x86_win_vc_32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>__QT5__;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;NDEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR695)\include\;$(IDA_SDK695)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK695)\lib\x86_win_qt\;$(IDA_SDK695)\lib\x86_win_vc_32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IDA_SDK)\lib\x64_win_vc_32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;NDEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;__EA64__;PTR64;__X64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR68)\include\;$(IDA_SDK68)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK68)\lib\x86_win_qt\;$(IDA_SDK68)\lib\x86_win_vc_64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>__QT5__;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_THREAD_SUPPORT;QT_NAMESPACE=QT;NDEBUG;__NT__;__IDP__;USE_STANDARD_FILE_FUNCTIONS;USE_DANGEROUS_FUNCTIONS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;__EA64__;PTR64;__X64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(QTDIR695)\include\;$(IDA_SDK695)\include\;$(ProjectDir)\include\;$(ProjectDir)\ida\;$(ProjectDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(IDA_SDK695)\lib\x86_win_qt\;$(IDA_SDK695)\lib\x86_win_vc_64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ida.lib;winmm.lib;comctl32.lib;libs\lua51.lib;libs\dx7\ddraw.lib;libs\dx7\dinput.lib;libs\dx7\dsound.lib;libs\dx7\dxguid.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <BaseAddress>0x10000000</BaseAddress>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="asm\blit.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\gfx_cd.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\io.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\mem_m68k.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\mem_s68k.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\mem_sh2.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\mem_z80.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\misc.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\pwm_asm.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\sh2a.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\vdp_32x.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\vdp_io.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\vdp_rend.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
     <CustomBuild Include="asm\z80.asm">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ida\ida_debug.cpp" />
     <ClCompile Include="ida\ida_plugin.cpp" />
-    <ClCompile Include="ida\moc_PaintForm_68.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ida\moc_PaintForm_695.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ida\PaintForm.cpp" />
     <ClCompile Include="lua\src\lapi.c" />
     <ClCompile Include="lua\src\lauxlib.c" />
     <ClCompile Include="lua\src\lbaselib.c" />
@@ -769,12 +263,12 @@
     <ClCompile Include="src\cblit.cpp" />
     <ClCompile Include="src\cdda_mp3.cpp" />
     <ClCompile Include="src\cd_aspi.cpp" />
-    <ClCompile Include="src\cd_file.c" />
-    <ClCompile Include="src\cd_sys.c" />
+    <ClCompile Include="src\cd_file.cpp" />
+    <ClCompile Include="src\cd_sys.cpp" />
     <ClCompile Include="src\corehooks.cpp" />
-    <ClCompile Include="src\cpu_68k.c" />
-    <ClCompile Include="src\cpu_sh2.c" />
-    <ClCompile Include="src\cpu_z80.c" />
+    <ClCompile Include="src\cpu_68k.cpp" />
+    <ClCompile Include="src\cpu_sh2.cpp" />
+    <ClCompile Include="src\cpu_z80.cpp" />
     <ClCompile Include="src\debugwindow.cpp" />
     <ClCompile Include="src\drawutil.cpp" />
     <ClCompile Include="src\gens.cpp" />
@@ -786,27 +280,27 @@
     <ClCompile Include="src\g_dsound.cpp" />
     <ClCompile Include="src\g_main.cpp" />
     <ClCompile Include="src\hexeditor.cpp" />
-    <ClCompile Include="src\lc89510.c" />
+    <ClCompile Include="src\lc89510.cpp" />
     <ClCompile Include="src\luascript.cpp" />
     <ClCompile Include="src\luascript_window.cpp" />
     <ClCompile Include="src\m68k_debugwindow.cpp" />
     <ClCompile Include="src\movie.cpp" />
     <ClCompile Include="src\parsecmdline.cpp" />
-    <ClCompile Include="src\pcm.c" />
+    <ClCompile Include="src\pcm.cpp" />
     <ClCompile Include="src\plane_explorer_kmod.cpp" />
-    <ClCompile Include="src\psg.c" />
-    <ClCompile Include="src\pwm.c" />
+    <ClCompile Include="src\psg.cpp" />
+    <ClCompile Include="src\pwm.cpp" />
     <ClCompile Include="src\ramwatch.cpp" />
     <ClCompile Include="src\ram_search.cpp" />
     <ClCompile Include="src\rom.cpp" />
     <ClCompile Include="src\save.cpp" />
-    <ClCompile Include="src\sh2.c" />
+    <ClCompile Include="src\sh2.cpp" />
     <ClCompile Include="src\tracer.cpp" />
     <ClCompile Include="src\tracer_cd.cpp" />
     <ClCompile Include="src\vdp_ram.cpp" />
     <ClCompile Include="src\vdp_sprites.cpp" />
-    <ClCompile Include="src\wave.c" />
-    <ClCompile Include="src\ym2612.c" />
+    <ClCompile Include="src\wave.cpp" />
+    <ClCompile Include="src\ym2612.cpp" />
     <ClCompile Include="zlib\adler32.c" />
     <ClCompile Include="zlib\compress.c" />
     <ClCompile Include="zlib\crc32.c" />
@@ -828,13 +322,7 @@
     <ClInclude Include="ida\ida_debug.h" />
     <ClInclude Include="ida\ida_plugin.h" />
     <ClInclude Include="ida\ida_registers.h" />
-    <ClInclude Include="ida\PaintForm.h" />
     <ClInclude Include="include\blit.h" />
-    <ClInclude Include="include\cdda_lp7.h" />
-    <ClInclude Include="include\cdda_mp3.h" />
-    <ClInclude Include="include\cd_aspi.h" />
-    <ClInclude Include="include\cd_file.h" />
-    <ClInclude Include="include\cd_sys.h" />
     <ClInclude Include="include\corehooks.h" />
     <ClInclude Include="include\cpu_68k.h" />
     <ClInclude Include="include\cpu_sh2.h" />
@@ -853,7 +341,6 @@
     <ClInclude Include="include\hexeditor.h" />
     <ClInclude Include="include\joypads.h" />
     <ClInclude Include="include\keycode.h" />
-    <ClInclude Include="include\lc89510.h" />
     <ClInclude Include="include\luascript.h" />
     <ClInclude Include="include\m68k_debugwindow.h" />
     <ClInclude Include="include\mem_m68k.h" />
@@ -927,73 +414,30 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource\gens.rc">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm\main68k.asm">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="asm\sub68k.asm">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win32 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">Assembling %(Filename).asm</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">Assembling %(Filename).asm</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release86_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_68|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release64_695|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nasm\nasm.exe -i%(RootDir)%(Directory) "%(FullPath)" -f win64 -o "$(IntDir)%(Filename).obj" -w-orphan-labels</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Assembling %(Filename).asm</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Assembling %(Filename).asm</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

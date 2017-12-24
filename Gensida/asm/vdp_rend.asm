@@ -1082,9 +1082,9 @@ ALIGN4
 
 %macro SPRITE_BOXING 2
 
-	push eax
-	push edi
-	push edx
+	push rax
+	push rdi
+	push rdx
 
 	mov edi, dword [Data_Misc.X]
 	mov edi, [Sprite_Visible + edi]
@@ -1137,9 +1137,9 @@ ALIGN4
 %%Not_RBORDER
 
 %%END_SPRITE_BOXING
-	pop edx
-	pop edi
-	pop eax
+	pop rdx
+	pop rdi
+	pop rax
 
 %endmacro
 
@@ -2023,13 +2023,20 @@ ALIGN4
 
 	DECL Render_Line
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
 
 		mov ebx, [VDP_Current_Line]
 		xor eax, eax
 		mov edi, [TAB336 + ebx * 4]
 		test dword [VDP_Reg + 1 * 4], 0x40		; test if the VDP is active
-		push edi								; we need this value later
+		push rdi								; we need this value later
 		jnz short .VDP_Enable					; if not, nothing is posted
 
 			test byte [VDP_Reg + 12 * 4], 0x08
@@ -2195,20 +2202,34 @@ ALIGN4
 
 		add esp, byte 4
 
-	popad
+	pop rdi
+	pop rsi
+	pop rbp
+	pop rsp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
 	ret
 
 ; *******************************************************
 
 	DECL Render_Line_32X
 
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
 
 		mov ebx, [VDP_Current_Line]
 		xor eax, eax
 		mov edi, [TAB336 + ebx * 4]
 		test dword [VDP_Reg + 1 * 4], 0x40		; test if the VDP is active
-		push edi								; we need this value later
+		push rdi								; we need this value later
 		jnz short .VDP_Enable					; if not, nothing is posted
 
 			test byte [VDP_Reg + 12 * 4], 0x08

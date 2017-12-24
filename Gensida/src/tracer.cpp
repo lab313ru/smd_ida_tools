@@ -13,7 +13,9 @@
 
 extern bool hook_trace;
 
+#ifdef __cplusplus
 extern "C" {
+#endif
     extern uint32 hook_address;
     extern uint32 hook_value;
     extern uint32 hook_pc;
@@ -35,7 +37,9 @@ extern "C" {
     void hook_dma();
 
     void trace_exec_pc();
+#ifdef __cplusplus
 };
+#endif
 
 extern UINT16 allow0_breaks;
 extern UINT32 allow1_breaks;

@@ -188,9 +188,6 @@
     <ClCompile Include="src\cd_aspi.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\cdda_mp3.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\corehooks.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -275,42 +272,6 @@
     <ClCompile Include="ida\ida_plugin.cpp">
       <Filter>ida</Filter>
     </ClCompile>
-    <ClCompile Include="src\ym2612.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wave.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sh2.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pwm.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\psg.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pcm.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lc89510.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cpu_z80.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cpu_sh2.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cpu_68k.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cd_sys.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cd_file.c">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="zlib\adler32.c">
       <Filter>zlib</Filter>
     </ClCompile>
@@ -356,14 +317,44 @@
     <ClCompile Include="zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="ida\PaintForm.cpp">
-      <Filter>ida</Filter>
+    <ClCompile Include="src\cdda_mp3.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ida\moc_PaintForm_68.cpp">
-      <Filter>ida</Filter>
+    <ClCompile Include="src\lc89510.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ida\moc_PaintForm_695.cpp">
-      <Filter>ida</Filter>
+    <ClCompile Include="src\cpu_68k.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cpu_sh2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cpu_z80.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cd_file.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cd_sys.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pcm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\psg.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pwm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sh2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wave.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ym2612.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -442,21 +433,6 @@
     <ClInclude Include="include\blit.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\cd_aspi.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cd_file.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cd_sys.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cdda_lp7.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cdda_mp3.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\corehooks.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -506,9 +482,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\keycode.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lc89510.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\luascript.h">
@@ -663,9 +636,6 @@
     </ClInclude>
     <ClInclude Include="zlib\zutil.h">
       <Filter>zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="ida\PaintForm.h">
-      <Filter>ida</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

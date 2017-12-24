@@ -109,11 +109,11 @@ section .text align=64
 	; void Blit_X1(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X1
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -144,11 +144,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -158,11 +158,11 @@ section .text align=64
 	; void Blit_X1_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X1_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -205,11 +205,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -220,11 +220,11 @@ section .text align=64
 	; void Blit_X2(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X2
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -290,11 +290,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz near .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -304,11 +304,11 @@ section .text align=64
 	; void Blit_X2_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X2_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -398,11 +398,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz near .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -413,12 +413,12 @@ section .text align=64
 	; void Blit_X2_Int(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X2_Int
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
-		push ebp
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
+		push rbp
 
 		mov ecx, [esp + 36]				; ecx = Number of pixels per row
 		mov ebx, [esp + 32]				; ebx = pitch of the Dest surface
@@ -576,12 +576,12 @@ section .text align=64
 			mov [edi + 4 - 8], edx
 			jnz short .Loop_X2_LL
 
-		pop ebp
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rbp
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -593,12 +593,12 @@ section .text align=64
 	; void Blit_X2_Int_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_X2_Int_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
-		push ebp
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
+		push rbp
 
 		mov ecx, [esp + 36]				; ecx = Number of pixels per row
 		mov ebx, [esp + 32]				; ebx = pitch of the Dest surface
@@ -773,12 +773,12 @@ section .text align=64
 			movq [edi + 8 - 16], mm1
 			jnz short .Loop_X2_LL
 
-		pop ebp
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rbp
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -789,11 +789,11 @@ section .text align=64
 	; void Blit_Scanline(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -835,11 +835,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz short .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -849,11 +849,11 @@ section .text align=64
 	; void Blit_Scanline_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -893,11 +893,11 @@ section .text align=64
 			mov ecx, [esp + 32]
 			jnz short .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -908,11 +908,11 @@ section .text align=64
 	; void Blit_Scanline_50_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_50_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -988,11 +988,11 @@ section .text align=64
 			jnz near .Loop_Y
 
 	.End
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -1003,11 +1003,11 @@ section .text align=64
 	; void Blit_Scanline_25_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_25_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -1092,11 +1092,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz near .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -1107,11 +1107,11 @@ section .text align=64
 	; void Blit_Scanline_Int(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_Int
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -1167,11 +1167,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz short .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1181,11 +1181,11 @@ section .text align=64
 	; void Blit_Scanline_Int_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_Int_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -1233,11 +1233,11 @@ section .text align=64
 			jnz short .Loop_Y
 
 		emms
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -1247,11 +1247,11 @@ section .text align=64
 	; void Blit_Scanline_50_Int_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_50_Int_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -1329,11 +1329,11 @@ section .text align=64
 			jnz near .Loop_Y
 
 	.End
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -1344,11 +1344,11 @@ section .text align=64
 	; void Blit_Scanline_25_Int_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_Scanline_25_Int_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 32]				; ecx = Number of pixels per row
 		mov ebx, [esp + 28]				; ebx = pitch of the Dest surface
@@ -1435,11 +1435,11 @@ section .text align=64
 			mov ecx, [esp + 32]			; ecx = (Number of pixels / 4) in a row
 			jnz near .Loop_Y
 
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -1450,11 +1450,11 @@ section .text align=64
 	;void Blit_2xSAI_MMX(unsigned char *Dest, int pitch, int x, int y, int offset)
 	DECL Blit_2xSAI_MMX
 
-		push ebx
-		push ecx
-		push edx
-		push edi
-		push esi
+		push rbx
+		push rcx
+		push rdx
+		push rdi
+		push rsi
 
 		mov ecx, [esp + 36]				; ecx = Number of rows
 		mov edx, [esp + 32]				; width
@@ -1471,7 +1471,7 @@ section .text align=64
 		mov [esp + 8], edx				; 3rd Param = width
 		mov [esp + 12], edi				; 4th Param = *Dest
 		mov [esp + 16], ebx				; 5th Param = DestPitch
-		jz short .Loop
+		jz .Loop
 
 		movq mm0, [colorMask15]
 		movq mm1, [lowPixelMask15]
@@ -1506,11 +1506,11 @@ section .text align=64
 		add esp, byte 4 * 5					; Free 5 params
 
 	.End
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		emms
 		ret
 
@@ -1521,9 +1521,17 @@ section .text align=64
 	;void _2xSaILine(uint8 *srcPtr, uint32 srcPitch, uint32 width, uint8 *dstPtr, uint32 dstPitch);
 	_2xSaILine:
 
-		push ebp
+		push rbp
 		mov ebp, esp
-		pushad
+
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
 
 		mov edx, [ebp+dstOffset]		; edx points to the screen
 
@@ -1540,7 +1548,7 @@ section .text align=64
 	ALIGN64
 	
 	.Loop:
-			push ecx
+			push rcx
 
 		;1	------------------------------------------
 
@@ -1683,13 +1691,13 @@ section .text align=64
 			movq mm1, mm0
 			movq mm3, mm2
 
-			push eax
+			push rax
 			add eax, ebx
 			pcmpeqw mm0, [eax+ebx+colorD]
 			pcmpeqw mm1, [eax+colorG]
 			pcmpeqw mm2, [eax+ebx+ebx+colorO]
 			pcmpeqw mm3, [eax+colorB]
-			pop eax
+			pop rax
 
 			pand mm0, mm1
 			pxor mm1, mm1
@@ -1704,13 +1712,13 @@ section .text align=64
 			movq mm5, mm4
 			movq mm7, mm6
 
-			push eax
+			push rax
 			add eax, ebx
 			pcmpeqw mm4, [eax+ebx+colorH]
 			pcmpeqw mm5, [eax+colorB]
 			pcmpeqw mm6, [eax+ebx+ebx+colorM]
 			pcmpeqw mm7, [eax+colorG]
-			pop eax
+			pop rax
 
 			pand mm4, mm5
 			pxor mm5, mm5
@@ -1904,7 +1912,7 @@ section .text align=64
 			paddw mm7, mm0
 			psubw mm7, mm2
 
-			push eax
+			push rax
 			add eax, ebx
 			movq mm0, [eax+ebx+colorH]
 			movq mm1, [eax+ebx+ebx+colorN]
@@ -1956,7 +1964,7 @@ section .text align=64
 			paddw mm7, mm0
 			psubw mm7, mm2
 
-			pop eax
+			pop rax
 			movq mm1, mm7
 			pxor mm0, mm0
 			pcmpgtw mm7, mm0
@@ -2028,26 +2036,34 @@ section .text align=64
 			punpcklwd mm0, mm4
 			punpckhwd mm1, mm4
 
-			push edx
+			push rdx
 			add edx, [ebp+dstPitch]
 
 			movq [edx], mm0
 			movq [edx+8], mm1
 
-			pop edx
+			pop rdx
 
 			add edx, 16
 			add eax, 8
 
-			pop ecx
+			pop rcx
 			sub ecx, 4
 			cmp ecx, 0
 			jg  near .Loop
 
 	; Restore some stuff
 
-		popad
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
+
 		mov esp, ebp
-		pop ebp
+		pop rbp
 		emms
 		ret

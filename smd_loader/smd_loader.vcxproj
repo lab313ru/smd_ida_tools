@@ -15,7 +15,6 @@
     <ProjectGuid>{B9CF80E3-416A-404A-8953-68085749E05F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>smdloader</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

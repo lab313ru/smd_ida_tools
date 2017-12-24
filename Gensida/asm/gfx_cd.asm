@@ -621,7 +621,7 @@ section .data align=64
 
 section .text align=64
 
-	extern _sub68k_interrupt
+	extern sub68k_interrupt
 
 	; void Init_RS_GFX(void)
 	DECL Init_RS_GFX
@@ -640,8 +640,8 @@ section .text align=64
 	ALIGN32
 
 	DECL Calcul_Rot_Comp
-		push ebx
-		push ecx
+		push rbx
+		push rcx
 
 		cmp byte [Ram_Word_State], 1
 		ja near .End
@@ -725,8 +725,8 @@ section .text align=64
 		call Update_Rot
 
 	.End
-		pop ecx
-		pop ebx
+		pop rcx
+		pop rbx
 		ret
 
 
@@ -744,7 +744,7 @@ section .text align=64
 
 		push dword -1
 		push dword 1
-		call _sub68k_interrupt
+		call sub68k_interrupt
 		add esp, 8
 
 	.INT1_OFF_0
@@ -763,17 +763,17 @@ section .text align=64
 	ALIGN4
 	
 	.Have_To_Draw
-		push edx
-		push ebx
-		push ecx
-		push edi
-		push esi
+		push rdx
+		push rbx
+		push rcx
+		push rdi
+		push rsi
 
 		mov ebx, eax
 		and eax, 0xFFFF
 		shr ebx, 16
 		add eax, [Draw_Speed]
-		push ebx
+		push rbx
 		mov [Float_Part], eax
 
 		jmp [Jmp_Adr]
@@ -956,12 +956,12 @@ section .text align=64
 	ALIGN4
 
 	GFX_Part_Completed
-		pop eax
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rax
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 	ALIGN4
@@ -975,16 +975,16 @@ section .text align=64
 
 		push dword -1
 		push dword 1
-		call _sub68k_interrupt
+		call sub68k_interrupt
 		add esp, 8
 
 	.INT1_OFF
-		pop eax
-		pop esi
-		pop edi
-		pop edx
-		pop ecx
-		pop ebx
+		pop rax
+		pop rsi
+		pop rdi
+		pop rdx
+		pop rcx
+		pop rbx
 		ret
 
 

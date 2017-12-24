@@ -214,7 +214,7 @@ PACKED_OP_TAB InitOp[] =
     { IFMT_i, 0xCA00, SH2I_XORI },
     { IFMT_i, 0xCE00, SH2I_XORM },
     { IFMT_nm, 0x200D, SH2I_XTRCT },
-    { 0, 0x0000, NULL },
+    { (_IFMT)0, 0x0000, NULL },
 };
 
 PACKED_OP_TAB InitOpDS[] =
@@ -348,7 +348,7 @@ PACKED_OP_TAB InitOpDS[] =
     { IFMT_i, 0xCA00, SH2I_XORI_DS },
     { IFMT_i, 0xCE00, SH2I_XORM_DS },
     { IFMT_nm, 0x200D, SH2I_XTRCT_DS },
-    { 0, 0x0000, NULL },
+    { (_IFMT)0, 0x0000, NULL },
 };
 
 /* Default READ/WRITE callback */

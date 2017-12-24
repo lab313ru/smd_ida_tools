@@ -9,7 +9,7 @@ section .bss align=64
 
 	extern MD_Screen
 	extern MD_Screen32
-	extern _Bits32
+	extern Bits32
 	
 	DECL _32X_Palette_16B
 	resw 0x10000
@@ -46,8 +46,8 @@ section .text align=64
 	; void _32X_VDP_Reset()
 	DECLF _32X_VDP_Reset
 
-		push ecx
-		push edi
+		push rcx
+		push rdi
 		
 		xor eax, eax
 		mov ecx, (256 * 1024 / 4)
@@ -60,8 +60,8 @@ section .text align=64
 		mov [_32X_VDP.AF_Len], eax
 		mov [_32X_VDP.AF_Line], eax
 
-		pop edi
-		pop ecx
+		pop rdi
+		pop rcx
 		ret
 
 
@@ -71,12 +71,20 @@ section .text align=64
 	DECLF _32X_VDP_Draw
 
 		mov eax, [esp + 4]
-		pushad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
 		and eax, byte 1
 		shl eax, 17
 		xor ebp, ebp
 		xor ebx, ebx
-		test [_Bits32], byte 1
+		test [Bits32], byte 1
 		lea esi, [eax + _32X_VDP_Ram]
 		jnz	near .32BIT
 		lea edi, [MD_Screen + 8 * 2]
@@ -112,7 +120,15 @@ section .text align=64
 
 	.32X_Draw_M00_P
 	.32X_Draw_M00
-		popad
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
+
 		ret
 
 	ALIGN32
@@ -217,7 +233,14 @@ section .text align=64
 
 	.32X_Draw_M00_P32
 	.32X_Draw_M0032
-		popad
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 		ret
 
 	ALIGN32
@@ -288,5 +311,12 @@ section .text align=64
 			dec ecx
 			jnz short .Palette_Loop32
 	.End
-		popad
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
 		ret

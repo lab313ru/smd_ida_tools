@@ -15,7 +15,6 @@
     <ProjectGuid>{A2CF3726-C6F5-44E0-A442-C0DE45F4F533}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>z80loader</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

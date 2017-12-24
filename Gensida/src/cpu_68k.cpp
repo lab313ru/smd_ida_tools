@@ -20,12 +20,14 @@
 
 struct S68000CONTEXT Context_68K;
 
+#define ram_68k_size(x) ((unsigned)(&Ram_68k[0] - (x)))
+
 struct STARSCREAM_PROGRAMREGION M68K_Fetch[] =
 {
     { 0x000000, 0x3FFFFF, (unsigned)0x000000 },
-    { 0xFF0000, 0xFFFFFF, (unsigned)&Ram_68k[0] - 0xFF0000 },
-    { 0xF00000, 0xF0FFFF, (unsigned)&Ram_68k[0] - 0xF00000 },
-    { 0xEF0000, 0xEFFFFF, (unsigned)&Ram_68k[0] - 0xEF0000 },
+    { 0xFF0000, 0xFFFFFF, ram_68k_size(0xFF0000) },
+    { 0xF00000, 0xF0FFFF, ram_68k_size(0xF00000) },
+    { 0xEF0000, 0xEFFFFF, ram_68k_size(0xEF0000) },
     { -1, -1, (unsigned)NULL },
     { -1, -1, (unsigned)NULL },
     { -1, -1, (unsigned)NULL }
@@ -117,7 +119,7 @@ int M68K_Init(void)
     Context_68K.s_readword = Context_68K.u_readword = Context_68K.readword = M68K_Read_Word;
     Context_68K.s_writebyte = Context_68K.u_writebyte = Context_68K.writebyte = M68K_Write_Byte;
     Context_68K.s_writeword = Context_68K.u_writeword = Context_68K.writeword = M68K_Write_Word;
-    Context_68K.resethandler = (void *)M68K_Reset_Handler;
+    Context_68K.resethandler = M68K_Reset_Handler;
 
     main68k_SetContext(&Context_68K);
     main68k_init();
@@ -136,7 +138,7 @@ int S68K_Init(void)
     Context_68K.s_readword = Context_68K.u_readword = Context_68K.readword = S68K_Read_Word;
     Context_68K.s_writebyte = Context_68K.u_writebyte = Context_68K.writebyte = S68K_Write_Byte;
     Context_68K.s_writeword = Context_68K.u_writeword = Context_68K.writeword = S68K_Write_Word;
-    Context_68K.resethandler = (void *)S68K_Reset_Handler;
+    Context_68K.resethandler = S68K_Reset_Handler;
 
     sub68k_SetContext(&Context_68K);
     sub68k_init();

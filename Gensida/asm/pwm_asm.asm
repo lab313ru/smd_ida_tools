@@ -70,13 +70,13 @@ section .bss align=64
 
 section .text align=64
 
-	extern _ApplyPWMVol
+	extern ApplyPWMVol
 	
 	; void PWM_Update(int **buf, int length)
 	DECLF PWM_Update, 8
 
-		push ebx
-		push esi
+		push rbx
+		push rsi
 
 		test byte [PWM_Enable], 0xFF
 		mov eax, [PWM_Out_L]
@@ -94,17 +94,33 @@ section .text align=64
 		sub edx, 0x4000
 		mov [PWM_Out_L_Tmp],eax
 		mov [PWM_Out_R_Tmp],edx
-		pushad
-		call _ApplyPWMVol
-		popad
+		push rax
+		push rbx
+		push rcx
+		push rdx
+		push rsp
+		push rbp
+		push rsi
+		push rdi
+
+		call ApplyPWMVol
+		pop rdi
+		pop rsi
+		pop rbp
+		pop rsp
+		pop rdx
+		pop rcx
+		pop rbx
+		pop rax
+
 		mov eax,[PWM_Out_L_Tmp]
 		mov edx,[PWM_Out_R_Tmp]
 		test ecx, ecx
 		mov ebx, [ebx]
 		jnz short .Loop
 
-		pop esi
-		pop ebx
+		pop rsi
+		pop rbx
 		ret
 
 	ALIGN32
@@ -118,6 +134,6 @@ section .text align=64
 		jnz short .Loop
 
 	.End
-		pop esi
-		pop ebx
+		pop rsi
+		pop rbx
 		ret
