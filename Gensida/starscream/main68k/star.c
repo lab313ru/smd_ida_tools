@@ -451,8 +451,8 @@ static void airlock_exit(void) {
 	emit("mov [__io_cycle_counter],edi\n");
 	emit("mov [__io_fetchbase],ebp\n");
 	emit("mov [__io_fetchbased_pc],esi\n");
-	emit("push ebx\n");
-	emit("push eax\n");
+	emit("push rbx\n");
+	emit("push rax\n");
 }
 
 /* Prepare to return to the warm fuzzy world of assembly code
@@ -562,7 +562,14 @@ static void gen_interface(void) {
 */
 	begin_source_proc("init");
 
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("mov edi,__jmptbl\n");
 	emit("mov esi,__jmptblcomp\n");
 	if(cputype == 68010) {
@@ -594,7 +601,14 @@ static void gen_interface(void) {
 	emit("cmp edi,__jmptbl+262144\n");
 	emit("jne short .decomp\n");
 
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 	emit("xor eax,eax\n");
 	emit("ret\n");
 
@@ -641,12 +655,12 @@ emit(".already_done\n");
 
 	emit(".notstopped:\n");
 
-	emit("push ebp\n");
-	emit("push ebx\n");
-	emit("push ecx\n");
-	emit("push edx\n");
-	emit("push esi\n");
-	emit("push edi\n");
+	emit("push rbp\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 
 	emit("mov [__cycles_needed],eax\n");
 	emit("mov edi,eax\n");/* store # of cycles to execute */
@@ -700,15 +714,29 @@ emit("js near execquit\n");
 	emit("add esi,byte 2\n");
 	
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("sub esi,ebp\n");
 	emit("sub esi,byte 2\n");
 	emit("mov [hook_pc],esi\n");
 	emit("call hook_exec\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
 
-	emit("jmp dword[__jmptbl+ebx*4]\n");
+	emit("jmp [__jmptbl+ebx*8]\n");
 	/* Traditional loop - used when hog mode is off */
 	if(!hog) {
 		emit("execend:\n");
@@ -851,8 +879,8 @@ emit("js near execquit\n");
 	emit("mov eax,1\n"); /* assume failure */
 	emit("mov [__pc],eax\n");
 	emit("mov byte [__interrupts],0x10\n");	/* stopped */
-	emit("push esi\n");
-	emit("push ebp\n");
+	emit("push rsi\n");
+	emit("push rbp\n");
 	emit("xor esi,esi\n");
 	emit("call basefunction\n");/* will preserve eax */
 	emit("test byte[__execinfo],2\n");
@@ -919,7 +947,14 @@ emit("js near execquit\n");
 	emit("test byte[__execinfo],1\n");
 	emit("jnz short .noflush\n");
 	/* Make registers "live" */
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 
 	emit("mov cl,[__sr+1]\n");
 	emit("mov ch,[__interrupts]\n");
@@ -938,7 +973,14 @@ emit("js near execquit\n");
 	emit("mov [__pc],esi\n"); /* PC guaranteed unbased */
 
 	emit(".noint_1\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 	emit(".noflush:\n");
 	emit("ret\n");
 
@@ -963,8 +1005,8 @@ emit("js near execquit\n");
 */
 	begin_source_proc("GetContext");
 
-	emit("push edx\n");
-	emit("push edi\n");
+	emit("push rdx\n");
+	emit("push rdi\n");
 	if(use_stack) emit("mov edi,[esp+12]\n");
 	else          emit("mov edi,eax\n");
 	emit("%%assign i 0\n");
@@ -993,8 +1035,8 @@ emit("js near execquit\n");
 */
 	begin_source_proc("SetContext");
 
-	emit("push edx\n");
-	emit("push esi\n");
+	emit("push rdx\n");
+	emit("push rsi\n");
 	if(use_stack) emit("mov esi,[esp+12]\n");
 	else          emit("mov esi,eax\n");
 	emit("%%assign i 0\n");
@@ -1027,10 +1069,10 @@ emit("js near execquit\n");
 	begin_source_proc("fetch");
 
 	if(use_stack) emit("mov eax,[esp+4]\n");
-	emit("push ebx\n");
-	emit("push esi\n");
-	emit("push edi\n");/* can be destroyed by rebase */
-	emit("push ebp\n");
+	emit("push rbx\n");
+	emit("push rsi\n");
+	emit("push rdi\n");/* can be destroyed by rebase */
+	emit("push rbp\n");
 	emit("push dword[__fetch]\n");
 	emit("mov ebx,[__s_fetch]\n");
 	emit("mov [__fetch],ebx\n");
@@ -1039,7 +1081,7 @@ emit("js near execquit\n");
 	emit("push dword[__fetch_region_end]\n");
 	/* and __execinfo */
 	emit("mov bl,[__execinfo]\n");
-	emit("push ebx\n");
+	emit("push rbx\n");
 
 	emit("xor ebp,ebp\n");
 	emit("mov esi,eax\n");
@@ -1222,7 +1264,7 @@ static void gen_flush_interrupts(void) {
 	emit("or dh, dl\n");
 	emit("mov [__sr+1], dh\n");
 
-	emit("push eax\n");
+	emit("push rax\n");
 	emit("call Int_Ack\n");					// in: dl = old IPL line, out: al = new IPL line
 	emit("mov byte [__interrupts],al\n");	// set it
 	emit("pop eax\n");
@@ -1249,7 +1291,14 @@ static void ret_timing(int n) {
 		emit("add esi,byte 2\n");
 		
 #ifdef HOOKS_ENABLED
-		emit("pushad\n");
+		emit("push rax\n");
+		emit("push rbx\n");
+		emit("push rcx\n");
+		emit("push rdx\n");
+		emit("push rsp\n");
+		emit("push rbp\n");
+		emit("push rsi\n");
+		emit("push rdi\n");
 		emit("sub esi,ebp\n");
 		emit("sub esi,byte 2\n");
 		emit("mov [hook_pc],esi\n");
@@ -1263,10 +1312,17 @@ static void ret_timing(int n) {
 		emit("mov [__sr],al\n");
 		
 		emit("call hook_exec\n");
-		emit("popad\n");
+		emit("pop rdi\n");
+		emit("pop rsi\n");
+		emit("pop rbp\n");
+		emit("pop rsp\n");
+		emit("pop rdx\n");
+		emit("pop rcx\n");
+		emit("pop rbx\n");
+		emit("pop rax\n");
 #endif
 		
-		emit("jmp dword[__jmptbl+ebx*4]\n");
+		emit("jmp [__jmptbl+ebx*8]\n");
 	}
 }
 
@@ -1297,7 +1353,7 @@ static void gen_decode_ext(void) {
 	align(16);
 	emit("decode_ext:\n");
 	if(cputype <= 68010) {
-		emit("push ecx\n");
+		emit("push rcx\n");
 		emit("movzx edx,word[esi]\n");
 		emit("movsx ecx,dl\n");
 		emit("add esi,byte 2\n");
@@ -1358,7 +1414,7 @@ static void gen_basefunction(void) {
 	** first).
 	*/
 	if(addressbits < 32) {
-		emit("push esi\n");
+		emit("push rsi\n");
 		maskaddress("esi");
 	}
 	emit("mov ebp,[__fetch]\n");
@@ -1395,7 +1451,7 @@ static void gen_basefunction(void) {
 		emit("mov esi,[esp]\n");
 		emit("and esi,%d\n", 0xFFFFFFFF << addressbits);
 	}
-	emit("push edx\n");
+	emit("push rdx\n");
 	emit("mov edx,ebp\n");
 	/*
 	** Update the fetch region cache, adding in the garbage bits where
@@ -1446,7 +1502,7 @@ static void cl2ccr(void){
 static void cx2sr(void){
 	int myline = linenum; linenum += 2;
 
-	emit("push ecx\n");
+	emit("push rcx\n");
 	/* Step 1: switch supervisor mode */
 	/* Is the new mode different from the last? */
 	emit("mov cl,[__sr+1]\n");
@@ -1513,7 +1569,14 @@ static void supervisor(void){
 
 static void emit_hook(const char* hookFuncName){
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("sub esi,ebp\n");
 	emit("and edx, 0xFFFFFF\n");
 	emit("sub esi,byte 2\n");
@@ -1521,7 +1584,14 @@ static void emit_hook(const char* hookFuncName){
 	emit("mov [hook_pc],esi\n");
 	emit("mov [hook_value],ecx\n");
 	emit("call %s\n", hookFuncName);
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
 }
 /***************************************************************************/
@@ -1550,15 +1620,15 @@ static void gen_readbw(int size)
 
 		emit("align 4\n");
 		emit(".Not_In_Ram\n");
-		emit("\tpush eax\n");
-		emit("\tpush edx\n");
+		emit("\tpush rax\n");
+		emit("\tpush rdx\n");
 		emit("\tmov [__io_cycle_counter], edi\n");
 		emit("\tmov [__io_fetchbase], ebp\n");
 		emit("\tmov [__io_fetchbased_pc], esi\n");
 		emit("\tcall M68K_RB\n");
 
 //	emit("\tmov eax, [esp]\n");
-//	emit("\tpush ebx\n");
+//	emit("\tpush rbx\n");
 //	emit("\tmov ebx, eax\n");
 //	emit("\tand eax, 0xF80000\n");
 //	emit("\tshr eax, 17\n");
@@ -1594,8 +1664,8 @@ static void gen_readbw(int size)
 
 		emit("align 4\n");
 		emit(".Not_In_Ram\n");
-		emit("\tpush eax\n");
-		emit("\tpush edx\n");
+		emit("\tpush rax\n");
+		emit("\tpush rdx\n");
 		emit("\tmov [__io_cycle_counter], edi\n");
 		emit("\tmov [__io_fetchbase], ebp\n");
 		emit("\tmov [__io_fetchbased_pc], esi\n");
@@ -1633,8 +1703,8 @@ static void gen_readl(void)
 
 	emit("align 4\n");
 	emit(".Not_In_Ram\n");
-	emit("\tpush eax\n");
-	emit("\tpush edx\n");
+	emit("\tpush rax\n");
+	emit("\tpush rdx\n");
 	emit("\tmov [__io_cycle_counter], edi\n");
 	emit("\tmov [__io_fetchbase], ebp\n");
 	emit("\tmov [__io_fetchbased_pc], esi\n");
@@ -1676,8 +1746,8 @@ static void gen_readdecl(void)
 	emit("align 4\n");
 	emit(".Not_In_Ram\n");
 	emit("\tadd edx, byte 2\n");
-	emit("\tpush eax\n");
-	emit("\tpush edx\n");
+	emit("\tpush rax\n");
+	emit("\tpush rdx\n");
 	emit("\tmov [__io_cycle_counter], edi\n");
 	emit("\tmov [__io_fetchbase], ebp\n");
 	emit("\tmov [__io_fetchbased_pc], esi\n");
@@ -1724,25 +1794,32 @@ static void gen_writebw(int size)
 		emit("\tmov [Ram_68k + edx], cl\n");
 		emit("\tmov edx, [__access_address]\n");
 #ifdef HOOKS_ENABLED
-		emit("pushad\n");
+		emit("push rax\n");
+		emit("push rbx\n");
+		emit("push rcx\n");
+		emit("push rdx\n");
+		emit("push rsp\n");
+		emit("push rbp\n");
+		emit("push rsi\n");
+		emit("push rdi\n");
 		emit("call hook_write_byte\n");
-		emit("popad\n");
+		emit("pop rdi\n");
+		emit("pop rsi\n");
+		emit("pop rbp\n");
+		emit("pop rsp\n");
+		emit("pop rdx\n");
+		emit("pop rcx\n");
+		emit("pop rbx\n");
+		emit("pop rax\n");
 #endif
-//		emit("pushad\n");
-//		emit("\tpush dword 1\n");
-//		emit("\tand edx,0xFFFFFF\n");
-//		emit("\tpush edx\n");
-//		emit("\tcall _Fix_Codes\n");
-//		emit("\tadd esp, byte 8\n");
-//		emit("popad\n");
 				
 		emit("\tret\n");
 
 		emit("align 4\n");
 		emit(".Not_In_Ram\n");
-		emit("\tpush eax\n");
-		emit("\tpush ecx\n");
-		emit("\tpush edx\n");
+		emit("\tpush rax\n");
+		emit("\tpush rcx\n");
+		emit("\tpush rdx\n");
 		emit("\tmov [__io_cycle_counter], edi\n");
 		emit("\tmov [__io_fetchbase], ebp\n");
 		emit("\tmov [__io_fetchbased_pc], esi\n");
@@ -1754,9 +1831,23 @@ static void gen_writebw(int size)
 		emit("\tpop eax\n");
 		emit("\tmov edx, [__access_address]\n");
 #ifdef HOOKS_ENABLED
-		emit("pushad\n");
+		emit("push rax\n");
+		emit("push rbx\n");
+		emit("push rcx\n");
+		emit("push rdx\n");
+		emit("push rsp\n");
+		emit("push rbp\n");
+		emit("push rsi\n");
+		emit("push rdi\n");
 		emit("call hook_write_byte\n");
-		emit("popad\n");
+		emit("pop rdi\n");
+		emit("pop rsi\n");
+		emit("pop rbp\n");
+		emit("pop rsp\n");
+		emit("pop rdx\n");
+		emit("pop rcx\n");
+		emit("pop rbx\n");
+		emit("pop rax\n");
 #endif
 
 		emit("\tret\n");
@@ -1779,25 +1870,32 @@ static void gen_writebw(int size)
 		emit("\tmov [Ram_68k + edx], cx\n");
 		emit("\tmov edx, [__access_address]\n");
 #ifdef HOOKS_ENABLED
-		emit("pushad\n");
+		emit("push rax\n");
+		emit("push rbx\n");
+		emit("push rcx\n");
+		emit("push rdx\n");
+		emit("push rsp\n");
+		emit("push rbp\n");
+		emit("push rsi\n");
+		emit("push rdi\n");
 		emit("call hook_write_word\n");
-		emit("popad\n");
+		emit("pop rdi\n");
+		emit("pop rsi\n");
+		emit("pop rbp\n");
+		emit("pop rsp\n");
+		emit("pop rdx\n");
+		emit("pop rcx\n");
+		emit("pop rbx\n");
+		emit("pop rax\n");
 #endif
-//		emit("pushad\n");
-//		emit("\tpush dword 2\n");
-//		emit("\tand edx,0xFFFFFF\n");
-//		emit("\tpush edx\n");
-//		emit("\tcall _Fix_Codes\n");
-//		emit("\tadd esp, byte 8\n");
-//		emit("popad\n");
 			
 		emit("\tret\n");
 
 		emit("align 4\n");
 		emit(".Not_In_Ram\n");
-		emit("\tpush eax\n");
-		emit("\tpush ecx\n");
-		emit("\tpush edx\n");
+		emit("\tpush rax\n");
+		emit("\tpush rcx\n");
+		emit("\tpush rdx\n");
 		emit("\tmov [__io_cycle_counter], edi\n");
 		emit("\tmov [__io_fetchbase], ebp\n");
 		emit("\tmov [__io_fetchbased_pc], esi\n");
@@ -1809,9 +1907,23 @@ static void gen_writebw(int size)
 		emit("\tpop eax\n");
 		emit("\tmov edx, [__access_address]\n");
 #ifdef HOOKS_ENABLED
-		emit("pushad\n");
+		emit("push rax\n");
+		emit("push rbx\n");
+		emit("push rcx\n");
+		emit("push rdx\n");
+		emit("push rsp\n");
+		emit("push rbp\n");
+		emit("push rsi\n");
+		emit("push rdi\n");
 		emit("call hook_write_word\n");
-		emit("popad\n");
+		emit("pop rdi\n");
+		emit("pop rsi\n");
+		emit("pop rbp\n");
+		emit("pop rsp\n");
+		emit("pop rdx\n");
+		emit("pop rcx\n");
+		emit("pop rbx\n");
+		emit("pop rax\n");
 #endif
 		
 		emit("\tret\n");
@@ -1840,25 +1952,32 @@ static void gen_writel(void)
 	emit("\tmov edx, [__access_address]\n");
 	emit("\trol ecx, 16\n");
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("call hook_write_dword\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
-//	emit("pushad\n");
-//	emit("\tpush dword 4\n");
-//	emit("\tand edx,0xFFFFFF\n");
-//	emit("\tpush edx\n");
-//	emit("\tcall _Fix_Codes\n");
-//	emit("\tadd esp, byte 8\n");
-//	emit("popad\n");
 		
 	emit("\tret\n");
 
 	emit("align 4\n");
 	emit(".Not_In_Ram\n");
-	emit("\tpush eax\n");
-	emit("\tpush ecx\n");
-	emit("\tpush edx\n");
+	emit("\tpush rax\n");
+	emit("\tpush rcx\n");
+	emit("\tpush rdx\n");
 	emit("\tmov [__io_cycle_counter], edi\n");
 	emit("\tmov [__io_fetchbase], ebp\n");
 	emit("\trol ecx, 16\n");
@@ -1875,9 +1994,23 @@ static void gen_writel(void)
 	emit("\tmov edx, [__access_address]\n");
 	
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("call hook_write_dword\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
 	emit("\tret\n");
 }
@@ -1904,26 +2037,33 @@ static void gen_writedecl(void)
 	emit("\tmov edx, [__access_address]\n");
 	emit("\trol ecx, 16\n");
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("call hook_write_dword\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
-//	emit("pushad\n");
-//	emit("\tpush dword 4\n");
-//	emit("\tand edx,0xFFFFFF\n");
-//	emit("\tpush edx\n");
-//	emit("\tcall _Fix_Codes\n");
-//	emit("\tadd esp, byte 8\n");
-//	emit("popad\n");
 	
 	emit("\tret\n");
 
 	emit("align 4\n");
 	emit(".Not_In_Ram\n");
 	emit("\tadd edx, byte 2\n");
-	emit("\tpush eax\n");
-	emit("\tpush ecx\n");
-	emit("\tpush edx\n");
+	emit("\tpush rax\n");
+	emit("\tpush rcx\n");
+	emit("\tpush rdx\n");
 	emit("\tmov [__io_cycle_counter], edi\n");
 	emit("\tmov [__io_fetchbase], ebp\n");
 	emit("\trol ecx, 16\n");
@@ -1939,9 +2079,23 @@ static void gen_writedecl(void)
 	emit("\tpop eax\n");
 	emit("\tmov edx, [__access_address]\n");
 #ifdef HOOKS_ENABLED
-	emit("pushad\n");
+	emit("push rax\n");
+	emit("push rbx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
+	emit("push rsp\n");
+	emit("push rbp\n");
+	emit("push rsi\n");
+	emit("push rdi\n");
 	emit("call hook_write_dword\n");
-	emit("popad\n");
+	emit("pop rdi\n");
+	emit("pop rsi\n");
+	emit("pop rbp\n");
+	emit("pop rsp\n");
+	emit("pop rdx\n");
+	emit("pop rcx\n");
+	emit("pop rbx\n");
+	emit("pop rax\n");
 #endif
 	
 	emit("\tret\n");
@@ -1965,7 +2119,7 @@ static void gen_group_12_exception(void) {
 		emit("mov byte[__loopmode],0\n");
 	}
 	if(cputype >= 68010) {
-		emit("push edx\n");
+		emit("push rdx\n");
 		emit("add edx,[__vbr]\n");
 	}
 	emit("call readmemorydword\n");
@@ -1973,9 +2127,9 @@ static void gen_group_12_exception(void) {
 		emit("pop edx\n");
 	}
 
-	emit("push ecx\n");/* dest. PC */
+	emit("push rcx\n");/* dest. PC */
 	sr2cx();
-	emit("push ecx\n");/* old SR */
+	emit("push rcx\n");/* old SR */
 	supervisor();
 	/*
 	** Exception handlers do not like being traced, so clear the SR trace
@@ -1990,7 +2144,7 @@ static void gen_group_12_exception(void) {
 	emit("mov ecx,esi\n");
 	emit("sub ecx,ebp\n");
 	if(cputype >= 68010) {
-		emit("push ecx\n");/* old PC */
+		emit("push rcx\n");/* old PC */
 		emit("mov ecx,edx\n");
 	}
 	emit("mov edx,[__a7]\n");
@@ -2049,7 +2203,7 @@ static void selftest(int size) {
 /* Get condition: Less Than (N^V)
 ** If true, the x86 sign flag will be set */
 static void getcondition_l_s_ns(void) {
-	emit("push eax\n");
+	emit("push rax\n");
 	emit("neg al\n");
 	emit("xor al,ah\n");
 	emit("pop eax\n");
@@ -2058,7 +2212,7 @@ static void getcondition_l_s_ns(void) {
 /* Get condition: Less Than or Equal ((N^V)|Z)
 ** If true, the x86 sign flag will be set */
 static void getcondition_le_s_ns(void) {
-	emit("push eax\n");
+	emit("push rax\n");
 	emit("neg al\n");
 	emit("xor al,ah\n");
 	emit("add ah,ah\n");
@@ -3021,7 +3175,7 @@ static void im_to_ea(char*op,int wback,int affectx,int logical,
 		if(affectx)c2x();
 		if(main_size<4)cycles=c1;else cycles=c2;
 	}else{
-		emit("push ecx\n");
+		emit("push rcx\n");
 		if(wback)main_ea_rmw_load();else main_ea_load();
 		emit("%s %s,[esp]\n",op,x86cx[main_size]);
 		if(logical){
@@ -3515,7 +3669,7 @@ static void bitop(int static_cycles){
 	}else{
 		main_size=1;
 		if(!main_cc){
-			emit("push ecx\n");
+			emit("push rcx\n");
 			main_ea_load();
 			emit("mov edx,ecx\n");
 			emit("pop ecx\n");
@@ -3525,7 +3679,7 @@ static void bitop(int static_cycles){
 		}else{
 			emit("mov dl,1\n");
 			emit("shl dl,cl\n");
-			emit("push edx\n");
+			emit("push rdx\n");
 			main_ea_rmw_load();
 			emit("xchg edx,[esp]\n");
 			emit("test cl,dl\n");
@@ -3704,7 +3858,7 @@ static void i_nop(void){
 static void i_movem_control(void){
 	int cycles=0;
 	int myline=linenum;linenum+=2;
-	emit("push eax\n");
+	emit("push rax\n");
 	selective_usereg();
 	emit("mov ax,[esi]\n");
 	emit("add esi,byte 2\n");
@@ -3754,11 +3908,11 @@ static void i_movem_control(void){
 static void i_movem_postinc(void){
 	int myline=linenum;linenum+=2;
 	usereg();
-	emit("push eax\n");
+	emit("push rax\n");
 	emit("mov ax,[esi]\n");
 	emit("add esi,byte 2\n");
 	emit("mov edx,[__areg+ebx*4]\n");
-	emit("push ebx\n");
+	emit("push rbx\n");
 	emit("xor ebx,ebx\n");
 	emit("ln%d:\n",myline);
 	emit("shr eax,1\n");
@@ -3781,11 +3935,11 @@ static void i_movem_postinc(void){
 static void i_movem_predec(void){
 	int myline=linenum;linenum+=2;
 	usereg();
-	emit("push eax\n");
+	emit("push rax\n");
 	emit("mov ax,[esi]\n");
 	emit("add esi,byte 2\n");
 	emit("mov edx,[__areg+ebx*4]\n");
-	emit("push ebx\n");
+	emit("push rbx\n");
 	emit("mov ebx,60\n");
 	emit("ln%d:\n",myline);
 	emit("shr eax,1\n");
@@ -4069,7 +4223,7 @@ static void i_negx(void){
 	}else{
 		cycles*=2;
 		main_ea_rmw_load();
-		emit("push ebx\n");
+		emit("push rbx\n");
 		emit("mov bl,[__xflag]\n");
 		emit("shr bl,1\n");
 		if(main_size==1)emit("mov bl,0\n");
@@ -4551,7 +4705,7 @@ static void i_moves(void){
 	int myline=linenum;
 	linenum++;
 	selective_usereg();
-	emit("push esi\n"); /* save in case it's invalid */
+	emit("push rsi\n"); /* save in case it's invalid */
 	emit("movzx ecx,word[esi]\n");
 	emit("add esi,byte 2\n");
 	ea_step_precalc(main_size,main_eamode,-1); /* edx=address */
@@ -4572,14 +4726,14 @@ static void i_moves(void){
 	*/
 	emit("cmp dword[__fc_read%s],byte 0\n",sizename[unitsize]);
 	emit("je short ln%d_inv\n",myline);
-	emit("push ecx\n");
-	emit("push edx\n");
+	emit("push rcx\n");
+	emit("push rdx\n");
 	airlock_exit();
 	emit("mov al,[__sfc]\n");
 	emit("and eax,byte 7\n");
 	if(use_stack) {
-		emit("push edx\n");
-		emit("push eax\n");
+		emit("push rdx\n");
+		emit("push rax\n");
 	}
 	emit("call dword[__fc_read%s]\n");
 	if(use_stack) {
@@ -4595,8 +4749,8 @@ static void i_moves(void){
 		emit("mov al,[__sfc]\n");
 		emit("and eax,byte 7\n");
 		if(use_stack) {
-			emit("push edx\n");
-			emit("push eax\n");
+			emit("push rdx\n");
+			emit("push rax\n");
 		}
 		emit("call dword[__fc_read%s]\n");
 		if(use_stack) {
@@ -5299,7 +5453,7 @@ int main(int argc, char **argv) {
 	emit("section .bss\n");
 	emit("bits 64\n");
 	align(4);
-	emit("__jmptbl resb 262144\n");
+	emit("__jmptbl resb 524288\n");
 	if(cputype == 68010) emit("__looptbl resb 65536\n");
 	emit("section .data\n");
 	emit("bits 64\n");
