@@ -356,15 +356,6 @@
     <ClCompile Include="zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="ida\PaintForm.cpp">
-      <Filter>ida</Filter>
-    </ClCompile>
-    <ClCompile Include="ida\moc_PaintForm_68.cpp">
-      <Filter>ida</Filter>
-    </ClCompile>
-    <ClCompile Include="ida\moc_PaintForm_695.cpp">
-      <Filter>ida</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lua\src\lapi.h">
@@ -663,9 +654,6 @@
     </ClInclude>
     <ClInclude Include="zlib\zutil.h">
       <Filter>zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="ida\PaintForm.h">
-      <Filter>ida</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -29,8 +29,6 @@
 #include "ida_debmod.h"
 #include "ida_registers.h"
 
-#include "PaintForm.h"
-
 extern debugger_t debugger;
 
 static bool plugin_inited;
@@ -1080,31 +1078,6 @@ static bool init_plugin(void)
     return true;
 }
 
-static void idaapi update_form(bool create);
-
-static int idaapi hook_view(void * /*ud*/, int notification_code, va_list va)
-{
-	switch (notification_code)
-	{
-	case view_curpos: update_form(false); break;
-	}
-	return 0;
-}
-
-struct data_as_tiles_action_t : public action_handler_t
-{
-	virtual int idaapi activate(action_activation_ctx_t * ctx)
-	{
-		update_form(true);
-		return 1;
-	}
-
-	virtual action_state_t idaapi update(action_update_ctx_t *ctx)
-	{
-		return AST_ENABLE_ALWAYS;
-	}
-};
-
 struct smd_constant_action_t : public action_handler_t
 {
 	virtual int idaapi activate(action_activation_ctx_t * ctx)
@@ -1154,11 +1127,6 @@ struct smd_constant_action_t : public action_handler_t
 	}
 };
 
-static const char data_as_tiles_title[] = "Tile data preview";
-static const char data_as_tiles_name[] = "gensida:data_as_tiles";
-static data_as_tiles_action_t data_as_tiles;
-static action_desc_t data_as_tiles_action = ACTION_DESC_LITERAL(data_as_tiles_name, "Paint data as tiles", &data_as_tiles, "Shift+D", NULL, -1);
-
 static const char smd_constant_name[] = "gensida:smd_constant";
 static smd_constant_action_t smd_constant;
 static action_desc_t smd_constant_action = ACTION_DESC_LITERAL(smd_constant_name, "Identify SMD constant", &smd_constant, "J", NULL, -1);
@@ -1175,58 +1143,12 @@ static int idaapi hook_ui(void *user_data, int notification_code, va_list va)
 			TCustomControl *view = get_tform_idaview(f);
 			if (view != NULL)
 			{
-				attach_action_to_popup(f, p, data_as_tiles_name);
 				attach_action_to_popup(f, p, smd_constant_name);
 			}
 		}
 	}
-	else if (notification_code == ui_tform_visible)
-	{
-		TForm *form = va_arg(va, TForm *);
-		if (form == user_data)
-		{
-			QHBoxLayout *mainLayout = new QHBoxLayout();
-			mainLayout->setMargin(0);
-			mainLayout->addWidget(new PaintForm());
-			((QWidget *)form)->setLayout(mainLayout);
-		}
-	}
 
 	return 0;
-}
-
-//--------------------------------------------------------------------------
-static void idaapi update_form(bool create)
-{
-	TForm *form = find_tform(data_as_tiles_title);
-	if (form != NULL)
-	{
-		((QWidget *)form)->update();
-	}
-	else if (create)
-	{
-		TForm *form = find_tform(data_as_tiles_title);
-		if (form != NULL)
-		{
-			switchto_tform(form, true);
-			update_form(false);
-			return;
-		}
-
-		HWND hwnd = NULL;
-		form = create_tform(data_as_tiles_title, &hwnd);
-
-		if (hwnd != NULL)
-		{
-			hook_to_notification_point(HT_UI, hook_ui, form);
-			open_tform(form, FORM_TAB | FORM_MENU | FORM_RESTORE | FORM_QWIDGET);
-		}
-		else
-		{
-			close_tform(form, FORM_SAVE);
-			unhook_from_notification_point(HT_UI, hook_ui);
-		}
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -1240,10 +1162,8 @@ static int idaapi init(void)
         dbg_started = false;
         my_dbg = false;
 
-		bool res = register_action(data_as_tiles_action);
-		res = register_action(smd_constant_action);
+		bool res = register_action(smd_constant_action);
 
-		hook_to_notification_point(HT_VIEW, hook_view, NULL);
 		hook_to_notification_point(HT_UI, hook_ui, NULL);
         hook_to_notification_point(HT_IDP, hook_idp, NULL);
 		hook_to_notification_point(HT_DBG, hook_dbg, NULL);
@@ -1260,12 +1180,10 @@ static void idaapi term(void)
 {
     if (plugin_inited)
     {
-		unhook_from_notification_point(HT_VIEW, hook_view);
 		unhook_from_notification_point(HT_UI, hook_ui);
         unhook_from_notification_point(HT_IDP, hook_idp);
 		unhook_from_notification_point(HT_DBG, hook_dbg);
 
-		unregister_action(data_as_tiles_name);
 		unregister_action(smd_constant_name);
 
         plugin_inited = false;
