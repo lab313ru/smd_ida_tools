@@ -735,6 +735,7 @@
 #define IDC_VDP_PAL_LOAD                51100
 #define IDC_VDP_PAL_DUMP                51101
 #define IDC_VDP_PAL_YY                  51102
+#define IDC_VDP_PAL_RNB                 51103
 #define IDC_PLANEEXPLORER_MAIN          54001
 #define IDC_PLANEEXPLORER_TILEINFO      54002
 #define IDC_PLANEEXPLORER_TRANS         54003

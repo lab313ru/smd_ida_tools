@@ -13,6 +13,7 @@
 *.db-shm
 *.db-wal
 *.ipch
+*.aps
 Gensida/asm/main68k.asm
 Gensida/asm/sub68k.asm
 Debug86_68/

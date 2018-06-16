@@ -941,6 +941,95 @@ BOOL CALLBACK MoveGroupCallback(HWND hChild, LPARAM lParam)
     return TRUE;
 }
 
+typedef struct RgbColor
+{
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
+} RgbColor;
+
+typedef struct HsvColor
+{
+	int16_t hue; // hue = 0 to 3600 (i.e. 1/10 of a degree)
+	int16_t saturation; // saturation = 0 to 1000
+	int16_t value; // value = 0 to 1000
+} HsvColor;
+
+static RgbColor hsv2rgb(HsvColor hsv)
+{
+	RgbColor rgb;
+	//---------------------------------------------------------------------
+	// convert hue, saturation and value (HSV) to red, green and blue
+	//---------------------------------------------------------------------
+
+	rgb.red = 0;
+	rgb.green = 0;
+	rgb.blue = 0;
+
+	if (hsv.saturation == 0)
+	{
+		rgb.red = (uint8_t)((255 * hsv.value) / 1000);
+		rgb.green = rgb.red;
+		rgb.blue = rgb.red;
+	}
+	else
+	{
+		int16_t h = hsv.hue / 600;
+		int16_t f = ((hsv.hue % 600) * 1000) / 600;
+		int16_t p = (hsv.value*(1000 - hsv.saturation)) / 1000;
+		int16_t q = (hsv.value*(1000 - ((hsv.saturation*f) / 1000))) / 1000;
+		int16_t t = (hsv.value*(1000 - ((hsv.saturation*(1000 - f)) / 1000))) / 1000;
+
+		switch (h)
+		{
+		case 0:
+
+			rgb.red = (uint8_t)((255 * hsv.value) / 1000);
+			rgb.green = (uint8_t)((255 * t) / 1000);
+			rgb.blue = (uint8_t)((255 * p) / 1000);
+			break;
+
+		case 1:
+
+			rgb.red = (uint8_t)((255 * q) / 1000);
+			rgb.green = (uint8_t)((255 * hsv.value) / 1000);
+			rgb.blue = (uint8_t)((255 * p) / 1000);
+			break;
+
+		case 2:
+
+			rgb.red = (uint8_t)((255 * p) / 1000);
+			rgb.green = (uint8_t)((255 * hsv.value) / 1000);
+			rgb.blue = (uint8_t)((255 * t) / 1000);
+			break;
+
+		case 3:
+
+			rgb.red = (uint8_t)((255 * p) / 1000);
+			rgb.green = (uint8_t)((255 * q) / 1000);
+			rgb.blue = (uint8_t)((255 * hsv.value) / 1000);
+			break;
+
+		case 4:
+
+			rgb.red = (uint8_t)((255 * t) / 1000);
+			rgb.green = (uint8_t)((255 * p) / 1000);
+			rgb.blue = (uint8_t)((255 * hsv.value) / 1000);
+			break;
+
+		case 5:
+
+			rgb.red = (uint8_t)((255 * hsv.value) / 1000);
+			rgb.green = (uint8_t)((255 * p) / 1000);
+			rgb.blue = (uint8_t)((255 * q) / 1000);
+			break;
+
+		}
+	}
+
+	return rgb;
+}
+
 LRESULT CALLBACK ButtonsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
     switch (uMsg)
@@ -1012,6 +1101,54 @@ LRESULT CALLBACK ButtonsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
             }
             return FALSE;
         } break;
+		case IDC_VDP_PAL_RNB:
+		{
+			for (int i = 0; i < VDP_PAL_COLORS; ++i)
+			{
+				uint16_t w = 0;
+				uint8_t c = (i * VDP_PAL_COLORS) & 0xFF;
+				w |= (uint16_t)(((c >> 4) & 0xE) << 0);
+				w |= (uint16_t)(((c >> 4) & 0xE) << 4);
+				w |= (uint16_t)(((c >> 4) & 0xE) << 8);
+				((char*)&CRam)[i * 2 + 0] = (w >> 0) & 0xFF;
+				((char*)&CRam)[i * 2 + 1] = (w >> 8) & 0xFF;
+			}
+
+			for (int i = 0; i < VDP_PAL_COLORS; ++i)
+			{
+				uint16_t w = 0;
+				uint8_t c = ((255 - i) * VDP_PAL_COLORS) & 0xFF;
+				w |= (uint16_t)(((c >> 4) & 0xE) << 0);
+				w |= (uint16_t)(((c >> 4) & 0xE) << 4);
+				w |= (uint16_t)(((c >> 4) & 0xE) << 8);
+				((char*)&CRam)[(VDP_PAL_COLORS + i) * 2 + 0] = (w >> 0) & 0xFF;
+				((char*)&CRam)[(VDP_PAL_COLORS + i) * 2 + 1] = (w >> 8) & 0xFF;
+			}
+
+			for (int i = 0; i < VDP_PAL_COLORS; ++i)
+			{
+				HsvColor _hsv;
+				_hsv.hue = (((double)i / (double)VDP_PAL_COLORS)) * 3600;
+				_hsv.saturation = 850;
+				_hsv.value = 1000;
+				RgbColor _rgb = hsv2rgb(_hsv);
+
+				uint16_t w = 0;
+				w |= (uint16_t)((((int)_rgb.red >> 4) & 0xE) << 0);
+				w |= (uint16_t)((((int)_rgb.green >> 4) & 0xE) << 4);
+				w |= (uint16_t)((((int)_rgb.blue >> 4) & 0xE) << 8);
+				((char*)&CRam)[(VDP_PAL_COLORS * 2 + i) * 2 + 0] = (w >> 0) & 0xFF;
+				((char*)&CRam)[(VDP_PAL_COLORS * 2 + i) * 2 + 1] = (w >> 8) & 0xFF;
+			}
+
+			if (Game)
+			{
+				CRam_Flag = 1;
+				Show_Genesis_Screen(HWnd);
+			}
+
+			return FALSE;
+		} break;
         case IDC_VDP_VRAM_DUMP:
         {
             char fname[2048];
@@ -1161,6 +1298,7 @@ LRESULT CALLBACK VDPRamProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SetParent(GetDlgItem(hDlg, IDC_VDP_PAL_DUMP), hPalGroup);
         SetParent(GetDlgItem(hDlg, IDC_VDP_PAL_LOAD), hPalGroup);
         SetParent(GetDlgItem(hDlg, IDC_VDP_PAL_YY), hPalGroup);
+		SetParent(GetDlgItem(hDlg, IDC_VDP_PAL_RNB), hPalGroup);
 
         SetWindowPos(hPalGroup, NULL,
             r.right + 5,
