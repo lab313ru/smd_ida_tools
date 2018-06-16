@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.9"
+#define VERSION "1.11"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
