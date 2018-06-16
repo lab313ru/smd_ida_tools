@@ -281,8 +281,10 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 				if (cmd.itype != 0x7F || op.n != 0) // movea
 					break;
 
-				if (op.value & 0xFF0000 && op.dtyp == dt_word)
+				if (op.value & 0xFF0000 && op.dtyp == dt_word) {
+					op.value &= 0xFFFF;
 					op_offset(cmd.ea, op.n, REF_OFF32, BADADDR, 0xFF0000);
+				}
 			} break;
 			}
 		}
