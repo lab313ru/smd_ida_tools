@@ -1,4 +1,4 @@
 #pragma once
 
 #define NAME "GensIDA"
-#define VERSION "1.2"
+#define VERSION "1.13"
