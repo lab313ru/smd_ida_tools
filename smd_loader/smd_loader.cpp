@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.12"
+#define VERSION "1.2"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -392,7 +392,7 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 		//| AF2_CHKUNI  //     0x0020          // Check for unicode strings
 		//| AF2_SIGCMT  //     0x0040          // Append a signature name comment for recognized anonymous library functions
 		| AF2_SIGMLT  //     0x0080          // Allow recognition of several copies of the same function
-		| AF2_FTAIL  //      0x0100          // Create function tails
+		//| AF2_FTAIL  //      0x0100          // Create function tails
 		| AF2_DATOFF  //     0x0200          // Automatically convert data to offsets
 		//| AF2_ANORET  //     0x0400          // Perform 'no-return' analysis
 		//| AF2_VERSP  //      0x0800          // Perform full SP-analysis (ph.verify_sp)

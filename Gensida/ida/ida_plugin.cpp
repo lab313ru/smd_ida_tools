@@ -275,6 +275,22 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 				if ((op.addr >= 0xC00000 && op.addr <= 0xC0001F) ||
 					(op.addr >= 0xC00020 && op.addr <= 0xC0003F)) // VDP mirrors
 					op.addr &= 0xC000FF;
+
+                if (cmd.itype != 0x76 || op.n != 0 ||
+                    (op.phrase != 0x09 && op.phrase != 0x0A) ||
+                    (op.addr == 0 || op.addr > MAX_ROM_SIZE)) // lea table(pc),Ax
+                    break;
+
+                short diff = op.addr - value;
+                if (diff >= SHRT_MIN && diff <= SHRT_MAX)
+                {
+                    cmd.Op1.type = o_displ;
+                    cmd.Op1.offb = 2;
+                    cmd.Op1.dtyp = dt_dword;
+                    //cmd.Op1.addr = value;
+                    cmd.Op1.phrase = 0x5B;
+                    cmd.Op1.specflag1 = 0x10;
+                }
 			} break;
 			case o_imm:
 			{
