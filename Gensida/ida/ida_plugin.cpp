@@ -278,7 +278,8 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
 
                 if (cmd.itype != 0x76 || op.n != 0 ||
                     (op.phrase != 0x09 && op.phrase != 0x0A) ||
-                    (op.addr == 0 || op.addr > MAX_ROM_SIZE)) // lea table(pc),Ax
+                    (op.addr == 0 || op.addr > MAX_ROM_SIZE) ||
+                    op.specflag1 != 2) // lea table(pc),Ax
                     break;
 
                 short diff = op.addr - value;
