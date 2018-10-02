@@ -327,6 +327,7 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             if (diff >= SHRT_MIN && diff <= SHRT_MAX)
             {
                 ua_add_dref(cmd.Op1.offb, cmd.Op1.addr, dr_O);
+                ua_add_cref(0, cmd.ea + cmd.size, fl_F);
                 return 2;
             }
         }
