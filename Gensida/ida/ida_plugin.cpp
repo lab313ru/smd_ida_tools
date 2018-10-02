@@ -288,7 +288,6 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                     cmd.Op1.type = o_displ;
                     cmd.Op1.offb = 2;
                     cmd.Op1.dtyp = dt_dword;
-                    //cmd.Op1.addr = value;
                     cmd.Op1.phrase = 0x5B;
                     cmd.Op1.specflag1 = 0x10;
                 }
@@ -320,6 +319,16 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             set_cmt(cmd.ea, name.c_str(), false);
             ua_add_cref(cmd.Op1.offb, trap_addr, fl_CN);
             return 2;
+        }
+
+        if (cmd.itype == 0x76 && cmd.Op1.phrase == 0x5B && cmd.Op1.specflag1 == 0x10) // lea table(pc),Ax
+        {
+            short diff = cmd.Op1.addr - cmd.ea;
+            if (diff >= SHRT_MIN && diff <= SHRT_MAX)
+            {
+                ua_add_dref(cmd.Op1.offb, cmd.Op1.addr, dr_O);
+                return 2;
+            }
         }
 
         if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
