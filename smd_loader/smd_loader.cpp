@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.16"
+#define VERSION "1.20"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -15,15 +15,12 @@
 
 #include <ida.hpp>
 #include <idp.hpp>
-#include <entry.hpp>
 #include <diskio.hpp>
 #include <loader.hpp>
 #include <auto.hpp>
 #include <name.hpp>
-#include <bytes.hpp>
 #include <struct.hpp>
 #include <enum.hpp>
-#include <fixup.hpp>
 
 #include "smd_loader.h"
 
@@ -107,28 +104,6 @@ static void add_sub(unsigned int addr, const char *name, unsigned int max)
 }
 
 //------------------------------------------------------------------------
-static void add_offset_field(struc_t *st, segment_t *code_segm, const char *name)
-{
-	opinfo_t info = { 0 };
-	info.ri.init(REF_OFF32, BADADDR);
-	add_struc_member(st, name, BADADDR, dwrdflag() | offflag(), &info, 4);
-}
-
-//------------------------------------------------------------------------
-static void add_dword_field(struc_t *st, const char *name)
-{
-	add_struc_member(st, name, BADADDR, dwrdflag() | hexflag(), NULL, 4);
-}
-
-//------------------------------------------------------------------------
-static void add_string_field(struc_t *st, const char *name, asize_t size)
-{
-	opinfo_t info = { 0 };
-	info.strtype = ASCSTR_C;
-	add_struc_member(st, name, BADADDR, asciflag(), &info, size);
-}
-
-//------------------------------------------------------------------------
 static void add_byte_field(struc_t *st, const char *name, const char *cmt = NULL)
 {
     add_struc_member(st, name, BADADDR, byteflag() | hexflag(), NULL, 1);
@@ -142,12 +117,6 @@ static void add_short_field(struc_t *st, const char *name, const char *cmt = NUL
 	add_struc_member(st, name, BADADDR, wordflag() | hexflag(), NULL, 2);
     member_t *mm = get_member_by_name(st, name);
     set_member_cmt(mm, cmt, true);
-}
-
-//------------------------------------------------------------------------
-static void add_dword_array(struc_t *st, const char *name, asize_t length)
-{
-	add_struc_member(st, name, BADADDR, dwrdflag() | hexflag(), NULL, 4 * length);
 }
 
 //------------------------------------------------------------------------
@@ -172,37 +141,23 @@ static void add_segment(ea_t start, ea_t end, const char *name, const char *clas
 }
 
 //------------------------------------------------------------------------
-static void add_subroutines(gen_vect *table, unsigned int rom_size)
+static void add_vector_subs(gen_vect *table, unsigned int rom_size)
 {
+    doDwrd(0, 4);
 	for (int i = 1; i < _countof(VECTOR_NAMES); i++) // except SPP pointer
 	{
 		add_sub(table->vectors[i], VECTOR_NAMES[i], rom_size);
+        doDwrd(i * 4, 4);
 	}
 }
 
 //------------------------------------------------------------------------
-static void convert_vector_addrs(gen_vect *table)
+static void get_vector_addrs(gen_vect *table)
 {
 	for (int i = 0; i < _countof(table->vectors); i++)
 	{
 		table->vectors[i] = SWAP_BYTES_32(table->vectors[i]);
 	}
-}
-
-//------------------------------------------------------------------------
-static void define_vectors_struct()
-{
-	segment_t *code_segm = getseg(0);
-	tid_t vec_id = add_struc(BADADDR, VECTORS_STRUCT);
-	struc_t *vectors = get_struc(vec_id);
-
-	for (int i = 0; i < _countof(VECTOR_NAMES); i++)
-	{
-		add_offset_field(vectors, code_segm, VECTOR_NAMES[i]);
-	}
-
-	doStruct(0, sizeof(gen_vect), vec_id);
-	set_name(0, VECTORS);
 }
 
 //--------------------------------------------------------------------------
@@ -213,48 +168,37 @@ static void add_enum_member_with_mask(enum_t id, const char *name, unsigned int 
 }
 
 //------------------------------------------------------------------------
-static void set_spec_register_names()
+static void make_array(ea_t addr, int datatype, const char *name, asize_t size)
 {
-	for (int i = 0; i < _countof(spec_regs); i++)
-	{
-		if (spec_regs[i].size == 2)
-		{
-			doWord(spec_regs[i].addr, 2);
-		}
-		else if (spec_regs[i].size == 4)
-		{
-			doDwrd(spec_regs[i].addr, 4);
-		}
-		else
-		{
-			doByte(spec_regs[i].addr, spec_regs[i].size);
-		}
-		set_name(spec_regs[i].addr, spec_regs[i].name);
-	}
+    const array_parameters_t array_params = {AP_ARRAY, 0, 0};
+
+    switch (datatype)
+    {
+    case 1: doByte(addr, size); break;
+    case 2: doWord(addr, size); break;
+    case 4: doWord(addr, size); break;
+    }
+    set_array_parameters(addr, &array_params);
+    set_name(addr, name);
 }
 
 //------------------------------------------------------------------------
-static void define_header_struct()
+static void define_header()
 {
-	tid_t head_id = add_struc(BADADDR, HEADER_STRUCT);
-	struc_t *header = get_struc(head_id);
-
-	add_string_field(header, "CopyRights", 32);
-	add_string_field(header, "DomesticName", 48);
-	add_string_field(header, "OverseasName", 48);
-	add_string_field(header, "ProductCode", 14);
-	add_short_field(header, "Checksum");
-	add_string_field(header, "Peripherials", 16);
-	add_dword_field(header, "RomStart");
-	add_dword_field(header, "RomEnd");
-	add_dword_field(header, "RamStart");
-	add_dword_field(header, "RamEnd");
-	add_string_field(header, "SramCode", 12);
-	add_string_field(header, "ModemCode", 12);
-	add_string_field(header, "Reserved", 40);
-	add_string_field(header, "CountryCode", 16);
-	doStruct(0x100, sizeof(gen_hdr), head_id);
-	set_name(0x100, HEADER);
+    make_array(0x100, 1, "CopyRights", 0x20);
+    make_array(0x120, 1, "DomesticName", 0x30);
+    make_array(0x150, 1, "OverseasName", 0x30);
+    make_array(0x180, 1, "ProductCode", 0x0E);
+    make_array(0x18E, 2, "Checksum", 0x02);
+    make_array(0x190, 1, "Peripherials", 0x10);
+    make_array(0x1A0, 4, "RomStart", 0x04);
+    make_array(0x1A4, 4, "RomEnd", 0x04);
+    make_array(0x1A8, 4, "RamStart", 0x04);
+    make_array(0x1AC, 4, "RamEnd", 0x04);
+    make_array(0x1B0, 1, "SramCode", 0x0C);
+    make_array(0x1BC, 1, "ModemCode", 0x0C);
+    make_array(0x1C8, 1, "Reserved", 0x28);
+    make_array(0x1F0, 1, "CountryCode", 0x10);
 }
 
 //------------------------------------------------------------------------
@@ -273,18 +217,66 @@ static void define_sprite_struct()
 }
 
 //------------------------------------------------------------------------
-static void make_segments()
+static void make_segments(size_t romsize)
 {
-	add_segment(0x00000000, 0x003FFFFF + 1, ROM, CODE, "ROM segment", SEGPERM_EXEC | SEGPERM_READ);
-	add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)", SEGPERM_READ | SEGPERM_WRITE);
-	add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)", SEGPERM_READ | SEGPERM_WRITE);
-	add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory", SEGPERM_READ | SEGPERM_WRITE);
-	add_segment(0x00A10000, 0x00A10FFF + 1, REGS, XTRN, "System registers", SEGPERM_WRITE);
-	add_segment(0x00A11000, 0x00A11FFF + 1, Z80C, XTRN, "Z80 control (/BUSREQ and /RESET lines)", SEGPERM_WRITE);
-	add_segment(0x00A12000, 0x00AFFFFF + 1, ASSR, XTRN, "Assorted registers", SEGPERM_WRITE);
-	add_segment(0x00B00000, 0x00BFFFFF + 1, UNLK, DATA, "Unallocated", SEGPERM_READ | SEGPERM_WRITE);
+	add_segment(0x00000000, qmin(romsize, 0x003FFFFF + 1), ROM, CODE, "ROM segment", SEGPERM_EXEC | SEGPERM_READ);
 
-    add_segment(0x00C00000, 0x00C0001F + 1, VDP, XTRN, "VDP Registers", SEGPERM_WRITE);
+    if (ASKBTN_YES == askyn_c(ASKBTN_NO, "Create Sega CD segment?"))
+	    add_segment(0x00400000, 0x007FFFFF + 1, EPA, DATA, "Expansion Port Area (used by the Sega CD)", SEGPERM_READ | SEGPERM_WRITE);
+    
+    if (ASKBTN_YES == askyn_c(ASKBTN_NO, "Create Sega 32X segment?"))
+	    add_segment(0x00800000, 0x009FFFFF + 1, S32X, DATA, "Unallocated (used by the Sega 32X)", SEGPERM_READ | SEGPERM_WRITE);
+	
+    add_segment(0x00A00000, 0x00A0FFFF + 1, Z80, DATA, "Z80 Memory", SEGPERM_READ | SEGPERM_WRITE);
+    make_array(0xA04000, 4, "Z80_YM2612", 4);
+
+    add_segment(0xA10000, 0xA10020, "SYS1", XTRN, "System regs 1", SEGPERM_WRITE);
+    make_array(0xA10000, 2, "IO_PCBVER", 2);
+    make_array(0xA10002, 2, "IO_CT1_DATA", 2);
+    make_array(0xA10004, 2, "IO_CT2_DATA", 2);
+    make_array(0xA10006, 2, "IO_EXT_DATA", 2);
+    make_array(0xA10008, 2, "IO_CT1_CTRL", 2);
+    make_array(0xA1000A, 2, "IO_CT2_CTRL", 2);
+    make_array(0xA1000C, 2, "IO_EXT_CTRL", 2);
+    make_array(0xA1000E, 2, "IO_CT1_RX", 2);
+    make_array(0xA10010, 2, "IO_CT1_TX", 2);
+    make_array(0xA10012, 2, "IO_CT1_SMODE", 2);
+    make_array(0xA10014, 2, "IO_CT2_RX", 2);
+    make_array(0xA10016, 2, "IO_CT2_TX", 2);
+    make_array(0xA10018, 2, "IO_CT2_SMODE", 2);
+    make_array(0xA1001A, 2, "IO_EXT_RX", 2);
+    make_array(0xA1001C, 2, "IO_EXT_TX", 2);
+    make_array(0xA1001E, 2, "IO_EXT_SMODE", 2);
+
+    add_segment(0xA11000, 0xA11002, "Z801", XTRN, "System regs 1", SEGPERM_WRITE);
+    make_array(0xA11000, 2, "IO_RAMMODE", 2);
+
+    add_segment(0xA11100, 0xA11102, "Z802", XTRN, "Z80 control 2", SEGPERM_WRITE);
+    make_array(0xA11100, 2, "IO_Z80BUS", 2);
+
+    add_segment(0xA11200, 0xA11202, "Z803", XTRN, "Z80 control 3", SEGPERM_WRITE);
+    make_array(0xA11200, 2, "IO_Z80RES", 2);
+
+    add_segment(0xA12000, 0xA12100, "FDC", XTRN, "IO FDC", SEGPERM_WRITE);
+    make_array(0xA12000, 1, "IO_FDC", 0x100);
+
+    add_segment(0xA13000, 0xA13100, "TIME", XTRN, "IO TIME", SEGPERM_WRITE);
+    make_array(0xA13000, 1, "IO_TIME", 0x100);
+
+    add_segment(0xA14000, 0xA14004, "TMSS", XTRN, "IO TMSS", SEGPERM_WRITE);
+    make_array(0xA14000, 4, "IO_TMSS", 4);
+
+    add_segment(0xC00000, 0xC00013, "VDP", XTRN, "VDP registers", SEGPERM_WRITE);
+    make_array(0xC00000, 2, "VDP_DATA", 2);
+    make_array(0xC00002, 2, "VDP__DATA", 2);
+    make_array(0xC00004, 2, "VDP_CTRL", 2);
+    make_array(0xC00006, 2, "VDP__CTRL", 2);
+    make_array(0xC00008, 2, "VDP_CNTR", 2);
+    make_array(0xC0000A, 2, "VDP__CNTR", 2);
+    make_array(0xC0000C, 2, "VDP___CNTR", 2);
+    make_array(0xC0000E, 2, "VDP____CNTR", 2);
+    make_array(0xC000011, 2, "VDP_PSG", 2);
+
     add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, CODE, "RAM segment", SEGPERM_MAXVAL);
 
 	set_name(0x00A00000, Z80_RAM);
@@ -301,15 +293,6 @@ static void make_segments()
 			add_segment(sram_s, sram_e, SRAM, DATA, "SRAM memory", SEGPERM_READ | SEGPERM_WRITE);
 		}
 	}
-}
-
-//--------------------------------------------------------------------------
-static void add_other_enum()
-{
-    enum_t ot = add_enum(BADADDR, "consts_other", hexflag());
-	add_enum_member_with_mask(ot, "ROM_START", 0x200);
-	add_enum_member_with_mask(ot, "IO_PCBVER_REF", 0x10FF);
-	add_enum_member_with_mask(ot, "IO_TMSS_REF", 0x2F00); // IO_TMSS
 }
 
 //--------------------------------------------------------------------------
@@ -352,6 +335,7 @@ int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], 
 	qlseek(li, 0, SEEK_SET);
 	if (qlread(li, &_vect, sizeof(_vect)) != sizeof(_vect)) return 0;
 	if (qlread(li, &_hdr, sizeof(_hdr)) != sizeof(_hdr)) return 0;
+    if (!strneq((const char *)(_hdr.CopyRights), "SEGA", 4)) return 0;
 	qstrncpy(fileformatname, "Sega Genesis/MegaDrive ROM file v.2", MAX_FILE_FORMAT_NAME);
 
 	return 1;
@@ -410,15 +394,12 @@ void idaapi load_file(linput_t *li, ushort neflags, const char *fileformatname)
 
 	file2base(li, 0, 0x0000000, size, FILEREG_NOTPATCHABLE); // load rom to database
 
-	make_segments(); // create ROM, RAM, Z80 RAM and etc. segments
-	convert_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
-	define_vectors_struct(); // add definition of vectors struct
-	define_header_struct(); // add definition of header struct
+	make_segments(size); // create ROM, RAM, Z80 RAM and etc. segments
+	get_vector_addrs(&_vect); // convert addresses of vectors from LE to BE
+	define_header(); // add definition of header struct
     define_sprite_struct(); // add definition of sprite struct
-	set_spec_register_names(); // apply names for special addresses of registers
-	add_subroutines(&_vect, size); // mark vector subroutines as procedures
+	add_vector_subs(&_vect, size); // mark vector subroutines as procedures
 
-    add_other_enum();
     add_vdp_status_enum();
     add_version_reg_enum();
 
