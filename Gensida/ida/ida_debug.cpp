@@ -548,14 +548,14 @@ static int idaapi read_registers(thid_t tid, int clsmask, regval_t *values)
         values[R_D6].ival = main68k_context.dreg[R_D6 - R_D0];
         values[R_D7].ival = main68k_context.dreg[R_D7 - R_D0];
 
-		values[R_A0].ival = main68k_context.areg[R_A0 - R_A0];
-		values[R_A1].ival = main68k_context.areg[R_A1 - R_A0];
-		values[R_A2].ival = main68k_context.areg[R_A2 - R_A0];
-		values[R_A3].ival = main68k_context.areg[R_A3 - R_A0];
-		values[R_A4].ival = main68k_context.areg[R_A4 - R_A0];
-		values[R_A5].ival = main68k_context.areg[R_A5 - R_A0];
-		values[R_A6].ival = main68k_context.areg[R_A6 - R_A0];
-		values[R_A7].ival = main68k_context.areg[R_A7 - R_A0];
+        values[R_A0].ival = main68k_context.areg[R_A0 - R_A0];
+        values[R_A1].ival = main68k_context.areg[R_A1 - R_A0];
+        values[R_A2].ival = main68k_context.areg[R_A2 - R_A0];
+        values[R_A3].ival = main68k_context.areg[R_A3 - R_A0];
+        values[R_A4].ival = main68k_context.areg[R_A4 - R_A0];
+        values[R_A5].ival = main68k_context.areg[R_A5 - R_A0];
+        values[R_A6].ival = main68k_context.areg[R_A6 - R_A0];
+        values[R_A7].ival = main68k_context.areg[R_A7 - R_A0];
 
         values[R_PC].ival = M68kDW.last_pc & 0xFFFFFF;
         values[R_SR].ival = main68k_context.sr;
