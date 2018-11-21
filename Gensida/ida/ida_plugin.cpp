@@ -276,10 +276,10 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                     (op.addr >= 0xC00020 && op.addr <= 0xC0003F)) // VDP mirrors
                     op.addr &= 0xC000FF;
 
-                if ((cmd.itype != 0x76 && cmd.itype != 0x75) || op.n != 0 ||
+                if ((cmd.itype != 0x76 && cmd.itype != 0x75 && cmd.itype != 0x74) || op.n != 0 ||
                     (op.phrase != 0x09 && op.phrase != 0x0A) ||
                     (op.addr == 0 || op.addr > MAX_ROM_SIZE) ||
-                    op.specflag1 != 2) // lea table(pc),Ax; jsr func(pc)
+                    op.specflag1 != 2) // lea table(pc),Ax; jsr func(pc); jmp label(pc)
                     break;
 
                 short diff = op.addr - value;
@@ -321,24 +321,27 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
             return 2;
         }
 
-        if ((cmd.itype == 0x76 || cmd.itype == 0x75) && cmd.Op1.phrase == 0x5B && cmd.Op1.specflag1 == 0x10) // lea table(pc),Ax; jsr func(pc)
+        if ((cmd.itype == 0x76 || cmd.itype == 0x75 || cmd.itype == 0x74) &&
+            cmd.Op1.phrase == 0x5B && cmd.Op1.specflag1 == 0x10) // lea table(pc),Ax; jsr func(pc); jmp label(pc)
         {
             short diff = cmd.Op1.addr - cmd.ea;
             if (diff >= SHRT_MIN && diff <= SHRT_MAX)
             {
                 ua_add_dref(cmd.Op1.offb, cmd.Op1.addr, dr_O);
-                ua_add_cref(0, cmd.ea + cmd.size, fl_F);
+
+                if (cmd.itype != 0x74)
+                    ua_add_cref(0, cmd.ea + cmd.size, fl_F);
+
                 return 2;
             }
         }
 
-        if (cmd.itype != M68K_linea && cmd.itype != M68K_linef)
-            break;
-
-        ua_add_cref(0, cmd.Op1.addr, fl_CN);
-        ua_add_cref(cmd.Op1.offb, cmd.ea + cmd.size, fl_F);
-
-        return 2;
+        if (cmd.itype == M68K_linea || cmd.itype == M68K_linef)
+        {
+            ua_add_cref(0, cmd.Op1.addr, fl_CN);
+            ua_add_cref(cmd.Op1.offb, cmd.ea + cmd.size, fl_F);
+            return 2;
+        }
     } break;
     case processor_t::idp_notify::custom_mnem:
     {
