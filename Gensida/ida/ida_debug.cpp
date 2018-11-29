@@ -720,7 +720,13 @@ static ssize_t idaapi read_memory(ea_t ea, void *buffer, size_t size)
     CHECK_FOR_START(0);
     for (size_t i = 0; i < size; ++i)
     {
-        if (IsHardwareAddressValid((uint32)(ea + i)))
+        if ((ea + i >= 0xA00000 && ea + i < 0xA10000) && IsHardwareAddressValid((uint32)(ea + i)))
+        {
+            // Z80
+            unsigned char value = (unsigned char)(ReadValueAtHardwareAddress((uint32)((ea + i) ^ 1), 1) & 0xFF);
+            ((UINT8*)buffer)[i] = value;
+        }
+        else if (IsHardwareAddressValid((uint32)(ea + i)))
         {
             unsigned char value = (unsigned char)(ReadValueAtHardwareAddress((uint32)(ea + i), 1) & 0xFF);
             ((UINT8*)buffer)[i] = value;
