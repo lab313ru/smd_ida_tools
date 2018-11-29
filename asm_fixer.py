@@ -2,6 +2,61 @@
 # 2) Export MAP from IDA
 # 3) asm_fixer.py rom.asm rom.map
 # 4) outputs: rom_new.asm, equals.inc, externs.inc, rams.inc, structs.inc
+
+'''
+Valid tags for IDA:
+1) CODE_START - CODE_END
+2) ORG
+3) DEL_START - DEL_END
+4) BIN_START - BIN_END
+5) INC_START - INC_END
+(Insert opening tag by pressing Ins button at object's start)
+(Insert closing tag by pressing Shift+Ins button at object's end)
+
+# IF you want to replace some code with the new one, use the following            #
+# Code between brackets will replace code after } bracket and before CODE_END tag #
+CODE_START
+{
+    some_new_code_line1
+    some_new_code_line2
+    some_new_code_line3
+}
+    some_original_code_line1
+    some_original_code_line2
+    some_original_code_line3
+CODE_END
+
+
+# If you want to use AS's org directive, use the following #
+# It will insert org directive into fixed ASM listing      #
+ORG $AABBCC
+
+
+# If you want to exclude some unused code (function or data array), #
+# place opening tag DEL_START at the beggining of unneeded code,    #
+# and closing tag DEL_END - at the end of unneded code              #
+
+DEL_START
+useless_array: dc.b $AB, $AB
+DEL_END
+
+
+# If you want to move some code (data array, or just part of code) #
+# into separate file use the following #
+# BIN_START - BIN_END - for arrays to store them in binary form. Will create binclude directive #
+# INC_START - INC_END - for parts of listing to store them as-is. Will create include directive #
+
+BIN_START "some_dir/some_bin.bin"
+data_bytes: dc.b $BC, $BC
+    dc.b $CD, $CD
+BIN_END
+
+INC_START "some_dir/some_inc.inc"
+palette_bytes: dc.w $EBC, $ABC, $EEE, $EEE
+INC_END
+
+'''
+
 import errno
 import struct
 import sys
