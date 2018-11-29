@@ -53,7 +53,7 @@ RowCount = 16;	// Offset consists of 16 bytes
 HexRegion HexRegions[] = {
     { "ROM", (u8 *)Rom_Data, 0, sizeof(Rom_Data), true, 1 },
     { "RAM 68K", (u8 *)Ram_68k, 0xFF0000, sizeof(Ram_68k), true, 1 },
-    { "RAM Z80", (u8 *)Ram_Z80, 0xA00000, sizeof(Ram_Z80), true, 1 },
+    { "RAM Z80", (u8 *)Ram_Z80, 0xA00000, sizeof(Ram_Z80), true, 0 },
     { "VRAM", (u8 *)VRam, 0, sizeof(VRam), true, 1 },
     { "CRAM", (u8 *)CRam, 0, sizeof(CRam), true, 1 },
     { "Regs 68K", (u8 *)&main68k_context.dreg, 0, sizeof(int) * 16, true, 3 },
