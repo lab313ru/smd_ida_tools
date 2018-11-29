@@ -206,7 +206,7 @@ int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], 
 	if (n != 0) return 0;
 	qlseek(li, 0, SEEK_SET);
 
-    if (qlsize(li) >= 0x2000) return 0;
+    if (qlsize(li) > 0x2000) return 0;
 
 	qstrncpy(fileformatname, "Z80 drivers loader v1", MAX_FILE_FORMAT_NAME);
 
