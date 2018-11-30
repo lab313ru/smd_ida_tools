@@ -276,20 +276,25 @@ static int idaapi hook_idp(void *user_data, int notification_code, va_list va)
                     (op.addr >= 0xC00020 && op.addr <= 0xC0003F)) // VDP mirrors
                     op.addr &= 0xC000FF;
 
-                if ((cmd.itype != 0x76 && cmd.itype != 0x75 && cmd.itype != 0x74) || op.n != 0 ||
-                    (op.phrase != 0x09 && op.phrase != 0x0A) ||
-                    (op.addr == 0 || op.addr > MAX_ROM_SIZE) ||
-                    op.specflag1 != 2) // lea table(pc),Ax; jsr func(pc); jmp label(pc)
-                    break;
-
-                short diff = op.addr - value;
-                if (diff >= SHRT_MIN && diff <= SHRT_MAX)
+                if (cmd.itype == 0x75 && op.n == 0 && op.phrase == 9 && (op.addr & 0xFFFF0000) == 0xFF0000)
                 {
-                    cmd.Op1.type = o_displ;
-                    cmd.Op1.offb = 2;
-                    cmd.Op1.dtyp = dt_dword;
-                    cmd.Op1.phrase = 0x5B;
-                    cmd.Op1.specflag1 = 0x10;
+                    op.type = o_mem;
+                    //op.specflag1 = 1;
+                }
+                else if ((cmd.itype == 0x76 || cmd.itype == 0x75 || cmd.itype == 0x74) && op.n == 0 &&
+                    (op.phrase == 0x09 || op.phrase == 0x0A) &&
+                    (op.addr != 0 && op.addr <= MAX_ROM_SIZE) &&
+                    op.specflag1 == 2) // lea table(pc),Ax; jsr func(pc); jmp label(pc)
+                {
+                    short diff = op.addr - value;
+                    if (diff >= SHRT_MIN && diff <= SHRT_MAX)
+                    {
+                        cmd.Op1.type = o_displ;
+                        cmd.Op1.offb = 2;
+                        cmd.Op1.dtyp = dt_dword;
+                        cmd.Op1.phrase = 0x5B;
+                        cmd.Op1.specflag1 = 0x10;
+                    }
                 }
             } break;
             case o_imm:
