@@ -279,7 +279,7 @@ def parse_array(text, size):
 
 def apply_bin(text):
     r = re.compile(
-        r'^BIN_START[ \t]+"(.*)"\n(\w+):((?:[ \t]+dc\.([bwl])[ \t]+(?:(?:\$)?[0-9A-F]+(?:,[ \t]+)?)+\n)+?)BIN_END$',
+        r'^BIN_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?dc\.([bwl])[ \t]+(?:(?:\$)?[0-9A-F]+(?:,(?:[ \t]+)?)?)+\n)+?)BIN_END$',
         re.MULTILINE)
 
     while True:
@@ -303,7 +303,7 @@ def apply_bin(text):
 
 def apply_inc(text):
     r = re.compile(
-        r'^INC_START[ \t]+"(.*)"\n(\w+):((?:[ \t]+dc\.[bwl][ \t]+(?:(?:\$)?[0-9A-F]+(?:,[ \t]+)?)+\n)+?)INC_END$',
+        r'^INC_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?dc\.[bwl][ \t]+(?:(?:\$)?[0-9A-F]+(?:,(?:[ \t]+)?)?)+\n)+?)INC_END$',
         re.MULTILINE)
 
     while True:
@@ -381,7 +381,8 @@ def main1(path):
             for x, val in externs.iteritems():
                 w.write('%s: equ $%06X\n' % (x, val))
 
-        with open(path.replace('.asm', '_new.asm'), 'wb') as w:
+        pre, ext = os.path.splitext(path)
+        with open(pre + '_new' + ext, 'wb') as w:
             w.write('    cpu 68000\n')
             w.write('    supmode on\n')
             w.write('    padding off\n')
