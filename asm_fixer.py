@@ -67,7 +67,7 @@ import os
 def collect_structs(text):
     structs = dict()
 
-    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:[ \t]+dc\.[bwl].*\n)+)\1[ \t]+ends', re.MULTILINE)
+    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:[ \t]+(?:dc\.[bwl])|(?:\w+).*\n)+)\1[ \t]+ends', re.MULTILINE)
 
     mm = r.findall(text)
 
@@ -172,12 +172,12 @@ def collect_rams(text):
 
     r = re.compile(r'^ [0-9A-F]{4}:((?:00FF|00A0)[0-9A-F]{4}) {7}(\w+)', re.MULTILINE)
 
-    p = text.find(' 0000:00A00000')
+    p = text.find(':00A00000')
 
     if p == -1:
         return rams
 
-    text = text[p:]
+    text = text[p-5:]
 
     mm = r.findall(text)
 
@@ -236,6 +236,25 @@ def remove_ida_comments(text):
     text, n = r.subn('', text)
 
     text = remove_many_empty(text)
+
+    return text
+
+
+def fix_quotates(text):
+    r = re.compile(r"([^#'])'(.+?)'", re.MULTILINE)
+
+    text, n = r.subn('\g<1>"\g<2>"', text)
+
+    return text
+
+
+def fix_at(text):
+    r = re.compile(r'^((?:\w*@+\w*)+):', re.MULTILINE)
+
+    mm = r.findall(text)
+
+    for m in mm:
+        text = text.replace(m, m.replace('@', '_'))
 
     return text
 
@@ -355,7 +374,7 @@ def main1(path):
         text = get_rom_start(text)
         text = get_rom_end(text)
 
-        r = re.compile(r'^\w+:[ \t]+(.*)[ \t]+\?(?:.*)?')
+        r = re.compile(r'^\w+:[ \t]+(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
 
         with open(os.path.join(dr, 'structs.inc'), 'wb') as w:
             for struct, keys in structs.iteritems():
@@ -369,7 +388,13 @@ def main1(path):
 
                 for i, key in enumerate(keys):
                     m = r.findall(key)
-                    w.write('    %s %s\n' % (m[0], 'p%d' % i))
+
+                    if len(m) == 1:
+                        m = m[0]
+                        if m[1] == '':
+                            w.write('    %s %s\n' % (m[0], 'p%d' % i))
+                        else:
+                            w.write('    %s [%s]%s\n' % (m[0], m[1], 'p%d' % i))
 
                 w.write('%s endm\n\n' % struct)
 
@@ -401,6 +426,8 @@ def main1(path):
             text = apply_code(text)
             text = apply_org(text)
             text = remove_many_empty(text)
+            text = fix_quotates(text)
+            text = fix_at(text)
 
             w.write(text)
 
