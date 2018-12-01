@@ -268,6 +268,8 @@ def apply_del(text):
 
 
 def mkdir_p(path):
+    if path == '':
+        return
     try:
         os.makedirs(path)
     except OSError as exc:
@@ -301,6 +303,9 @@ def apply_bin(text):
         r'^BIN_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?dc\.([bwl])[ \t]+(?:(?:\$)?[0-9A-F]+(?:,(?:[ \t]+)?)?)+\n)+?)BIN_END$',
         re.MULTILINE)
 
+    basedir = os.getcwd()
+    os.chdir(os.path.dirname(sys.argv[1]))
+
     while True:
         mm = r.findall(text)
 
@@ -317,13 +322,18 @@ def apply_bin(text):
 
             text, n = r.subn('\g<2>:\n    binclude "\g<1>"', text)
 
+    os.chdir(basedir)
+
     return text
 
 
 def apply_inc(text):
     r = re.compile(
-        r'^INC_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?dc\.[bwl][ \t]+(?:(?:\$)?[0-9A-F]+(?:,(?:[ \t]+)?)?)+\n)+?)INC_END$',
+        r'^INC_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?(?:dc\.[bwl])|(?:\w+)[ \t]+(?:(?:(?:\$)?[0-9A-F]+)|(?:\w+)(?:,(?:[ \t]+)?)?)+\n)+?)INC_END$',
         re.MULTILINE)
+
+    basedir = os.getcwd()
+    os.chdir(os.path.dirname(sys.argv[1]))
 
     while True:
         mm = r.findall(text)
@@ -336,9 +346,11 @@ def apply_inc(text):
             mkdir_p(dd)
 
             with open(m[0], 'wb') as w:
-                w.write(m[2])
+                w.write('\t' + m[2])
 
             text, n = r.subn('\g<2>:\n    include "\g<1>"', text)
+
+    os.chdir(basedir)
 
     return text
 
@@ -363,8 +375,6 @@ def apply_org(text):
 
 def main1(path):
     with open(path, 'rb') as f:
-        dr = os.path.dirname(path)
-
         text = f.read()
         text = text.replace('\r\n', '\n')
         structs = collect_structs(text)
@@ -376,15 +386,18 @@ def main1(path):
 
         r = re.compile(r'^\w+:(?:[ \t]+)?(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
 
-        with open(os.path.join(dr, 'structs.inc'), 'wb') as w:
-            for struct, keys in structs.iteritems():
-                pp = ','.join('p'+str(i) for i, _ in enumerate(keys))
-                w.write('%s macro %s\n' % (struct, pp))
+        pre, ext = os.path.splitext(path)
+        structs_path = pre + '_structs.inc'
 
-                pat = '%s[ \\t]+<0>' % struct
+        with open(structs_path, 'wb') as w:
+            for ss, keys in structs.iteritems():
+                pp = ','.join('p'+str(i) for i, _ in enumerate(keys))
+                w.write('%s macro %s\n' % (ss, pp))
+
+                pat = '%s[ \\t]+<0>' % ss
                 r3 = re.compile(pat, re.MULTILINE)
 
-                text, rr3 = r3.subn(('%s <' % struct) + ', '.join(['0'] * len(keys)) + '>', text)
+                text, rr3 = r3.subn(('%s <' % ss) + ', '.join(['0'] * len(keys)) + '>', text)
 
                 for i, key in enumerate(keys):
                     m = r.findall(key)
@@ -396,30 +409,34 @@ def main1(path):
                         else:
                             w.write('    %s [%s]%s\n' % (m[0], m[1], 'p%d' % i))
 
-                w.write('%s endm\n\n' % struct)
+                w.write('%s endm\n\n' % ss)
 
-        with open(os.path.join(dr, 'equals.inc'), 'wb') as w:
+        equals_path = pre + '_equals.inc'
+        with open(equals_path, 'wb') as w:
             for equ, val in equs.iteritems():
                 w.write('%s: equ %s\n' % (equ, val))
 
-        with open(os.path.join(dr, 'externs.inc'), 'wb') as w:
+        externs_path = pre + '_externs.inc'
+        with open(externs_path, 'wb') as w:
             for x, val in externs.iteritems():
                 w.write('%s: equ $%06X\n' % (x, val))
 
-        pre, ext = os.path.splitext(path)
-        with open(pre + '_new' + ext, 'wb') as w:
+        with open(path, 'wb') as w:
             w.write('    cpu 68000\n')
             w.write('    supmode on\n')
             w.write('    padding off\n')
             if len(structs) > 0:
-                w.write('    include "%s"\n' % 'structs.inc')
+                w.write('    include "%s"\n' % os.path.basename(structs_path))
             if len(equs) > 0:
-                w.write('    include "%s"\n' % 'equals.inc')
+                w.write('    include "%s"\n' % os.path.basename(equals_path))
             if len(sys.argv) > 2:
-                w.write('    include "%s"\n' % 'rams.inc')
+                rams_path = pre + '_rams.inc'
+                w.write('    include "%s"\n' % os.path.basename(rams_path))
             if len(externs) > 0:
-                w.write('    include "%s"\n' % 'externs.inc')
-            w.write('    include "%s"\n\n' % 'funcs.inc')
+                w.write('    include "%s"\n' % os.path.basename(externs_path))
+
+            funcs_path = pre + '_funcs.inc'
+            w.write('    include "%s"\n\n' % os.path.basename(funcs_path))
 
             text = exact_zero_off(text)
             text = fix_dcb(text)
@@ -439,22 +456,25 @@ def main1(path):
 
 def main2(path):
     with open(path, 'rb') as f:
-        dr = os.path.dirname(path)
         text = f.read()
 
         rams = collect_rams(text)
 
-        with open(os.path.join(dr, 'rams.inc'), 'wb') as w:
+        pre, ext = os.path.splitext(path)
+        rams_path = pre + '_rams.inc'
+
+        with open(rams_path, 'wb') as w:
             for addr, val in rams.iteritems():
                 w.write('%s: equ $%s\n' % (val, addr[2:]))
 
 
 def main3(path):
-    dr = os.path.dirname(path)
-    funcs_inc_path = os.path.join(dr, 'funcs.inc')
+    pre, ext = os.path.splitext(path)
 
-    if not os.path.exists(funcs_inc_path):
-        with open(funcs_inc_path, 'wb') as w:
+    funcs_path = pre + '_funcs.inc'
+
+    if not os.path.exists(funcs_path):
+        with open(funcs_path, 'wb') as w:
             w.write('\n')
 
 
