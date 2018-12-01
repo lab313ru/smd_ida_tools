@@ -67,7 +67,7 @@ import os
 def collect_structs(text):
     structs = dict()
 
-    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:[ \t]+(?:dc\.[bwl])|(?:\w+).*\n)+)\1[ \t]+ends', re.MULTILINE)
+    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:(?:[ \t]+)?(?:dc\.[bwl])|(?:\w+).*\n)+)\1[ \t]+ends', re.MULTILINE)
 
     mm = r.findall(text)
 
@@ -80,7 +80,7 @@ def collect_structs(text):
 def collect_equs(text):
     equs = dict()
 
-    r = re.compile(r'^(\w+):[ \t]+equ[ \t]+((?:\$)?[0-9A-F]+)', re.MULTILINE)
+    r = re.compile(r'^(\w+):(?:[ \t]+)?equ[ \t]+((?:\$)?[0-9A-F]+)', re.MULTILINE)
 
     mm = r.findall(text)
 
@@ -91,7 +91,7 @@ def collect_equs(text):
 
 
 def get_rom_start(text):
-    p = text.find('\nvectors:')
+    p = text.find('\n; segment "ROM"')
 
     if p == -1:
         return text
@@ -374,7 +374,7 @@ def main1(path):
         text = get_rom_start(text)
         text = get_rom_end(text)
 
-        r = re.compile(r'^\w+:[ \t]+(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
+        r = re.compile(r'^\w+:(?:[ \t]+)?(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
 
         with open(os.path.join(dr, 'structs.inc'), 'wb') as w:
             for struct, keys in structs.iteritems():
@@ -411,10 +411,14 @@ def main1(path):
             w.write('    cpu 68000\n')
             w.write('    supmode on\n')
             w.write('    padding off\n')
-            w.write('    include "%s"\n' % 'structs.inc')
-            w.write('    include "%s"\n' % 'equals.inc')
-            w.write('    include "%s"\n' % 'rams.inc')
-            w.write('    include "%s"\n' % 'externs.inc')
+            if len(structs) > 0:
+                w.write('    include "%s"\n' % 'structs.inc')
+            if len(equs) > 0:
+                w.write('    include "%s"\n' % 'equals.inc')
+            if len(sys.argv) > 2:
+                w.write('    include "%s"\n' % 'rams.inc')
+            if len(externs) > 0:
+                w.write('    include "%s"\n' % 'externs.inc')
             w.write('    include "%s"\n\n' % 'funcs.inc')
 
             text = exact_zero_off(text)
@@ -456,5 +460,6 @@ def main3(path):
 
 if __name__ == '__main__':
     main1(sys.argv[1])
-    main2(sys.argv[2])
+    if len(sys.argv) > 2:
+        main2(sys.argv[2])
     main3(sys.argv[1])
