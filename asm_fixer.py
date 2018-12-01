@@ -414,7 +414,8 @@ def main1(path):
             w.write('    include "%s"\n' % 'structs.inc')
             w.write('    include "%s"\n' % 'equals.inc')
             w.write('    include "%s"\n' % 'rams.inc')
-            w.write('    include "%s"\n\n' % 'externs.inc')
+            w.write('    include "%s"\n' % 'externs.inc')
+            w.write('    include "%s"\n\n' % 'funcs.inc')
 
             text = exact_zero_off(text)
             text = fix_dcb(text)
@@ -444,6 +445,16 @@ def main2(path):
                 w.write('%s: equ $%s\n' % (val, addr[2:]))
 
 
+def main3(path):
+    dr = os.path.dirname(path)
+    funcs_inc_path = os.path.join(dr, 'funcs.inc')
+
+    if not os.path.exists(funcs_inc_path):
+        with open(funcs_inc_path, 'wb') as w:
+            w.write('\n')
+
+
 if __name__ == '__main__':
     main1(sys.argv[1])
     main2(sys.argv[2])
+    main3(sys.argv[1])
