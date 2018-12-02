@@ -268,8 +268,6 @@ def apply_del(text):
 
 
 def mkdir_p(path):
-    if path == '':
-        return
     try:
         os.makedirs(path)
     except OSError as exc:
@@ -304,7 +302,7 @@ def apply_bin(text):
         re.MULTILINE)
 
     basedir = os.getcwd()
-    os.chdir(os.path.dirname(sys.argv[1]))
+    os.chdir(os.path.abspath(os.path.dirname(sys.argv[1])))
 
     while True:
         mm = r.findall(text)
@@ -313,7 +311,7 @@ def apply_bin(text):
             break
 
         for m in mm:
-            dd = os.path.dirname(m[0])
+            dd = os.path.abspath(os.path.dirname(m[0]))
             mkdir_p(dd)
 
             with open(m[0], 'wb') as w:
@@ -333,7 +331,7 @@ def apply_inc(text):
         re.MULTILINE)
 
     basedir = os.getcwd()
-    os.chdir(os.path.dirname(sys.argv[1]))
+    os.chdir(os.path.abspath(os.path.dirname(sys.argv[1])))
 
     while True:
         mm = r.findall(text)
@@ -342,7 +340,7 @@ def apply_inc(text):
             break
 
         for m in mm:
-            dd = os.path.dirname(m[0])
+            dd = os.path.abspath(os.path.dirname(m[0]))
             mkdir_p(dd)
 
             with open(m[0], 'wb') as w:
