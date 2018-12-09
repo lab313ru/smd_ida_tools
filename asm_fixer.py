@@ -45,11 +45,13 @@ DEL_END
 # into separate file use the following #
 # BIN_START - BIN_END - for arrays to store them in binary form. Will create binclude directive #
 # INC_START - INC_END - for parts of listing to store them as-is. Will create include directive #
+# If EXEC tag exists after BIN_END, specified command will be executed. Use %s for filename
 
 BIN_START "some_dir/some_bin.bin"
 data_bytes: dc.b $BC, $BC
     dc.b $CD, $CD
 BIN_END
+EXEC "some_cmd %s"
 
 INC_START "some_dir/some_inc.inc"
 palette_bytes: dc.w $EBC, $ABC, $EEE, $EEE
@@ -67,7 +69,8 @@ import os
 def collect_structs(text):
     structs = dict()
 
-    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:(?:[ \t]+)?(?:dc\.[bwl])|(?:\w+).*\n)+)\1[ \t]+ends', re.MULTILINE)
+    r = re.compile(r'^(\w+)[ \t]+struc.*\n(?:^[ \t]+.*\n)?((?:\w+:(?:[ \t]+)?(?:dc\.[bwl])|(?:\w+).*\n)+)\1[ \t]+ends',
+                   re.MULTILINE)
 
     mm = r.findall(text)
 
@@ -77,10 +80,38 @@ def collect_structs(text):
     return structs
 
 
+def apply_structs(structs_path, text, structs):
+    r = re.compile(r'^\w+:(?:[ \t]+)?(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
+
+    with open(structs_path, 'wb') as w:
+        for ss in sorted(structs.iterkeys()):
+            pp = ','.join('p' + str(i) for i, _ in enumerate(structs[ss]))
+            w.write('%s macro %s\n' % (ss, pp))
+
+            pat = '%s[ \\t]+<0>' % ss
+            r3 = re.compile(pat, re.MULTILINE)
+
+            text, rr3 = r3.subn(('%s <' % ss) + ', '.join(['0'] * len(structs[ss])) + '>', text)
+
+            for i, key in enumerate(structs[ss]):
+                m = r.findall(key)
+
+                if len(m) == 1:
+                    m = m[0]
+                    if m[1] == '':
+                        w.write('    %s %s\n' % (m[0], 'p%d' % i))
+                    else:
+                        w.write('    %s [%s]%s\n' % (m[0], m[1], 'p%d' % i))
+
+            w.write('%s endm\n\n' % ss)
+
+    return text
+
+
 def collect_equs(text):
     equs = dict()
 
-    r = re.compile(r'^(\w+):(?:[ \t]+)?equ[ \t]+((?:\$)?[0-9A-F]+)', re.MULTILINE)
+    r = re.compile(r'^(\w+):(?:[ \t]+)?equ[ \t]+((?:\$[0-9A-F]+)|(?:[0-9]+)|(?:%[0-1]+))', re.MULTILINE)
 
     mm = r.findall(text)
 
@@ -109,20 +140,18 @@ def get_rom_end(text):
 
 
 def fix_dcb(text):
-    r = re.compile(r'(dcb\.b[ \t]+((?:\$)?[0-9A-F]+),((?:\$)?[0-9A-F]+))')
+    r = re.compile(r'(dcb\.b[ \t]+((?:\$[0-9A-F]+)|(?:[0-9]+)|(?:%[0-1]+)),(\$[0-9A-F]+))')
 
     mm = r.findall(text)
 
     for m in mm:
-        count = int(m[1][1:], 16) if m[1][0] == '$' else int(m[1])
-        val = int(m[2][1:], 16) if m[2][0] == '$' else int(m[2])
+        count = parse_array_int(m[1])
+        val = parse_array_int(m[2])
 
         if val == 0:
             text = text.replace(m[0], 'rorg $%X' % count, 1)
         else:
             text = text.replace(m[0], 'dc.b [%s]%s' % (m[1], m[2]), 1)
-
-    # text, n = r.subn('dc.\g<1> [\g<2>]\g<3>', text)
 
     return text
 
@@ -189,7 +218,7 @@ def collect_rams(text):
 
 def exact_zero_off(text):
     r = re.compile(r'([ \t,]+0)\(', re.MULTILINE)
-    text, n = r.subn('\g<1>.w(', text)
+    text, n = r.subn(r'\g<1>.w(', text)
 
     return text
 
@@ -198,42 +227,42 @@ def fix_struct_start_end(text, structs):
     for struc in structs:
         pat = '(%s)[ \\t]+<(.*)>' % struc
         r = re.compile(pat, re.MULTILINE)
-        text, n = r.subn('\g<1> \g<2>', text)
+        text, n = r.subn(r'\g<1> \g<2>', text)
 
     return text
 
 
 def remove_many_empty(text):
     r = re.compile(r'(\n){3}', re.MULTILINE)
-    text, n = r.subn('\g<1>', text)
+    text, n = r.subn(r'\g<1>', text)
 
     return text
 
 
 def remove_ida_comments(text):
     r = re.compile(r'^[ \t]+;[ \t]+(?:DATA|CODE)[ \t]+XREF.*\n', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'[ \t]+;[ \t]+(?:DATA|CODE)[ \t]+XREF.*', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'^[ \t]+;[ \t]+.*\n', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'^;[ \t]+[-=]+\n', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'\n;[ \t]+=+[ \t]+S[ \t]+U[ \t]+B[ \t]+R.*\n', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'^;[ \t]+End[ \t]+of[ \t]+function.*\n', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     r = re.compile(r'(\$[0-9A-F]{2}.*)[ \t]+;.*', re.MULTILINE)
-    text, n = r.subn('\g<1>', text)
+    text, n = r.subn(r'\g<1>', text)
 
     r = re.compile(r'^;[ \t]+Attributes:[ \t]+.*', re.MULTILINE)
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     text = remove_many_empty(text)
 
@@ -243,7 +272,7 @@ def remove_ida_comments(text):
 def fix_quotates(text):
     r = re.compile(r"([^#'])'(.+?)'", re.MULTILINE)
 
-    text, n = r.subn('\g<1>"\g<2>"', text)
+    text, n = r.subn(r'\g<1>"\g<2>"', text)
 
     return text
 
@@ -259,10 +288,18 @@ def fix_at(text):
     return text
 
 
+def fix_align(text):
+    r = re.compile(r'align[ \t]+(\d+)', re.MULTILINE)
+
+    text, n = r.subn(r'align \g<1>, 0', text)
+
+    return text
+
+
 def apply_del(text):
     r = re.compile(r'^(DEL_START.+?DEL_END)$', re.MULTILINE | re.DOTALL)
 
-    text, n = r.subn('', text)
+    text, n = r.subn(r'', text)
 
     return text
 
@@ -277,18 +314,33 @@ def mkdir_p(path):
             raise
 
 
-def parse_array(text, size):
-    r = re.compile(r'((?:\$)?[0-9A-F]+)', re.MULTILINE)
+def parse_array_int(m):
+    return int(m[1:], 16) if m[0] == '$' else int(m[1:], 2) if m[0] == '%' else int(m)
 
+
+def parse_array(text, sizes, equs):
+    r = re.compile(r'((?:\$[0-9A-F]+)|(?:[0-9]+)|(?:%[0-1]+)|(?:\w+))', re.MULTILINE)
     mm = r.findall(text)
 
+    sizes_len = len(sizes)
     data = ''
 
-    for m in mm:
-        val = int(m[1:], 16) if m[0] == '$' else int(m)
-        if size == 'b':
+    for i, m in enumerate(mm):
+        try:
+            val = parse_array_int(m)
+        except ValueError:
+            if m in equs:
+                m = equs[m]
+
+                try:
+                    val = parse_array_int(m)
+                except ValueError:
+                    val = 0
+            else:
+                val = 0
+        if sizes[i % sizes_len] == 'b':
             data += struct.pack('>B', val & 0xFF)
-        elif size == 'w':
+        elif sizes[i % sizes_len] == 'w':
             data += struct.pack('>H', val & 0xFFFF)
         else:
             data += struct.pack('>I', val & 0xFFFFFFFF)
@@ -296,10 +348,41 @@ def parse_array(text, size):
     return data
 
 
-def apply_bin(text):
+def parse_struct(bin_data, struct_name, structs, equs):
+    if struct_name not in structs:
+        return bin_data
+
+    bin_struct = structs[struct_name]
+
+    sizes = list()
+
+    for struct_field in bin_struct:
+        p = struct_field.find('dc.')
+
+        if p != -1:
+            sizes.append(struct_field[p+3:p+4])
+        else:
+            print 'Cannot use struct in struct!'
+
+    data = parse_array(bin_data, sizes, equs)
+
+    return data
+
+
+def apply_bin(text, structs, equs):
     r = re.compile(
-        r'^BIN_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?dc\.([bwl])[ \t]+(?:(?:\$)?[0-9A-F]+(?:,(?:[ \t]+)?)?)+\n)+?)BIN_END$',
+        r'^BIN_START[ \t]+'
+        r'"(.*)"\n(?:(\w+:|))?'
+        r'('
+        r'(?:'
+        r'(?:[ \t]+)?'
+        r'(?:(?:dc\.[bwl])|(?:\w+))[ \t]+(?:(?:(?:\$[0-9A-F]+)|(?:[0-9]+)|(?:%[0-1]+)|(?:\w+))(?:,(?:[ \t]+)?)?)+\n)+?'
+        r')'
+        r'BIN_END'
+        r'(?:\nEXEC[ \t]+"(.*)")?$',
         re.MULTILINE)
+
+    rr = re.compile(r'((?:dc\.[bwl])|(?:\w+))', re.MULTILINE)
 
     basedir = os.getcwd()
     os.chdir(os.path.abspath(os.path.dirname(sys.argv[1])))
@@ -314,11 +397,31 @@ def apply_bin(text):
             dd = os.path.abspath(os.path.dirname(m[0]))
             mkdir_p(dd)
 
-            with open(m[0], 'wb') as w:
-                data = parse_array(m[2], m[3])
+            fname = m[0]
+            with open(fname, 'wb') as w:
+                lines = m[2].splitlines()
+
+                data = ''
+                for line in lines:
+                    mx = rr.search(line)
+                    size_or_name = mx.group(1)
+                    bin_data = line[mx.end(1):].strip()
+
+                    if size_or_name not in structs:
+                        size_or_name = list(size_or_name[-1])
+                        data += parse_array(bin_data, size_or_name, equs)
+                    else:
+                        data += parse_struct(bin_data, size_or_name, structs, equs)
                 w.write(data)
 
-            text, n = r.subn('\g<2>:\n    binclude "\g<1>"', text)
+                print 'Saved bin-file: "%s"' % fname
+
+            if m[3] != '':  # EXEC
+                cmd = (m[3] % fname) if m[3].find('%s') != -1 else m[3]
+                print 'Executing command "%s"' % cmd
+                os.system(cmd)
+
+        text, n = r.subn(r'\g<2>\n    binclude "\g<1>"\n    align 2', text)
 
     os.chdir(basedir)
 
@@ -327,7 +430,14 @@ def apply_bin(text):
 
 def apply_inc(text):
     r = re.compile(
-        r'^INC_START[ \t]+"(.*)"\n(\w+):((?:(?:[ \t]+)?(?:dc\.[bwl])|(?:\w+)[ \t]+(?:(?:(?:\$)?[0-9A-F]+)|(?:\w+)(?:,(?:[ \t]+)?)?)+\n)+?)INC_END$',
+        r'^INC_START[ \t]+'
+        r'"(.*)"\n(\w+):'
+        r'('
+        r'(?:'
+        r'(?:[ \t]+)?'
+        r'(?:(?:dc\.[bwl])|(?:\w+))[ \t]+(?:(?:(?:\$[0-9A-F]+)|(?:[0-9]+)|(?:%[0-1]+)|(?:\w+))(?:,(?:[ \t]+)?)?)+\n)+?'
+        r')'
+        r'INC_END$',
         re.MULTILINE)
 
     basedir = os.getcwd()
@@ -343,10 +453,13 @@ def apply_inc(text):
             dd = os.path.abspath(os.path.dirname(m[0]))
             mkdir_p(dd)
 
-            with open(m[0], 'wb') as w:
+            fname = m[0]
+            with open(fname, 'wb') as w:
                 w.write('\t' + m[2])
 
-            text, n = r.subn('\g<2>:\n    include "\g<1>"', text)
+                print 'Saved inc-file: "%s"' % fname
+
+        text, n = r.subn(r'\g<2>:\n    include "\g<1>"\n    align 2', text)
 
     os.chdir(basedir)
 
@@ -355,10 +468,10 @@ def apply_inc(text):
 
 def apply_code(text):
     r = re.compile(r'^CODE_START\n{\n((?:.*\n)+?)}\n+(\w+):((?:.*\n)+?)CODE_END$', re.MULTILINE)
-    text, n = r.subn('\n\g<2>:\n\g<1>', text)
+    text, n = r.subn(r'\n\g<2>:\n\g<1>', text)
 
     r = re.compile(r'^CODE_START\n{\n((?:.*\n)+?)}\n+((?:.*\n)+?)CODE_END$', re.MULTILINE)
-    text, n = r.subn('\n\g<1>', text)
+    text, n = r.subn(r'\n\g<1>', text)
 
     return text
 
@@ -366,7 +479,7 @@ def apply_code(text):
 def apply_org(text):
     r = re.compile(r'^ORG[ \t]+(\$[0-9A-F]+)$', re.MULTILINE)
 
-    text, n = r.subn('    org \g<1>', text)
+    text, n = r.subn(r'    org \g<1>', text)
 
     return text
 
@@ -375,6 +488,7 @@ def main1(path):
     with open(path, 'rb') as f:
         text = f.read()
         text = text.replace('\r\n', '\n')
+
         structs = collect_structs(text)
         equs = collect_equs(text)
         externs = create_externs()
@@ -382,44 +496,22 @@ def main1(path):
         text = get_rom_start(text)
         text = get_rom_end(text)
 
-        r = re.compile(r'^\w+:(?:[ \t]+)?(.*)[ \t]+(?:(?:(\d+)[ \t]+dup\(\?\))|(?:\?.*))')
-
         pre, ext = os.path.splitext(path)
+
         structs_path = pre + '_structs.inc'
-
-        with open(structs_path, 'wb') as w:
-            for ss, keys in structs.iteritems():
-                pp = ','.join('p'+str(i) for i, _ in enumerate(keys))
-                w.write('%s macro %s\n' % (ss, pp))
-
-                pat = '%s[ \\t]+<0>' % ss
-                r3 = re.compile(pat, re.MULTILINE)
-
-                text, rr3 = r3.subn(('%s <' % ss) + ', '.join(['0'] * len(keys)) + '>', text)
-
-                for i, key in enumerate(keys):
-                    m = r.findall(key)
-
-                    if len(m) == 1:
-                        m = m[0]
-                        if m[1] == '':
-                            w.write('    %s %s\n' % (m[0], 'p%d' % i))
-                        else:
-                            w.write('    %s [%s]%s\n' % (m[0], m[1], 'p%d' % i))
-
-                w.write('%s endm\n\n' % ss)
+        text = apply_structs(structs_path, text, structs)
 
         equals_path = pre + '_equals.inc'
         with open(equals_path, 'wb') as w:
-            for equ, val in equs.iteritems():
-                w.write('%s: equ %s\n' % (equ, val))
+            for equ in sorted(equs.iterkeys()):
+                w.write('%s: equ %s\n' % (equ, equs[equ]))
 
         externs_path = pre + '_externs.inc'
         with open(externs_path, 'wb') as w:
-            for x, val in externs.iteritems():
-                w.write('%s: equ $%06X\n' % (x, val))
+            for x in sorted(externs.iterkeys()):
+                w.write('%s: equ $%06X\n' % (x, externs[x]))
 
-        with open(path, 'wb') as w:
+        with open(path.replace('.asm', '.s'), 'wb') as w:
             w.write('    cpu 68000\n')
             w.write('    supmode on\n')
             w.write('    padding off\n')
@@ -440,14 +532,19 @@ def main1(path):
             text = fix_dcb(text)
             text = fix_struct_start_end(text, structs)
             text = remove_ida_comments(text)
+
+            with open('temp.asm', 'wb') as ww:
+                ww.write(text)
+
             text = apply_del(text)
-            text = apply_bin(text)
+            text = apply_bin(text, structs, equs)
             text = apply_inc(text)
             text = apply_code(text)
             text = apply_org(text)
             text = remove_many_empty(text)
             text = fix_quotates(text)
             text = fix_at(text)
+            text = fix_align(text)
 
             w.write(text)
 
@@ -462,8 +559,8 @@ def main2(path):
         rams_path = pre + '_rams.inc'
 
         with open(rams_path, 'wb') as w:
-            for addr, val in rams.iteritems():
-                w.write('%s: equ $%s\n' % (val, addr[2:]))
+            for addr in sorted(rams.iterkeys()):
+                w.write('%s: equ $%s\n' % (rams[addr], addr[2:]))
 
 
 def main3(path):
