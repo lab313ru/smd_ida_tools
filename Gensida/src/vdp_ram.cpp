@@ -1666,22 +1666,6 @@ LRESULT CALLBACK VDPRamProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         Redraw_VDP_View();
     } break;
 
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        BeginPaint(hDlg, &ps);
-
-        RedrawWindow(GetDlgItem(VDPRamHWnd, IDC_VDP_PALETTE), NULL, NULL, RDW_INVALIDATE);
-        RedrawWindow(GetDlgItem(VDPRamHWnd, IDC_VDP_TILES), NULL, NULL, RDW_INVALIDATE);
-        RedrawWindow(GetDlgItem(VDPRamHWnd, IDC_VDP_TILE_VIEW), NULL, NULL, RDW_INVALIDATE);
-
-        EndPaint(hDlg, &ps);
-
-        msgModeRegistersUPDATE(tabItems[0].hwndDialog);
-        msgOtherRegistersUPDATE(tabItems[1].hwndDialog);
-        return true;
-    } break;
-
     case WM_LBUTTONDOWN:
     {
         RECT r;

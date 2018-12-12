@@ -37,7 +37,6 @@ extern "C" {
     extern int Show_LED;
     extern int Auto_Pause;
     extern int Auto_Fix_CS;
-    extern int Language;
     extern int Country;
     extern int Country_Order[3];
     extern int WinNT_Flag;
@@ -85,7 +84,6 @@ extern "C" {
     extern char SpliceMovie[1024];
     extern char Str_Tmp[1024];
     extern char Gens_Path[1024];
-    extern char Language_Path[1024];
     extern POINT Window_Pos;
 
 #define MAX_RECENT_SCRIPTS 15

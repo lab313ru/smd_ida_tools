@@ -961,9 +961,11 @@ void AddHotkeySuffix(char* str, int id, const char* defaultSuffix)
     int index = s_reverseEventLookup[id] - 1;
     if (index < 0)
     {
-        strcat(str, "\t");
         if (defaultSuffix)
+        {
+            strcat(str, "\t");
             strcat(str, defaultSuffix);
+        }
         return;
     }
 

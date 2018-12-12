@@ -2285,8 +2285,6 @@ int Save_Config(char *File_Name)
 
     wsprintf(Str_Tmp, "%d", Current_State);
     WritePrivateProfileString("General", "State Number", Str_Tmp, Conf_File);
-    wsprintf(Str_Tmp, "%d", Language);
-    WritePrivateProfileString("General", "Language", Str_Tmp, Conf_File);
     wsprintf(Str_Tmp, "%d", Window_Pos.x);
     WritePrivateProfileString("General", "Window X", Str_Tmp, Conf_File);
     wsprintf(Str_Tmp, "%d", Window_Pos.y);
@@ -2829,7 +2827,6 @@ int Load_Config(char *File_Name, void *Game_Active)
         File_Type_Index = 8;
 
     Current_State = GetPrivateProfileInt("General", "State Number", 0, Conf_File);
-    Language = GetPrivateProfileInt("General", "Language", 0, Conf_File);
     Window_Pos.x = GetPrivateProfileInt("General", "Window X", 0, Conf_File);
     Window_Pos.y = GetPrivateProfileInt("General", "Window Y", 0, Conf_File);
     Intro_Style = GetPrivateProfileInt("General", "Intro Style", 0, Conf_File); //Modif N. - default to not using the "crazy" intro effect, which used to guzzle more CPU than the actual emulation

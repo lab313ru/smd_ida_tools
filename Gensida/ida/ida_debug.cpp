@@ -335,8 +335,6 @@ HINSTANCE GetHInstance()
 char cmdline[2048];
 static int idaapi gens_process(void *ud)
 {
-    SetCurrentDirectoryA(idadir("plugins"));
-
     int rc;
 
     rc = WinMain(GetHInstance(), (HINSTANCE)NULL, cmdline, SW_NORMAL);
