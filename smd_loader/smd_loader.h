@@ -6,7 +6,7 @@ struct gen_hdr {
 	unsigned char OverseasName[48];
 	unsigned char ProductCode[14];
 	unsigned short CheckSum;
-	unsigned char Peripherials[16];
+	unsigned char Peripherals[16];
 	unsigned int RomStart;
 	unsigned int RomEnd;
 	unsigned int RamStart;
