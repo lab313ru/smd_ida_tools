@@ -275,7 +275,7 @@ static void make_segments(size_t romsize)
     make_array(0xC0000A, 2, "VDP__CNTR", 2);
     make_array(0xC0000C, 2, "VDP___CNTR", 2);
     make_array(0xC0000E, 2, "VDP____CNTR", 2);
-    make_array(0xC000011, 2, "VDP_PSG", 2);
+    make_array(0xC00011, 1, "VDP_PSG", 1);
 
     add_segment(0x00FF0000, 0x00FFFFFF + 1, RAM, CODE, "RAM segment", SEGPERM_MAXVAL);
 
