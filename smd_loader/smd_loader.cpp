@@ -5,7 +5,7 @@
 *
 */
 
-#define VERSION "1.24"
+#define VERSION "1.25"
 /*
 *      SEGA MEGA DRIVE/GENESIS ROMs Loader (Modified/Updated HardwareMan's source)
 *      Author: Dr. MefistO [Lab 313] <meffi@lab313.ru>
@@ -127,7 +127,7 @@ static void add_segment(ea_t start, ea_t end, const char *name, const char *clas
 static void add_vector_subs(gen_vect *table, unsigned int rom_size)
 {
     doDwrd(0, 4);
-	for (int i = 1; i < _countof(VECTOR_NAMES); i++) // except SPP pointer
+	for (int i = _countof(VECTOR_NAMES); i >= 1; i--) // except SPP pointer
 	{
 		add_sub(table->vectors[i], VECTOR_NAMES[i], rom_size);
         doDwrd(i * 4, 4);
