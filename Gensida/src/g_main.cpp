@@ -2,8 +2,9 @@
 
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>
-#include <string.h>
+#include <iostream>
+#include <cstdio>
+#include <cstring>
 #include "g_main.h"
 #include "g_ddraw.h"
 #include "g_dsound.h"
