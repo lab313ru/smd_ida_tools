@@ -1,4 +1,4 @@
-THIS PROJECT IS NOT SUPPORTED ANYMORE. USE [Smd Ida Tools v2](https://github.com/lab313ru/smd_ida_tools)!
+THIS PROJECT IS NOT SUPPORTED ANYMORE. USE [Smd Ida Tools v2](https://github.com/lab313ru/smd_ida_tools2)!
 
 # smd_ida_tools
 The IDA Pro tools for the Sega Genesis/MegaDrive romhackers.
